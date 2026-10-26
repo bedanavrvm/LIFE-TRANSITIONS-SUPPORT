@@ -1,20 +1,98 @@
 ---
 import type { Service, Course } from '@ltsp/shared';
+import { demoMode } from '../lib/cms';
 interface Props { services: Service[]; courses: Course[]; values: Record<string, string>; errors: Record<string, string>; }
 const { services, courses, values: v, errors } = Astro.props;
+const service = services.find(item => item.slug === v.service);
+const course = courses.find(item => item.slug === v.course);
 const kinds = [['care', 'Support or home visit'], ['callback', 'A callback'], ['referral', 'Refer someone'], ['training-group', 'Group training'], ['training-private', 'Private training']];
 ---
 <form method="post" action="/support" class="form-panel">
-  <h2>Let’s start a conversation.</h2><p>Share a little about what you need. You can leave the details for your conversation with the nurse.</p>
-  {Object.keys(errors).length > 0 && <div class="notice error" role="alert" tabindex="-1" id="form-errors"><strong>Please check the following:</strong><ul>{Object.entries(errors).map(([field, error]) => <li><a href={`#${field}`}>{error}</a></li>)}</ul></div>}
+  {demoMode && <p class="form-demo-note">For this demonstration, please use fictional details.</p>}
+  {Object.keys(errors).length > 0 && <div class="notice error" role="alert" tabindex="-1" id="form-errors"><strong>Please check your request:</strong><ul>{Object.entries(errors).map(([field, error]) => <li><a href={field === 'form' ? '#form-errors' : `#${field}`}>{error}</a></li>)}</ul></div>}
   <div class="honeypot" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off" /></label></div>
-  <div class="field"><label for="kind">I’m getting in touch about</label><select name="kind" id="kind">{kinds.map(([value, label]) => <option value={value} selected={v.kind === value}>{label}</option>)}</select></div>
-  <div class="field-grid"><div class="field"><label for="name">Your name</label><input id="name" name="name" value={v.name} required maxlength="100" autocomplete="name" aria-invalid={!!errors.name} /></div><div class="field"><label for="phone">Contact phone number</label><input id="phone" name="phone" type="tel" value={v.phone} required maxlength="25" autocomplete="tel" placeholder="e.g. +254 7…" aria-invalid={!!errors.phone} /></div></div>
-  <div class="field-grid"><div class="field"><label for="email">Email address <span class="muted">(optional)</span></label><input id="email" name="email" type="email" value={v.email} maxlength="150" autocomplete="email" aria-invalid={!!errors.email} /></div><div class="field"><label for="preferredContact">How should we reply?</label><select id="preferredContact" name="preferredContact">{[['phone', 'Phone call'], ['whatsapp', 'WhatsApp'], ['email', 'Email']].map(([value, label]) => <option value={value} selected={v.preferredContact === value}>{label}</option>)}</select></div></div>
-  <div class="field-grid"><div class="field"><label for="service">Service <span class="muted">(if known)</span></label><select id="service" name="service"><option value="">Help me find the right support</option>{services.map(service => <option value={service.slug} selected={v.service === service.slug}>{service.title}{service.free ? ' · Free' : ''}</option>)}</select></div><div class="field"><label for="course">Training course <span class="muted">(if relevant)</span></label><select id="course" name="course"><option value="">Not applicable / please advise</option>{courses.map(course => <option value={course.slug} selected={v.course === course.slug}>{course.title}</option>)}</select></div></div>
-  <div class="field-grid"><div class="field"><label for="relationship">You are enquiring for</label><select id="relationship" name="relationship">{[['self', 'Myself'], ['family', 'A family member'], ['employer', 'My household or organisation'], ['professional', 'Someone I am referring professionally']].map(([value, label]) => <option value={value} selected={v.relationship === value}>{label}</option>)}</select></div><div class="field"><label for="ageGroup">Person needing support</label><select id="ageGroup" name="ageGroup">{[['adult', 'An adult'], ['child', 'A child or young person'], ['not-applicable', 'Not applicable / training enquiry']].map(([value, label]) => <option value={value} selected={v.ageGroup === value}>{label}</option>)}</select></div></div>
-  <div class="field-grid"><div class="field"><label for="area">Area or neighbourhood <span class="muted">(optional)</span></label><input id="area" name="area" value={v.area} maxlength="150" /><small>An exact home address is not needed yet.</small></div><div class="field"><label for="availability">Good times to contact you <span class="muted">(optional)</span></label><input id="availability" name="availability" value={v.availability} maxlength="200" placeholder="e.g. weekday afternoons" /></div></div>
-  <div class="field"><label for="message">What support would help? <span class="muted">(optional)</span></label><textarea id="message" name="message" maxlength="1500" aria-describedby="message-help">{v.message}</textarea><small id="message-help">A brief description is enough. Please avoid detailed medical history, identity numbers or financial records.</small></div>
-  <label class="check-label"><input id="consent" type="checkbox" name="consent" required checked={v.consent === 'on'} /><span>I have read the <a href="/privacy">privacy information</a> and understand that the team will use these details to review and respond to my request.</span></label>
-  <button class="button" type="submit">Send my request <span aria-hidden="true">↗</span></button><p class="small-note">Submitting a request does not confirm an appointment or a training place.</p>
+  <input type="hidden" name="service" value={v.service} />
+  <p class="enquiry-context" hidden={!service && !course}>
+    <span>About your enquiry</span>
+    {service && <strong data-service-context>{service.title}{service.free ? ' · Free' : ''}</strong>}
+    <strong data-course-context>{course?.title}</strong>
+  </p>
+  <div class="field-grid">
+    <div class="field">
+      <label for="kind">I’m getting in touch about</label>
+      <select name="kind" id="kind" aria-invalid={!!errors.kind} aria-describedby={errors.kind ? 'kind-error' : undefined}>{kinds.map(([value, label]) => <option value={value} selected={v.kind === value}>{label}</option>)}</select>
+      {errors.kind && <p class="field-error" id="kind-error">{errors.kind}</p>}
+    </div>
+    <div class="field">
+      <label for="name">Your name</label>
+      <input id="name" name="name" value={v.name} required maxlength="100" autocomplete="name" aria-invalid={!!errors.name} aria-describedby={errors.name ? 'name-error' : undefined} />
+      {errors.name && <p class="field-error" id="name-error">{errors.name}</p>}
+    </div>
+  </div>
+  <div class="field-grid">
+    <div class="field">
+      <label for="preferredContact">How should we reply?</label>
+      <select id="preferredContact" name="preferredContact" aria-invalid={!!errors.preferredContact} aria-describedby={errors.preferredContact ? 'preferredContact-error' : undefined}>{[['phone', 'Phone call'], ['whatsapp', 'WhatsApp'], ['email', 'Email']].map(([value, label]) => <option value={value} selected={v.preferredContact === value}>{label}</option>)}</select>
+      {errors.preferredContact && <p class="field-error" id="preferredContact-error">{errors.preferredContact}</p>}
+    </div>
+    <div class="field" data-contact="phone">
+      <label for="phone">Contact phone number</label>
+      <input id="phone" name="phone" type="tel" value={v.phone} maxlength="25" autocomplete="tel" aria-invalid={!!errors.phone} aria-describedby={`phone-help${errors.phone ? ' phone-error' : ''}`} />
+      <small id="phone-help">For a phone call or WhatsApp reply.</small>
+      {errors.phone && <p class="field-error" id="phone-error">{errors.phone}</p>}
+    </div>
+    <div class="field" data-contact="email">
+      <label for="email">Email address</label>
+      <input id="email" name="email" type="email" value={v.email} maxlength="150" autocomplete="email" aria-invalid={!!errors.email} aria-describedby={`email-help${errors.email ? ' email-error' : ''}`} />
+      <small id="email-help">For an email reply. No phone number needed.</small>
+      {errors.email && <p class="field-error" id="email-error">{errors.email}</p>}
+    </div>
+  </div>
+  <noscript><p class="small-note">Complete only the phone number or email address for your chosen reply method. Choose a course below for group training; for other requests you can leave it blank.</p></noscript>
+  <div class="field" data-training>
+    <label for="course">Training course <span class="muted">(required for group training)</span></label>
+    <select id="course" name="course" aria-invalid={!!errors.course} aria-describedby={errors.course ? 'course-error' : undefined}><option value="">Please advise me</option>{courses.map(item => <option value={item.slug} selected={v.course === item.slug}>{item.title}</option>)}</select>
+    {errors.course && <p class="field-error" id="course-error">{errors.course}</p>}
+  </div>
+  <div class="field">
+    <label for="message">What support would help? <span class="muted">(optional)</span></label>
+    <textarea id="message" name="message" rows="3" maxlength="1500" aria-invalid={!!errors.message} aria-describedby={`message-help${errors.message ? ' message-error' : ''}`}>{v.message}</textarea>
+    <small id="message-help">A sentence or two is enough. Leave medical history, identity numbers and financial details for a private conversation.</small>
+    {errors.message && <p class="field-error" id="message-error">{errors.message}</p>}
+  </div>
+  <label class="check-label" for="consent"><input id="consent" type="checkbox" name="consent" required checked={v.consent === 'on'} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? 'consent-error' : undefined} /><span>I’ve read the <a href="/privacy">privacy information</a> and understand the team will use these details to respond to my request.</span></label>
+  {errors.consent && <p class="field-error" id="consent-error">{errors.consent}</p>}
+  <button class="button" type="submit">Send my request <span aria-hidden="true">↗</span></button>
+  <p class="small-note">No payment needed to enquire. Appointments and training places are confirmed separately.</p>
 </form>
+<script>
+  const form = document.querySelector<HTMLFormElement>('.form-panel');
+  if (form) {
+    const kind = form.querySelector<HTMLSelectElement>('#kind')!;
+    const preferred = form.querySelector<HTMLSelectElement>('#preferredContact')!;
+    const course = form.querySelector<HTMLSelectElement>('#course')!;
+    const updateFields = () => {
+      for (const field of form.querySelectorAll<HTMLElement>('[data-contact]')) {
+        const active = field.dataset.contact === (preferred.value === 'email' ? 'email' : 'phone');
+        field.hidden = !active;
+        const input = field.querySelector('input')!;
+        input.disabled = !active;
+        input.required = active;
+      }
+      const training = kind.value.startsWith('training-');
+      form.querySelector<HTMLElement>('[data-training]')!.hidden = !training;
+      course.disabled = !training;
+      course.required = kind.value === 'training-group';
+      const courseContext = form.querySelector<HTMLElement>('[data-course-context]')!;
+      courseContext.textContent = training && course.value ? course.selectedOptions[0].textContent : '';
+      courseContext.hidden = !courseContext.textContent;
+      form.querySelector<HTMLElement>('.enquiry-context')!.hidden = !form.querySelector('[data-service-context]') && !courseContext.textContent;
+    };
+    kind.addEventListener('change', updateFields);
+    preferred.addEventListener('change', updateFields);
+    course.addEventListener('change', updateFields);
+    window.addEventListener('pageshow', updateFields);
+    updateFields();
+    form.querySelector<HTMLElement>('#form-errors')?.focus();
+  }
+</script>

@@ -62,15 +62,21 @@ const Requests: CollectionConfig = {
     { name: 'reference', type: 'text', required: true, unique: true, defaultValue: () => `LT-${randomUUID().slice(0, 8).toUpperCase()}`, admin: { readOnly: true } },
     { name: 'kind', type: 'select', required: true, options: ['care', 'callback', 'referral', 'training-group', 'training-private'] },
     { name: 'status', type: 'select', required: true, defaultValue: 'new', options: ['new', 'reviewed', 'closed'] },
-    { name: 'name', type: 'text', required: true }, { name: 'phone', type: 'text', required: true },
+    { name: 'name', type: 'text', required: true }, { name: 'phone', type: 'text' },
     { name: 'email', type: 'email' }, { name: 'preferredContact', type: 'select', options: ['phone', 'whatsapp', 'email'], required: true },
     { name: 'service', type: 'relationship', relationTo: 'services' }, { name: 'course', type: 'relationship', relationTo: 'courses' },
-    { name: 'relationship', type: 'select', options: ['self', 'family', 'employer', 'professional'], required: true },
-    { name: 'ageGroup', type: 'select', options: ['adult', 'child', 'not-applicable'], required: true },
+    { name: 'relationship', type: 'select', options: ['self', 'family', 'employer', 'professional'] },
+    { name: 'ageGroup', type: 'select', options: ['adult', 'child', 'not-applicable'] },
     { name: 'area', type: 'text' }, { name: 'availability', type: 'text' }, { name: 'message', type: 'textarea' },
     { name: 'consent', label: 'Privacy acknowledgement received', type: 'checkbox', required: true },
     { name: 'staffNotes', type: 'textarea', admin: { description: 'Necessary operational notes only. Do not use this MVP as a medical record.' } },
   ],
+  hooks: { beforeValidate: [({ data, originalDoc }) => {
+    const item = { ...originalDoc, ...data };
+    if (item.preferredContact === 'email' && !String(item.email || '').trim()) throw new APIError('Enter an email address for an email reply.', 400);
+    if (['phone', 'whatsapp'].includes(item.preferredContact) && !String(item.phone || '').trim()) throw new APIError('Enter a phone number for a call or WhatsApp reply.', 400);
+    return data;
+  }] },
 };
 const Appointments: CollectionConfig = {
   slug: 'appointments', access: privateAccess, admin: { group: 'Care & training', defaultColumns: ['request', 'startsAt', 'status'] },
@@ -144,7 +150,7 @@ export default buildConfig({
       ]);
       if ((service && !services?.docs.length) || (course && !courses?.docs.length)) return Response.json({ error: 'This service or course is unavailable.' }, { status: 400 });
       // Public creation is limited to the validated intake shape; no private document is returned.
-      const created = await req.payload.create({ collection: 'support-requests', overrideAccess: true, req, data: { ...values, email: values.email || undefined, status: 'new', service: services?.docs[0]?.id, course: courses?.docs[0]?.id } });
+      const created = await req.payload.create({ collection: 'support-requests', overrideAccess: true, req, data: { ...values, phone: values.phone || undefined, email: values.email || undefined, status: 'new', service: services?.docs[0]?.id, course: courses?.docs[0]?.id } });
       return Response.json({ reference: created.reference }, { status: 201, headers: { 'Cache-Control': 'no-store' } });
     } },
     { path: '/payment-summary/:reference', method: 'get', handler: async req => {

@@ -24,6 +24,32 @@ test('photographs and local fonts load, with readable homepage text', async ({ p
   expect(sizes.every(size => size >= 18)).toBe(true);
 });
 
+test('headings, leads, labels and helpers have distinct roles, without the global preview banner', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  for (const path of ['/', '/services', '/support']) {
+    await page.goto(path);
+    await expect(page.locator('.preview-note')).toHaveCount(0);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,nofollow');
+    const heading = await page.locator('h1').evaluate(element => {
+      const style = getComputedStyle(element);
+      return { family: style.fontFamily, weight: style.fontWeight, size: parseFloat(style.fontSize) };
+    });
+    expect(heading.family).toContain('Lora');
+    expect(heading.weight).toBe('500');
+    expect(heading.size).toBeGreaterThanOrEqual(40);
+  }
+  const type = await page.evaluate(() => {
+    const style = (selector: string) => getComputedStyle(document.querySelector(selector)!);
+    return { body: parseFloat(style('body').fontSize), lead: parseFloat(style('.page-intro p').fontSize), labelWeight: style('label[for="name"]').fontWeight, helper: parseFloat(style('#message-help').fontSize), asideFamily: style('.form-aside h2').fontFamily };
+  });
+  expect(type.lead).toBeGreaterThan(type.body);
+  expect(type.labelWeight).toBe('600');
+  expect(type.helper).toBeGreaterThanOrEqual(15);
+  expect(type.helper).toBeLessThan(type.body);
+  expect(type.asideFamily).toContain('DM Sans');
+  await expect(page.locator('.form-demo-note')).toContainText('fictional details');
+});
+
 for (const width of [320, 390, 768, 1440]) {
   test(`public pages remain readable and fit a ${width}px viewport`, async ({ page }) => {
     test.setTimeout(120000);

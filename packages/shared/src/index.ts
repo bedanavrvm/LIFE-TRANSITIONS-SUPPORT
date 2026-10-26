@@ -4,18 +4,19 @@ export const requestKinds = ['care', 'callback', 'referral', 'training-group', '
 export const requestSchema = z.object({
   kind: z.enum(requestKinds),
   name: z.string().trim().min(2, 'Please enter your name.').max(100),
-  phone: z.string().trim().regex(/^[+()\d -]{7,25}$/, 'Please enter a contact phone number.'),
+  phone: z.union([z.string().trim().regex(/^[+()\d -]{7,25}$/, 'Please enter a contact phone number.'), z.literal('')]).default(''),
   email: z.union([z.email(), z.literal('')]).default(''),
   preferredContact: z.enum(['phone', 'whatsapp', 'email']),
   service: z.string().max(100).default(''),
   course: z.string().max(100).default(''),
-  relationship: z.enum(['self', 'family', 'employer', 'professional']),
-  ageGroup: z.enum(['adult', 'child', 'not-applicable']),
+  relationship: z.enum(['self', 'family', 'employer', 'professional']).optional(),
+  ageGroup: z.enum(['adult', 'child', 'not-applicable']).optional(),
   area: z.string().trim().max(150).default(''),
   availability: z.string().trim().max(200).default(''),
   message: z.string().trim().max(1500).default(''),
   consent: z.literal(true, { error: 'Please acknowledge how we will use your request.' }),
 }).strict().superRefine((data, ctx) => {
+  if (data.preferredContact !== 'email' && !data.phone) ctx.addIssue({ code: 'custom', path: ['phone'], message: 'Enter a phone number for a call or WhatsApp reply.' });
   if (data.preferredContact === 'email' && !data.email) ctx.addIssue({ code: 'custom', path: ['email'], message: 'Enter an email address for an email reply.' });
   if (data.kind === 'training-group' && !data.course) ctx.addIssue({ code: 'custom', path: ['course'], message: 'Choose a course.' });
 });

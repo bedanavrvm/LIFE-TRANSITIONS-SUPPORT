@@ -19,7 +19,6 @@ const navigation = [['Services', '/services'], ['Caregiver training', '/training
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    {demoMode && <div class="preview-note">Local preview · Please use fictional details. Service arrangements and course dates are illustrative until confirmed.</div>}
     <header class="header-shell"><div class="site-header wrap">
       <a href="/" class="brand" aria-label="Life Transitions Support Partners home"><img src="/mark.svg" width="44" height="44" alt="" /><span>Life Transitions<small>SUPPORT PARTNERS</small></span></a>
       <nav class="desktop-nav" aria-label="Main navigation">{navigation.map(([label, href]) => <a class:list={{ active: path.startsWith(href) }} href={href}>{label}</a>)}</nav>

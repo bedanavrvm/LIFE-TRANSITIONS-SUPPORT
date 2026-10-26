@@ -147,7 +147,7 @@ Selected after the user described the initial build as lacking photos, hard to r
 
 - Warm cream/deep green/terracotta colours, Lora headings and DM Sans body text. Body text scales from 18px to 20px; navigation/buttons/form labels are at least 16px; secondary copy is at least 14px. These are design defaults, not a claim that font size alone establishes accessibility.
 - A family photograph replaces the illustrated hero. Asymmetric framing, a small overlapping caption, lighter situation links, a caregiving photo alongside the support process, and photo-led training previews provide variety. Decorative shapes contain no information. Meaningful text stays on solid backgrounds.
-- Shared typography applies throughout the public pages, including support, training, service, contact and payment pages. The staff admin and all intake/payment interfaces retain their existing behaviour.
+- Shared typography applies throughout the public pages, including support, training, service, contact and payment pages. That initial refresh preserved intake behaviour; C16 later simplifies the first enquiry as recorded below. Payment workflows and staff access remain unchanged.
 - The initial refresh used restrained CSS hover transitions. The later scrolling/layout pass extends those behaviours as recorded below, preserving the reduced-motion override. No animation library, autoplay media, CMS image-upload feature or client-side gallery is introduced.
 - Photography is imported locally and served through Astro's responsive WebP image handling with explicit dimensions, eager hero loading and lazy supporting images. Fonts are self-hosted WOFF2 with swap behaviour; visitors do not fetch these assets from Pexels or Google.
 - The original family illustration is retained as an unused asset, preserving the earlier direction without presenting it as the current hero.
@@ -174,6 +174,24 @@ Primary references accessed on **2026-10-26**:
 | [W3C Focus Not Obscured guidance](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html) | Sticky layers can obscure focused controls. Keep skip navigation above the header, show navigation on focus and offset scrolling by measured header height. |
 
 These references inform implementation; they do not establish whole-site accessibility. Cross-browser snap feel, physical touch devices and screen readers require separate review.
+
+#### Short first enquiry and text hierarchy
+
+Adopted under C16/C17 on **2026-10-26**, after the user selected a short first enquiry and authorised implementation. This replaces the original twelve-field public form rather than changing the six service areas, nurse review or payment workflow.
+
+- Five core inputs: reason for contact, name, reply method, its phone number or email address, and a short optional message. Privacy acknowledgement is still required. Care, callback, referral, group training and private training retain their existing request kinds and URLs.
+- Selecting email reveals and requires email only; selecting phone or WhatsApp reveals and requires a phone number. Hidden alternatives are disabled, and the server uses only the chosen contact. Staff writes also require the contact appropriate to the selected method. Email-only records can be reviewed without supplying a phone.
+- Known service/course links retain their valid context in a compact summary. Only training enquiries reveal the course selector; group training requires a course, while private training can ask for advice. Unavailable incoming context is discarded, and an unavailable submitted course receives an understandable error.
+- Relationship, age category, area and availability are deferred to nurse follow-up. The existing staff fields and detailed records remain available; missing relationship/age are not filled with invented self/adult defaults. The validated legacy fields remain accepted for older callers.
+- A small native script manages the conditional controls without dependencies or a multi-step wizard. Without JavaScript, labelled contact/course alternatives and completion instructions remain visible; server validation applies the chosen method and request kind. Typed active values, context and privacy selection survive validation and backend errors. Inline errors are associated with their controls, a linked summary receives focus, and the page title indicates a request needs checking.
+- The support introduction is shorter, its repeated form heading is removed, and the sidebar explains the next steps in two items. It retains complimentary spiritual/bereavement information and the emergency boundary. No response-time promise or live operational contact is invented.
+- The global preview banner and its styles are removed. Demo mode still adds noindex/nofollow, disables checkout and shows a brief fictional-details reminder inside the form. Removing the banner does not authorise live intake.
+- Existing local fonts are retained: Lora 500 for main/section headings, DM Sans 600 for smaller headings/cards/labels, and DM Sans 400 for body text. Main headings scale around 40–72px and section headings around 30–48px; body text stays 18–20px. Leads are larger than body text; form helpers use 15px with clear spacing and contrast. Existing shadows, photographs, colour bands and scrolling behaviour remain.
+- Shared validation and Payload nullability change without deleting fields or resetting development data. An ignored SQLite backup is taken before the local schema update. Request state is still computed on the server, and intake allowlisting, honeypot, rate limiting and private-record permissions are preserved.
+
+Primary references accessed on **2026-10-26**: [W3C form instructions](https://www.w3.org/WAI/tutorials/forms/instructions/) supports clear labels and associated instructions; [W3C user notifications](https://www.w3.org/WAI/tutorials/forms/notifications/) supports concise feedback, inline errors and linked error lists. These inform the implementation; they do not establish whole-site accessibility or replace nurse usability and assistive-technology testing.
+
+The former up-front demographic/availability questions and global preview banner remain recorded as superseded choices S07/S08. Public launch requirements, final privacy review, and detailed follow-up collection rules remain open.
 
 #### Photography asset register
 
