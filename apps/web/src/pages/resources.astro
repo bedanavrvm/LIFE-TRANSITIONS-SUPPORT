@@ -1,0 +1,15 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import ContentFrame from '../layouts/ContentFrame.astro';
+---
+<SiteLayout title="Preparing for a conversation">
+  <ContentFrame>
+    <Fragment slot="intro"><span class="eyebrow">A useful starting point</span><h1>You don’t need all<br />the answers.</h1><p>A few practical notes to help you prepare for a first conversation with the team.</p></Fragment>
+    <h2 id="your-needs">Think about what would help</h2><p>You might need someone to talk to, practical caregiver education, support after discharge, or help finding a professional. It is also fine to say you are unsure.</p>
+    <h2 id="ways-to-talk">Choose a comfortable way to talk</h2><p>Let the team know your preferred contact method and a suitable time. You can start with a brief description and discuss more sensitive details privately.</p>
+    <h2 id="arrangements">Ask about the arrangements</h2><ul><li>Who will provide the service and what are their qualifications?</li><li>What is included, and what requires another professional?</li><li>When and where can the support take place?</li><li>Is there a fee, and what happens if arrangements change?</li></ul>
+    <h2 id="someone-else">If you are enquiring for someone else</h2><p>Explain your relationship and how the person would like to be involved. The team will discuss appropriate permissions before sharing or collecting further information.</p>
+    <div class="notice">These notes help you prepare to contact the team. They do not provide medical advice or replace a professional assessment.</div><a class="button" href="/support">Request a conversation ↗</a>
+    <nav slot="aside" class="aside-panel section-nav" aria-label="On this page"><span class="eyebrow">On this page</span><a href="#your-needs">Think about your needs</a><a href="#ways-to-talk">Ways to talk</a><a href="#arrangements">Ask about arrangements</a><a href="#someone-else">Enquiring for someone else</a></nav>
+  </ContentFrame>
+</SiteLayout>

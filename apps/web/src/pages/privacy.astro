@@ -1,0 +1,18 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import ContentFrame from '../layouts/ContentFrame.astro';
+import { demoMode } from '../lib/cms';
+---
+<SiteLayout title="Privacy & your information">
+  <ContentFrame>
+    <Fragment slot="intro"><span class="eyebrow">Your information matters</span><h1>Privacy & your information</h1><p>Understand what happens when you send a request.</p></Fragment>
+    {demoMode && <div class="notice">This is a local demonstration. Use fictional details only. A final organisation-specific privacy notice must be approved before accepting real client information.</div>}
+    <h2 id="collection">What the form collects</h2><p>Your name and contact details, the support or training you are interested in, your relationship to the person needing support, an age category, and optional information about your area, availability and needs.</p>
+    <h2 id="use">How it is used</h2><p>The care team uses the request to review what support may be appropriate and contact you about arrangements. Submitting a form is not an appointment confirmation, medical assessment or agreement to marketing.</p>
+    <h2 id="access">Who can access it</h2><p>Private requests, appointments and payment records are restricted to authorised care staff. Public content editors do not automatically have access to those records.</p>
+    <h2 id="payments">Payments and other contact methods</h2><p>When the team supplies a payment link, payment takes place on a provider-hosted page. Do not send card information through the enquiry form. Phone, WhatsApp, email and payment providers have their own information-handling arrangements.</p>
+    <h2 id="first-message">Keep the first message brief</h2><p>Please avoid identity numbers, detailed medical history or financial records. Discuss any necessary further information and appropriate permissions with the nurse.</p>
+    <h2 id="questions">Questions, corrections and deletion</h2><p>Use the <a href="/contact">contact routes</a> to ask about a request or to raise a privacy concern. Retention periods, the responsible organisation’s contact details, applicable legal bases and vendor arrangements must be established before a public launch.</p>
+    <nav slot="aside" class="aside-panel section-nav" aria-label="On this page"><span class="eyebrow">On this page</span><a href="#collection">What we collect</a><a href="#use">How it is used</a><a href="#access">Who can access it</a><a href="#payments">Payments and contact</a><a href="#first-message">Your first message</a><a href="#questions">Questions and deletion</a></nav>
+  </ContentFrame>
+</SiteLayout>

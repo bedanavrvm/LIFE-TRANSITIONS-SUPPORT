@@ -1,0 +1,10 @@
+---
+const hasAside = Astro.slots.has('aside');
+---
+<div class="content-frame wrap">
+  <header class="page-intro"><slot name="intro" /></header>
+  <div class:list={['content-columns', { 'has-aside': hasAside }]}>
+    <div class="article-copy"><slot /></div>
+    {hasAside && <aside class="content-aside"><slot name="aside" /></aside>}
+  </div>
+</div>

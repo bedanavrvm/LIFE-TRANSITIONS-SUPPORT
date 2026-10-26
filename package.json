@@ -1,0 +1,29 @@
+{
+  "name": "life-transitions-support-partners",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "admin": "node --env-file=.env --import tsx scripts/create-admin.ts",
+    "dev": "node scripts/dev.mjs",
+    "seed": "node --env-file=.env --import tsx scripts/seed.ts",
+    "check": "npm run check --workspace @ltsp/cms && npm run check --workspace @ltsp/web",
+    "build": "npm run build --workspace @ltsp/cms && npm run build --workspace @ltsp/web",
+    "test": "playwright test",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "overrides": {
+    "dompurify": "3.4.17"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@types/node": "^24.0.0",
+    "node": "24.22.1",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

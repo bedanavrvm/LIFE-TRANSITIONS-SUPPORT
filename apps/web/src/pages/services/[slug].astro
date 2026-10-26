@@ -1,0 +1,19 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ContentFrame from '../../layouts/ContentFrame.astro';
+import CarePhoto from '../../components/CarePhoto.astro';
+import { publicContent } from '../../lib/cms';
+const { services, settings, available } = await publicContent();
+const service = services.find(item => item.slug === Astro.params.slug);
+if (!service) Astro.response.status = available ? 404 : 503;
+---
+<SiteLayout title={service?.title || 'Service unavailable'} settings={settings}>
+  <ContentFrame>
+    <Fragment slot="intro"><div class="breadcrumb"><a href="/services">Our services</a> / {service?.title || 'Unavailable'}</div><span class="eyebrow">Here for your next step</span><h1>{service?.title || 'We couldn’t find that service.'}</h1><p>{service?.summary || 'Please return to the service list or try again shortly.'}</p>{service?.free && <span class="badge">Offered free of charge</span>}</Fragment>
+    {service && <><p>{service.description}</p><h2>What happens next?</h2><p>Tell us about the support you are looking for. A nurse reviews your request and contacts you to discuss suitability, availability and arrangements. Your appointment is confirmed only after that conversation.</p></>}
+    <Fragment slot="aside">{service && <>
+      {(service.slug === 'home-follow-up' || service.slug === 'caregiver-training') && <CarePhoto photo={service.slug === 'home-follow-up' ? 'homeCare' : 'childcare'} class="aside-photo" sizes="(max-width: 1100px) calc(100vw - 48px), 340px" />}
+      <div class="aside-panel"><h2>Who this is for</h2><p>{service.audience}</p><div class="notice">{service.free ? 'This service is complimentary. You do not need to make a payment to request it.' : 'Any fees and travel arrangements are explained and agreed before you proceed.'}</div><div class="actions"><a class="button" href={`/support?service=${service.slug}`}>Request this support ↗</a>{service.slug === 'caregiver-training' && <a class="button secondary" href="/training">Explore training</a>}</div></div>
+    </>}</Fragment>
+  </ContentFrame>
+</SiteLayout>

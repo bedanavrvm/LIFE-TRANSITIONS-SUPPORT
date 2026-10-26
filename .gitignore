@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+!.env.example
+data/
+.test-data/
+apps/cms/.next/
+apps/cms/tsconfig.tsbuildinfo
+apps/cms/src/payload-types.ts
+apps/web/.astro/
+apps/web/dist/
+playwright-report/
+test-results/
+*.log

@@ -1,0 +1,16 @@
+{
+  "name": "@ltsp/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "build": "astro build",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/node": "11.1.9",
+    "@ltsp/shared": "*",
+    "astro": "7.4.2"
+  },
+  "devDependencies": { "@astrojs/check": "0.9.12" }
+}

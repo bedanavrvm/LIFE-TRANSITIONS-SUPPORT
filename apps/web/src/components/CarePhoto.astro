@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+import { photography } from '../lib/photography';
+
+interface Props {
+  photo: keyof typeof photography;
+  class?: string;
+  sizes?: string;
+  priority?: boolean;
+}
+const { photo, class: className, sizes = '(max-width: 780px) 100vw, 50vw', priority = false } = Astro.props;
+const image = photography[photo];
+---
+<Image
+  src={image.src}
+  alt={image.alt}
+  width={1200}
+  widths={[400, 800, 1200]}
+  sizes={sizes}
+  format="webp"
+  quality={78}
+  loading={priority ? 'eager' : 'lazy'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  class:list={['care-photo', className]}
+  style={`object-position: ${image.position}`}
+/>
