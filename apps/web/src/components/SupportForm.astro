@@ -1,4 +1,5 @@
 ---
+import CareIcon from './CareIcon.astro';
 import type { Service, Course } from '@ltsp/shared';
 import { demoMode } from '../lib/cms';
 interface Props { services: Service[]; courses: Course[]; values: Record<string, string>; errors: Record<string, string>; }
@@ -62,8 +63,8 @@ const kinds = [['care', 'Support or home visit'], ['callback', 'A callback'], ['
   </div>
   <label class="check-label" for="consent"><input id="consent" type="checkbox" name="consent" required checked={v.consent === 'on'} aria-invalid={!!errors.consent} aria-describedby={errors.consent ? 'consent-error' : undefined} /><span>I’ve read the <a href="/privacy">privacy information</a> and understand the team will use these details to respond to my request.</span></label>
   {errors.consent && <p class="field-error" id="consent-error">{errors.consent}</p>}
-  <button class="button" type="submit">Send my request <span aria-hidden="true">↗</span></button>
-  <p class="small-note">No payment needed to enquire. Appointments and training places are confirmed separately.</p>
+  <button class="button" type="submit">Send my request <CareIcon name="arrow-right" /></button>
+  <p class="small-note"><CareIcon name="check" /><span>No payment needed to enquire. Appointments and training places are confirmed separately.</span></p>
 </form>
 <script>
   const form = document.querySelector<HTMLFormElement>('.form-panel');

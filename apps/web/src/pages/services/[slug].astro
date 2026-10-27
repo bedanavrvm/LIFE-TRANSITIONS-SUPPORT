@@ -1,19 +1,29 @@
 ---
+import CareIcon from '../../components/CareIcon.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import ContentFrame from '../../layouts/ContentFrame.astro';
-import CarePhoto from '../../components/CarePhoto.astro';
+import ServiceVisual from '../../components/ServiceVisual.astro';
 import { publicContent } from '../../lib/cms';
 const { services, settings, available } = await publicContent();
 const service = services.find(item => item.slug === Astro.params.slug);
 if (!service) Astro.response.status = available ? 404 : 503;
 ---
 <SiteLayout title={service?.title || 'Service unavailable'} settings={settings}>
-  <ContentFrame>
-    <Fragment slot="intro"><div class="breadcrumb"><a href="/services">Our services</a> / {service?.title || 'Unavailable'}</div><span class="eyebrow">Here for your next step</span><h1>{service?.title || 'We couldn’t find that service.'}</h1><p>{service?.summary || 'Please return to the service list or try again shortly.'}</p>{service?.free && <span class="badge">Offered free of charge</span>}</Fragment>
-    {service && <><p>{service.description}</p><h2>What happens next?</h2><p>Tell us about the support you are looking for. A nurse reviews your request and contacts you to discuss suitability, availability and arrangements. Your appointment is confirmed only after that conversation.</p></>}
-    <Fragment slot="aside">{service && <>
-      {(service.slug === 'home-follow-up' || service.slug === 'caregiver-training') && <CarePhoto photo={service.slug === 'home-follow-up' ? 'homeCare' : 'childcare'} class="aside-photo" sizes="(max-width: 1100px) calc(100vw - 48px), 340px" />}
-      <div class="aside-panel"><h2>Who this is for</h2><p>{service.audience}</p><div class="notice">{service.free ? 'This service is complimentary. You do not need to make a payment to request it.' : 'Any fees and travel arrangements are explained and agreed before you proceed.'}</div><div class="actions"><a class="button" href={`/support?service=${service.slug}`}>Request this support ↗</a>{service.slug === 'caregiver-training' && <a class="button secondary" href="/training">Explore training</a>}</div></div>
-    </>}</Fragment>
+  <ContentFrame class="service-detail">
+    <Fragment slot="intro">
+      {service ? <div class="service-hero">
+        <div class="service-hero-copy">
+          <span class="eyebrow">Here for your next step</span><h1>{service.title}</h1><p>{service.summary}</p>
+          <dl class="service-facts">
+            <div><dt>Who this is for</dt><dd>{service.audience}</dd></div>
+            <div><dt>Fees & arrangements</dt><dd>{service.free ? <span class="badge">Offered free of charge</span> : 'Any fees and travel arrangements are explained and agreed before you proceed.'}</dd></div>
+          </dl>
+          <div class="actions"><a class="button" href={`/support?service=${encodeURIComponent(service.slug)}`}>Request this support <CareIcon name="arrow-right" /></a>{service.slug === 'caregiver-training' && <a class="text-link" href="/training">Explore training <CareIcon name="arrow-right" /></a>}</div>
+        </div>
+        <ServiceVisual slug={service.slug} />
+      </div> : <><span class="eyebrow">Here for your next step</span><h1>We couldn’t find that service.</h1><p>Please return to the service list or try again shortly.</p></>}
+    </Fragment>
+    {service && <><h2>How we can support you</h2><p>{service.description}</p></>}
+    <Fragment slot="aside">{service && <div class="aside-panel service-next"><h2>What happens next?</h2><ol class="next-steps"><li>Share a brief request about the support you need.</li><li>A nurse discusses suitable support, availability and any fees with you.</li><li>Confirm your arrangements together before an appointment goes ahead.</li></ol></div>}</Fragment>
   </ContentFrame>
 </SiteLayout>

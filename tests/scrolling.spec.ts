@@ -32,7 +32,6 @@ test('an open phone menu stays visible while scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/resources');
   await page.locator('.mobile-nav summary').click();
-  await page.locator('main').focus();
   await scrollTo(page, 400);
   await expect(page.locator('.header-shell')).toHaveAttribute('data-hidden', 'false');
   await expect(page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('link', { name: 'Request support' })).toBeVisible();
@@ -59,11 +58,14 @@ test('homepage has gentle desktop snapping and bounded photo depth, while articl
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType)).toBe('none');
 });
 
-test('reduced motion keeps the header visible and disables snapping, parallax and hover movement', async ({ page }) => {
+test('reduced motion keeps directional navigation without animation and disables snapping and parallax', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
   await scrollTo(page, 600);
+  await expect(page.locator('.header-shell')).toHaveAttribute('data-hidden', 'true');
+  expect(await page.locator('.header-shell').evaluate(element => getComputedStyle(element).transitionDuration)).toBe('0s');
+  await scrollTo(page, 560);
   await expect(page.locator('.header-shell')).toHaveAttribute('data-hidden', 'false');
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType)).toBe('none');
   expect(await page.locator('.hero-art').evaluate(el => getComputedStyle(el).animationName)).toBe('none');
@@ -114,7 +116,8 @@ for (const width of [320, 390, 768, 1440, 1920]) {
       await page.evaluate(() => document.fonts.ready);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
       if (width >= 1440) {
-        expect(await page.locator('.content-frame').evaluate(el => el.getBoundingClientRect().width)).toBe(1280);
+        expect(await page.locator('.content-columns').evaluate(el => el.getBoundingClientRect().width)).toBe(1280);
+        expect(await page.locator('.intro-band').evaluate(el => el.getBoundingClientRect().width)).toBe(width);
         const columns = await page.locator('.content-columns').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' '));
         expect(columns).toHaveLength(2);
       }

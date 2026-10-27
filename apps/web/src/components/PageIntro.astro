@@ -1,0 +1,5 @@
+---
+interface Props { class?: string; }
+const { class: className } = Astro.props;
+---
+<header class="intro-band"><div class:list={['page-intro', 'wrap', className]}><slot /></div></header>

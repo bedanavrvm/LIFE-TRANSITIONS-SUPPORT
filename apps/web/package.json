@@ -10,7 +10,10 @@
   "dependencies": {
     "@astrojs/node": "11.1.9",
     "@ltsp/shared": "*",
+    "@lucide/astro": "1.62.0",
     "astro": "7.4.2"
   },
-  "devDependencies": { "@astrojs/check": "0.9.12" }
+  "devDependencies": {
+    "@astrojs/check": "0.9.12"
+  }
 }

@@ -1,15 +1,18 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import CarePhoto from '../components/CarePhoto.astro';
+import CareIcon from '../components/CareIcon.astro';
+import type { CareIconName } from '../lib/servicePresentation';
 import { coursePhotography } from '../lib/photography';
 import { publicContent } from '../lib/cms';
 const { courses, settings, available } = await publicContent();
-const situations = [
-  ['Parenthood & new beginnings', 'Preparing for a baby, or finding your feet as a parent.', 'psychological-support', '☼'],
-  ['Caring for someone at home', 'Support for you and the person who depends on you.', 'home-follow-up', '⌂'],
-  ['Living with serious illness', 'Practical guidance and room for difficult conversations.', 'psychological-support', '♡'],
-  ['Finding your way through loss', 'Gentle support for individuals, children and families.', 'spiritual-bereavement', '❧'],
-  ['Coming home from hospital', 'Help with the next chapter of recovery and care.', 'home-follow-up', '↗'],
+const featuredCourses = courses.slice(0, 3);
+const situations: [string, string, string, CareIconName][] = [
+  ['Parenthood & new beginnings', 'Preparing for a baby, or finding your feet as a parent.', 'psychological-support', 'parenthood'],
+  ['Caring for someone at home', 'Support for you and the person who depends on you.', 'home-follow-up', 'home'],
+  ['Living with serious illness', 'Practical guidance and room for difficult conversations.', 'psychological-support', 'heart'],
+  ['Finding your way through loss', 'Gentle support for individuals, children and families.', 'spiritual-bereavement', 'hands'],
+  ['Coming home from hospital', 'Help with the next chapter of recovery and care.', 'home-follow-up', 'recovery'],
 ];
 ---
 <SiteLayout settings={settings}>
@@ -19,22 +22,22 @@ const situations = [
       <span class="eyebrow">Nurse-led care · Nairobi, Kenya</span>
       <h1>Life changes.<br />You don’t have to<br />face it <em>alone.</em></h1>
       <p>Compassionate guidance and practical support for your family, through new beginnings, uncertain days and difficult goodbyes.</p>
-      <div class="actions"><a class="button" href="/support">Find the support you need <span aria-hidden="true">↗</span></a><a class="text-link" href="/services">Explore our services</a></div>
-      <div class="small-note">A conversation is a good place to start.</div>
+      <div class="actions"><a class="button" href="/support">Find the support you need <CareIcon name="arrow-right" /></a><a class="text-link" href="/services">Explore our services</a></div>
+      <div class="small-note"><CareIcon name="check" />A conversation is a good place to start.</div>
     </div>
     <div class="hero-art">
       <CarePhoto photo="family" priority sizes="(max-width: 780px) calc(100vw - 36px), (max-width: 1340px) 46vw, 580px" />
-      <div class="art-note"><span aria-hidden="true">❧</span><div><strong>Care that sees the whole family.</strong><small>Practical. Personal. Compassionate.</small></div></div>
+      <div class="art-note"><span><CareIcon name="hands" /></span><div><strong>Care that sees the whole family.</strong><small>Practical. Personal. Compassionate.</small></div></div>
     </div>
   </div>
-  <div class="trust-strip wrap"><span><b aria-hidden="true">✧</b> Nurse-led & family-centred</span><span><b aria-hidden="true">⌂</b> Support that reaches home</span><span><b aria-hidden="true">♡</b> Dignity at every stage</span><span><b aria-hidden="true">❧</b> Space to be heard</span></div>
+  <div class="trust-strip wrap"><span><CareIcon name="family" /> Nurse-led & family-centred</span><span><CareIcon name="home" /> Support that reaches home</span><span><CareIcon name="heart" /> Dignity at every stage</span><span><CareIcon name="conversation" /> Space to be heard</span></div>
   </section>
   {!available && <div class="wrap notice error" role="status">Service information is temporarily unavailable. Please try again shortly.</div>}
   <section class="page-band chapter near-white section" id="find-support"><div class="wrap situation-section">
-    <div class="situation-intro"><span class="eyebrow">Start where you are</span><h2>What brings<br />you <em>here?</em></h2><p>Every family’s story is different. We’ll help you take the next step, wherever you are in yours.</p><span class="chapter-flourish" aria-hidden="true">❧</span></div>
+    <div class="situation-intro"><span class="eyebrow">Start where you are</span><h2>What brings<br />you <em>here?</em></h2><p>Every family’s story is different. We’ll help you take the next step, wherever you are in yours.</p><span class="chapter-flourish"><CareIcon name="hands" /></span></div>
     <div class="situation-grid">
-      {situations.map(([title, summary, slug, icon]) => <a class="situation" href={`/services/${slug}`}><span class="icon" aria-hidden="true">{icon}</span><div><h3>{title}</h3><p>{summary}</p></div><span class="arrow" aria-hidden="true">↗</span></a>)}
-      <a class="situation special" href="/support"><span class="icon" aria-hidden="true">↗</span><div><h3>Not sure what you need?</h3><p>You don’t need to have the answers before reaching out. Let’s talk it through.</p></div><span class="arrow" aria-hidden="true">↗</span></a>
+      {situations.map(([title, summary, slug, icon]) => <a class="situation" href={`/services/${slug}`}><span class="icon"><CareIcon name={icon} /></span><div><h3>{title}</h3><p>{summary}</p></div><span class="arrow"><CareIcon name="arrow-right" /></span></a>)}
+      <a class="situation special" href="/support"><span class="icon"><CareIcon name="conversation" /></span><div><h3>Not sure what you need?</h3><p>You don’t need to have the answers before reaching out. Let’s talk it through.</p></div><span class="arrow"><CareIcon name="arrow-right" /></span></a>
     </div>
   </div></section>
   <section class="page-band chapter soft-section section" id="our-approach">
@@ -44,15 +47,25 @@ const situations = [
         <span class="eyebrow">Care beyond the clinical</span><h2>A partner for<br />your next chapter.</h2>
         <p>Life Transitions Support Partners brings together psychological, educational, spiritual and practical support. We listen to what matters to your family and help you find a way forward.</p>
         <ol class="steps"><li><span class="step-number">01</span><div><h3>Tell us a little about your situation</h3><p>Request a conversation in the way that feels comfortable for you.</p></div></li><li><span class="step-number">02</span><div><h3>Work out the right support together</h3><p>A nurse reviews your request and discusses options, availability and any fees.</p></div></li><li><span class="step-number">03</span><div><h3>Take the next step with support</h3><p>Agree your arrangements, with a clear understanding of what happens next.</p></div></li></ol>
-        <a class="text-link" href="/about">Get to know our approach ↗</a>
+        <a class="text-link" href="/about">Get to know our approach <CareIcon name="arrow-right" /></a>
       </div>
     </div>
   </section>
   <section class="page-band chapter sand-section section" id="learning"><div class="wrap">
-    <div class="section-head"><div><span class="eyebrow">Confidence through learning</span><h2>Better prepared.<br /><em>Better supported.</em></h2></div><p>Caregiver education for the people looking after your family, with group and private training options.</p></div>
-    <div class="course-grid">{courses.slice(0, 3).map(course => <article class="course-card"><div class="course-art"><CarePhoto photo={coursePhotography[course.slug] ?? 'companionship'} sizes="(max-width: 780px) calc(100vw - 36px), (max-width: 1340px) 30vw, 400px" /></div><div class="course-body"><span class="tag">{course.audience}</span><h3>{course.title}</h3><p>{course.summary}</p><a class="text-link" href={`/training/${course.slug}`}>Explore this training ↗</a></div></article>)}</div>
-    <div class="actions"><a class="text-link" href="/training">All training & private sessions ↗</a></div>
+    <div class="section-head"><div><span class="eyebrow">Confidence through learning</span><h2 id="learning-title">Better prepared.<br /><em>Better supported.</em></h2></div><p>Caregiver education for the people looking after your family, with group and private training options.</p></div>
+    <div class="training-carousel" role="region" aria-roledescription="carousel" aria-labelledby="learning-title">
+      <div class="carousel-controls" hidden>
+        <p class="carousel-status" role="status" aria-atomic="true"></p>
+        <div class="carousel-actions">
+          <button type="button" class="carousel-button" data-previous aria-label="Previous training" aria-controls="training-courses"><CareIcon name="previous" /></button>
+          <button type="button" class="carousel-button" data-next aria-label="Next training" aria-controls="training-courses"><CareIcon name="next" /></button>
+        </div>
+      </div>
+      <div class="course-grid course-track" id="training-courses">{featuredCourses.map((course, index) => <article class="course-card" role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${featuredCourses.length}`}><div class="course-art"><CarePhoto photo={coursePhotography[course.slug] ?? 'companionship'} sizes="(max-width: 1100px) 85vw, (max-width: 1340px) 40vw, 540px" /></div><div class="course-body"><span class="tag">{course.audience}</span><h3>{course.title}</h3><p>{course.summary}</p><a class="text-link" href={`/training/${course.slug}`}>Explore this training <CareIcon name="arrow-right" /></a></div></article>)}</div>
+    </div>
+    <div class="actions"><a class="text-link" href="/training">All training & private sessions <CareIcon name="arrow-right" /></a></div>
   </div></section>
-  <section class="page-band chapter green-section" id="through-loss"><div class="wrap care-banner"><div><span class="eyebrow">A little reassurance</span><h2>Support through loss,<br />offered with care.</h2><p>Our spiritual and bereavement support is complimentary. There is space to talk, remember, and find support for the whole family.</p></div><a class="button light" href="/services/spiritual-bereavement">Explore free support ↗</a></div></section>
-  <section class="page-band chapter near-white section" id="questions"><div class="wrap"><div class="section-head"><div><span class="eyebrow">Before we talk</span><h2>A few things you may be wondering.</h2></div></div><div class="faq"><details><summary>Do I need to know which service to choose?</summary><p>No. You can request a conversation and a nurse will help you explore the right support.</p></details><details><summary>Can I get in touch for someone else?</summary><p>Yes. Let us know your relationship to the person who needs support. We will discuss the appropriate arrangements and permissions with you.</p></details><details><summary>Is all support free?</summary><p>Spiritual and bereavement care described on its service page is complimentary. The team will explain any fees for other services before you agree to proceed.</p></details><details><summary>Is an appointment confirmed when I submit?</summary><p>No. A nurse reviews care requests first. The team will discuss availability and agree the arrangements with you.</p></details></div></div></section>
+  <section class="page-band chapter green-section" id="through-loss"><div class="wrap care-banner"><div><span class="eyebrow">A little reassurance</span><h2>Support through loss,<br />offered with care.</h2><p>Our spiritual and bereavement support is complimentary. There is space to talk, remember, and find support for the whole family.</p></div><a class="button light" href="/services/spiritual-bereavement">Explore free support <CareIcon name="arrow-right" /></a></div></section>
+  <section class="page-band chapter near-white section" id="questions"><div class="wrap"><div class="section-head"><div><span class="eyebrow">Before we talk</span><h2>A few things you may be wondering.</h2></div></div><div class="faq"><details><summary>Do I need to know which service to choose?<CareIcon name="chevron" /></summary><p>No. You can request a conversation and a nurse will help you explore the right support.</p></details><details><summary>Can I get in touch for someone else?<CareIcon name="chevron" /></summary><p>Yes. Let us know your relationship to the person who needs support. We will discuss the appropriate arrangements and permissions with you.</p></details><details><summary>Is all support free?<CareIcon name="chevron" /></summary><p>Spiritual and bereavement care described on its service page is complimentary. The team will explain any fees for other services before you agree to proceed.</p></details><details><summary>Is an appointment confirmed when I submit?<CareIcon name="chevron" /></summary><p>No. A nurse reviews care requests first. The team will discuss availability and agree the arrangements with you.</p></details></div></div></section>
 </SiteLayout>
+<script>import '../scripts/training-carousel';</script>

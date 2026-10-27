@@ -1,6 +1,6 @@
 # Research and options
 
-First recorded: 2026-10-26. Last updated: 2026-10-26.
+First recorded: 2026-10-26. Last updated: 2026-10-27.
 
 This document consolidates the substantive brainstorming in the founder's supplied conversation and the subsequent research discussion. It is a structured record, not a verbatim transcript or a final implementation specification.
 
@@ -10,7 +10,7 @@ Use [the decision register](DECISIONS.md) to determine what has been selected. U
 
 ## Research method and limits
 
-- The earlier pasted conversation has no known original date. Source checks in this workspace were performed on 2026-10-26.
+- The earlier pasted conversation has no known original date. Source checks in this workspace were performed on 2026-10-26, with batch 1 accessibility references checked on 2026-10-27.
 - Current technical findings below rely on primary documentation. Website observations rely on the organisations' published pages. Proposed adaptations, visual fit, and architecture preferences are the assistant's judgments.
 - These are reference candidates, not a ranking established through a rendered visual audit. Page extraction can reveal content, links, labels, and form structure; it cannot establish actual visual quality, responsive behaviour, contrast, keyboard usability, or performance.
 - A browser screenshot attempt was blocked by the environment's approval policy. No screenshot, device, screen-reader, or completed reference-site form/payment testing is claimed.
@@ -143,6 +143,8 @@ Single light theme, dark mode, and a high-contrast option were discussed. Their 
 
 ### Adopted local visual refresh
 
+The sections below record successive design passes. [C23–C26](#professional-icons-colour-and-training-carousel) set the current icon, colour and training-preview defaults; earlier descriptions retain their historical rationale.
+
 Selected after the user described the initial build as lacking photos, hard to read, and too rigid; the user then authorised implementation of the proposed refresh. These are implementation choices for the local public website, not a production launch or a change to clinical services.
 
 - Warm cream/deep green/terracotta colours, Lora headings and DM Sans body text. Body text scales from 18px to 20px; navigation/buttons/form labels are at least 16px; secondary copy is at least 14px. These are design defaults, not a claim that font size alone establishes accessibility.
@@ -158,7 +160,7 @@ The user selected gentle snapping plus parallax on desktop, with ordinary touch 
 
 - At widths above 1100px and with no reduced-motion preference, the homepage uses native vertical proximity snapping at six major sections and the footer. Sections keep their content-led heights; long content remains reachable. There is no wheel/touch interception, mandatory snapping or nested full-screen scroller. Content pages and forms do not snap.
 - Native CSS view timelines add depth to the hero and care-process photo frames, ranging from +12px to -12px, and move decorative layers by up to 24px. Unsupported browsers retain static compositions. These effects are disabled on smaller screens and under reduced motion.
-- The full-width sage header is sticky. Beyond its own height, accumulated downward travel of 24px hides it; upward travel of 12px reveals it. Small reversals do not immediately toggle it. Keyboard focus inside the header, an open mobile menu, proximity to the top, and reduced-motion preference keep it visible. Without JavaScript it remains visibly sticky. A small native controller schedules scroll updates with animation frames, measures header height for anchor offsets, and resets on restored-page entry.
+- The full-width sage header uses 24px downward/12px upward travel thresholds. Its later compact sizing, pointer-focus correction and revised reduced-motion behaviour are recorded in [the reading-navigation follow-up](#persistent-reading-navigation-and-stock-photography). Keyboard-visible focus, an open menu and proximity to the top preserve access. Without JavaScript it remains visibly sticky.
 - Homepage bands alternate cream, near-white, sage, warm sand, green and near-white. The footer uses deep green with warm light text and its own legal divider. Original botanical and embracing/home/heart line art decorates available desktop gutters; it is non-interactive, contains no content and disappears when space is limited.
 - Clickable situation links and buttons gain a small lift and a stronger soft shadow on fine-pointer hover. Navigation/text links gain clearer colour and underline changes. Focus outlines and raised focus states provide keyboard feedback. Informational panels use static shadows; course/service panels strengthen their shadow when their actual link is hovered or focused. Hover movement respects reduced motion.
 - Approach, service detail, training detail, contact, resources and privacy pages use the existing 1280px container with article/aside slots. Paragraphs remain capped around 65 characters. Side panels contain existing photographs, audience/fee/session information, actions or section navigation. Below 1101px the article and side panel stack in source order. Payment, confirmation and error pages retain compact message layouts.
@@ -170,7 +172,7 @@ Primary references accessed on **2026-10-26**:
 | --- | --- |
 | [W3C CSS Scroll Snap specification](https://www.w3.org/TR/css-scroll-snap-1/) | Proximity snapping lets the browser choose whether a nearby position should settle; the exact feel is browser-dependent. Native behaviour preserves ordinary scrolling rather than enforcing page steps. |
 | [MDN animation-timeline reference](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/animation-timeline) | View timelines support scroll-driven animation but have limited availability. Guard the enhancement with feature detection and retain a static fallback. |
-| [W3C reduced-motion technique C39](https://www.w3.org/WAI/WCAG22/Techniques/css/C39) | Interaction-triggered motion can be disabled according to user preference. This implementation disables parallax/snapping and keeps the header stationary under reduced motion. |
+| [W3C reduced-motion technique C39](https://www.w3.org/WAI/WCAG22/Techniques/css/C39) | Interaction-triggered motion can be disabled according to user preference. The current implementation disables parallax/snapping and animated header transitions under reduced motion. |
 | [W3C Focus Not Obscured guidance](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html) | Sticky layers can obscure focused controls. Keep skip navigation above the header, show navigation on focus and offset scrolling by measured header height. |
 
 These references inform implementation; they do not establish whole-site accessibility. Cross-browser snap feel, physical touch devices and screen readers require separate review.
@@ -193,17 +195,61 @@ Primary references accessed on **2026-10-26**: [W3C form instructions](https://w
 
 The former up-front demographic/availability questions and global preview banner remain recorded as superseded choices S07/S08. Public launch requirements, final privacy review, and detailed follow-up collection rules remain open.
 
+#### Batch 1: service presentation and mobile navigation
+
+Confirmed on **2026-10-27** under C18/C19 after the user selected photographs plus line art and improving the existing mobile menu, then authorised implementation. This extends the current warm visual direction without changing service scope, CMS schemas, intake, appointments or payments.
+
+This section records the initial batch 1 composition. C20–C22 subsequently supersede its large service illustrations and extend its navigation; C23–C26 replace its utility icon paths and update the colours/training preview. Current behaviour is specified below.
+
+**Service overview:** retain the CMS ordering and render two card columns above 780px, one below. Original icon medallions replace prominent numbering; the number field remains available for ordering. Each card has one native link covering its surface, labelled "Explore {service title}", with a visible keyboard outline and raised hover/focus shadow. Cards stretch within a row without truncating content. The complimentary badge follows the existing free flag. A warm callout below the cards offers "Help me choose support" through the existing enquiry form.
+
+**Service details:** above 1100px, the existing 1280px content frame contains a two-column introduction with a 48px gap: title, summary, audience, fees and action on the left; photograph or illustration on the right. At 1100px and below, source order places the title, audience, fee guidance and request action before the visual, followed by the description and next steps. Existing CMS descriptions remain intact, including family therapy/counselling within complimentary spiritual care. A three-item next-steps panel explains sharing a brief request, nurse review/discussion and confirmation of arrangements. The caregiver-training page retains its training action. Missing services and backend failures retain their 404/503 statuses.
+
+| Stable service slug | Small icon | Detail visual | Accent |
+| --- | --- | --- | --- |
+| psychological-support | Conversation | Original two-person conversation illustration | Sage |
+| caregiver-training | Learning | Existing childcare photograph | Sand |
+| spiritual-bereavement | Hands and leaf | Original hands supporting a leafy stem | Sand |
+| support-groups | Group | Original connected people illustration | Sage |
+| professional-linkage | Connection | Original referral-path illustration | Sage |
+| home-follow-up | Home and heart | Existing home-care photograph | Sage |
+
+**Artwork implementation:** CareIcon supplies typed original inline SVGs with consistent 24×24 geometry and rounded strokes. ServiceVisual combines the existing responsive photography component with four larger, separately composed illustrations. A single frontend slug mapping chooses visuals and accents independently of CMS ordering. A valid service with an unfamiliar slug receives neutral hands/leaf artwork and sage styling. The original artwork also replaces pictorial text symbols in homepage situation links, the reassurance strip, hero caption and flourish; the logo, gutter artwork and functional text arrows remain. Decorative SVGs are hidden from assistive technology and cannot receive focus. Existing photograph alternative text and credits remain applicable; the stock subjects are not presented as staff, clients or a verified location. No new bitmap assets, third-party icon package, animation library or remote asset requests are introduced.
+
+**Mobile navigation:** retain the native details/summary control at widths up to 1100px, with a visible Menu label and matching open/close icons. The panel is at most 360px wide and constrained to the viewport, with scrollable overflow on short screens. Links are at least 48px high. Request support is the first, primary action, followed by Services, Caregiver training, Our approach, Resources and Contact. Desktop and mobile links identify exact pages with aria-current=page and containing service/training sections with aria-current=location; matching uses complete path segments.
+
+With JavaScript, Escape closes the menu and restores toggle focus; outside pointer interaction and focus moving outside close it without stealing focus. Link activation closes the panel, desktop resizing clears its open state, and restored pages start closed. Native Enter/Space activation and ordinary Tab navigation remain; there is no focus trap or application-menu role. Without JavaScript, the summary and links still work. The existing scroll thresholds and open-menu header visibility are retained. A fixed bottom support bar, staff profiles, submission pending-state changes and additional animation remain outside this batch.
+
+Primary references accessed on **2026-10-27**: [W3C disclosure navigation](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/examples/disclosure-navigation/) informs ordinary-link semantics and keyboard/dismissal behaviour; [WAI-ARIA current-location semantics](https://www.w3.org/TR/wai-aria-1.2/#aria-current) informs current-page/section feedback; [W3C decorative images](https://www.w3.org/WAI/tutorials/images/decorative/) informs redundant-artwork treatment. The APG example is guidance rather than production-ready code. Physical-device and assistive-technology validation remains separate from automated checks.
+
+#### Persistent reading navigation and stock photography
+
+Confirmed on **2026-10-27** under C20–C22 following the user's direct feedback. Typography, care workflows and data boundaries remain in use. C23–C26 subsequently update the utility icons, colour separation and homepage training preview as specified below.
+
+- **Whole-card interaction:** service links already cover their cards; training links now extend over the complete photograph and body through a native link hit area. No hover, script click handler or extra keyboard target is needed to navigate. Container hover/focus states apply the shadow and action emphasis, including when the pointer is over a photograph.
+- **Photography:** every service introduction uses a real-person stock photograph. Psychological support uses the new conversation photo; caregiver training retains childcare; spiritual/bereavement support uses existing companionship; support-group linkage uses the new group-conversation photo; professional linkage uses the new consultation photo; home follow-up retains home care. Unmapped valid services use companionship. The large illustration markup is removed. Subjects are illustrative and are not identified as staff, clients, verified partners or people with a particular condition.
+- **Compact directional header:** default minimum heights are 75px desktop and 72px phone, reduced from 100/96px. Text can still enlarge and wrap. The scroll thresholds remain 24px downward to hide and 12px upward to reveal. Keyboard-visible focus, an open menu and the top of the page keep it accessible. Pointer focus after closing a menu no longer pins it; reduced-motion mode hides/reveals without animation. With JavaScript disabled the header remains visibly sticky.
+- **Persistent breadcrumbs:** a shared trail appears below the header on content pages. Home and the containing Services/Training section remain native links, followed by the current page label. The trail stays at the top when the main header hides and moves below it when it returns. Current text can truncate visually while retaining its full accessible text; long ancestor trails scroll within their own row. Form values and private references are not included.
+- **Persistent section navigation:** Resources and Privacy retain a 320px panel in the desktop gutter. The panel is pinned independently of article height so it does not disappear at the end of a section. At 1100px and below it becomes a compact horizontal index above the content, with space reserved for its measured height. Desktop introductions and footer content reserve the panel's column; link lists can scroll when space is limited.
+- **Section tracking and anchors:** a small native script marks one section link with aria-current=location as headings cross the reserved reading offset. Clicking an index link retains ordinary fragment navigation. Active items are brought into the horizontal index viewport without scrolling the document or moving focus. Measured header, breadcrumb and index heights provide anchor clearance, with conservative CSS fallbacks when JavaScript is absent. Original article IDs and URLs remain compatible.
+- **Implementation:** the existing header controller manages direction and exposed header height. The shared reading-navigation controller measures the pinned controls and tracks headings using animation-frame-scheduled scroll work. There is no new framework, dependency, CMS collection or server endpoint.
+
+Primary references accessed on **2026-10-27**: [MDN positioning reference](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position) informs containing-block/pinned-position behaviour; [W3C Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html) informs clearance for sticky layers and focused targets. Primary Pexels source pages and licence terms are recorded below. These references do not establish full accessibility or production readiness.
+
 #### Photography asset register
 
-All source pages and the [Pexels licence](https://www.pexels.com/license/) were accessed on **2026-10-26**. The licence permits website use and modification, does not require attribution, and prohibits implying endorsement or portraying identifiable people offensively. Credits are retained here for provenance. Photographs illustrate family life and support; they do not identify actual staff or clients, establish a person's health condition, or document a Kenyan location.
+The original five source pages were accessed on **2026-10-26**. The three follow-up sources and the [Pexels licence](https://www.pexels.com/license/) were checked on **2026-10-27**. The licence permits website use and modification, does not require attribution, and prohibits implying endorsement or portraying identifiable people offensively. Credits are retained here for provenance. Photographs illustrate family life and support; they do not identify actual staff or clients, establish a person's health condition, or document a Kenyan location.
 
 | Local source asset | Photographer and original page | Current use |
 | --- | --- | --- |
 | `family.jpg` | August de Richelieu — [Family gathering for a group hug](https://www.pexels.com/photo/family-gathering-for-a-group-hug-4262424/) | Homepage hero. |
-| `companionship.jpg` | Kampus Production — [Woman assisting elderly man](https://www.pexels.com/photo/woman-assisting-elderly-man-7551667/) | Support-process section, approach page and generic fallback for newly added courses. |
+| `companionship.jpg` | Kampus Production — [Woman assisting elderly man](https://www.pexels.com/photo/woman-assisting-elderly-man-7551667/) | Support process, approach, spiritual/bereavement service and generic fallback for new courses/services. |
 | `home-care.jpg` | Kampus Production — [Woman and elderly man sitting on bed](https://www.pexels.com/photo/woman-and-elderly-man-sitting-on-bed-7551671/) | Home-care training and follow-up detail. |
 | `childcare.jpg` | Keira Burton — [Woman caring for her children](https://www.pexels.com/photo/woman-caring-for-her-children-6624421/) | Childcare training and caregiver-training service detail. |
 | `baby-care.jpg` | William Fortunato — [Black mother hugging baby on hands](https://www.pexels.com/photo/black-mother-hugging-baby-on-hands-6392860/) | Baby-care training. |
+| `conversation.jpg` | Polina Tankilevitch — [Women having conversation while sitting on the couch](https://www.pexels.com/photo/women-having-conversation-while-sitting-on-the-couch-5234577/) | Psychological support. Accessed 2026-10-27. |
+| `community.jpg` | PICHA Stock — [Women having a conversation](https://www.pexels.com/photo/women-having-a-conversation-3869641/) | Support-group linkage, illustrating a group conversation. Accessed 2026-10-27. |
+| `consultation.jpg` | Klaus Nielsen — [Doctor showing diagnosis to black patient in hospital](https://www.pexels.com/photo/doctor-showing-diagnosis-to-black-patient-in-hospital-6303652/) | Professional health linkage, illustrating a consultation. Accessed 2026-10-27. |
 
 The source JPEGs are under `apps/web/src/assets/photos/`. Course photographs are selected by slug rather than collection order, so editorial reordering retains the correct association. Replacing a photograph requires updating its asset, alternative text, crop and this register. Later organisation photography requires appropriate permission before use.
 
@@ -212,6 +258,26 @@ The source JPEGs are under `apps/web/src/assets/photos/`. Course photographs are
 Accessed **2026-10-26**: [DM Sans's SIL Open Font License](https://github.com/google/fonts/blob/main/ofl/dmsans/OFL.txt) and [Lora's SIL Open Font License](https://github.com/google/fonts/blob/main/ofl/lora/OFL.txt). Latin WOFF2 files were retrieved through the official Google Fonts CSS endpoint for DM Sans weights 400–700 and Lora normal/italic weights 400–500. Only the necessary styles/subsets are included. Licence copies ship beside the fonts in `apps/web/public/fonts/`.
 
 Responsive browser review, font/image loading, doubled-text reflow, keyboard access and reduced-motion checks support this refresh's acceptance. They do not replace screen-reader or physical-device testing; exact results are recorded in the MVP plan and README.
+
+#### Professional icons, colour and training carousel
+
+Confirmed on **2026-10-27** under C23–C26. The user selected colour changes for both the navbar and page introductions, chose the training showcase rather than a photo gallery, and authorised implementation of the resulting plan.
+
+- **Icons:** @lucide/astro 1.62.0 replaces the original CareIcon path definitions and public text arrows/checkmarks, including form actions, confirmations, menu controls and FAQ chevrons. The existing typed CareIcon interface maps semantic names to explicit component imports. Internal navigation uses ArrowRight; provider checkout uses ArrowUpRight. Icons render as local inline SVG with a consistent 24px/1.75-stroke base; decorative SVGs are hidden from assistive technology and cannot receive focus. The original logo and gutter artwork remain brand decoration. No React hydration, icon font or runtime icon CDN is added.
+- **Colour:** navigation uses forest green #244c40 with warm-white text and a light primary action; introductions use pale sage #e7eddf; reading surfaces use warm white #fffefa. Cream/sand panels and the existing deeper-green footer retain warmth. Shared PageIntro markup gives ordinary content, service/training detail, support, confirmation and error introductions a full-width background with aligned inner content. The homepage uses its existing full-width hero band. Mobile-menu foregrounds and focus rings are scoped to their actual light/dark surfaces. Measured text sizes, compact header heights and directional/pinned navigation remain applicable.
+- **Copy:** remove exactly "This service does not provide emergency response." from the footer, Contact page and support form. The remaining urgent-care guidance on Contact/support remains. No emergency availability, response time or professional capability is introduced by the copy change.
+- **Training preview:** retain the first three public CMS courses and their order, photos, descriptions and whole-card links. A native horizontal track shows two full cards plus a preview on desktop and one full card plus a preview at widths up to 1100px. The main training catalogue remains a grid. Forty-eight-pixel previous/next buttons and a polite range status enhance native scrolling. Endpoint buttons use aria-disabled and ignore activation while retaining keyboard focus; carousel navigation changes only the track's horizontal position. A course is counted in the visible range when at least half its width is in view. Scroll/resize updates the range and controls.
+- **Fallbacks:** no autoplay, looping, wheel interception or additional carousel dependency. Reduced motion makes button scrolling immediate; native horizontal snapping remains. Without JavaScript, the course track and native links remain available while enhanced controls are hidden. Zero/one-course and non-overflow layouts do not expose unusable controls. Existing desktop vertical snapping, breadcrumbs and section tracking retain their own behaviour.
+- **Boundaries:** no CMS schema, public API, private-record permissions, booking/payment behaviour, new stock asset, testimonial or operational claim is added. The lockfile adds only the Lucide package and its web-workspace declaration; existing resolved packages and the DOMPurify override are preserved.
+
+Primary references accessed on **2026-10-27**:
+
+| Source | Finding and implementation use |
+| --- | --- |
+| [Lucide Astro getting started](https://lucide.dev/guide/astro/getting-started) | Official package name is @lucide/astro; named Astro imports render inline SVG and support size, colour and stroke settings. [Package metadata for version 1.62.0](https://registry.npmjs.org/@lucide/astro/1.62.0) declares Astro 4–7 peer support and the ISC licence. |
+| [Lucide Astro accessibility](https://lucide.dev/guide/astro/advanced/accessibility) | Decorative icons are hidden by default; give icon-only controls an accessible name on the button. The package does not establish whole-site accessibility. |
+| [WAI carousel pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) | Use labelled previous/next controls and ordinary keyboard navigation; activating controls should preserve focus. This implementation chooses manual navigation without automatic rotation. |
+| [WAI carousel tutorial](https://www.w3.org/WAI/tutorials/carousels/) | Keyboard operation, understandable focus and communicated item changes matter. A visible preview and persistent catalogue link help discovery; these design choices still require user/device testing. |
 
 ## Design systems and components
 

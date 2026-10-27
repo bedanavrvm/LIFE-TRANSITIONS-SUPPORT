@@ -1,0 +1,9 @@
+---
+import type { CareIconName } from '../lib/servicePresentation';
+import { ArrowRight, ArrowUpRight, Baby, BookOpen, Check, ChevronDown, ChevronLeft, ChevronRight, CircleCheck, Heart, HeartHandshake, House, Menu, MessagesSquare, RotateCcw, Stethoscope, Users, UsersRound, X } from '@lucide/astro';
+interface Props { name: CareIconName; class?: string; }
+const { name, class: className } = Astro.props;
+const icons = { conversation: MessagesSquare, learning: BookOpen, hands: HeartHandshake, group: Users, connection: Stethoscope, home: House, parenthood: Baby, heart: Heart, recovery: RotateCcw, family: UsersRound, menu: Menu, close: X, 'arrow-right': ArrowRight, external: ArrowUpRight, previous: ChevronLeft, next: ChevronRight, chevron: ChevronDown, check: Check, success: CircleCheck };
+const Icon = icons[name];
+---
+<Icon class:list={['care-icon', className]} data-icon={name} size={24} stroke-width={1.75} aria-hidden="true" focusable="false" />

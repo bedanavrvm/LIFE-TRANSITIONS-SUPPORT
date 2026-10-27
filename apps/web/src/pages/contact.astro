@@ -1,4 +1,5 @@
 ---
+import CareIcon from '../components/CareIcon.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import ContentFrame from '../layouts/ContentFrame.astro';
 import { publicContent } from '../lib/cms';
@@ -9,9 +10,9 @@ const whatsapp = settings.whatsapp?.replace(/\D/g, '');
 <SiteLayout title="Contact us" settings={settings}>
   <ContentFrame>
     <Fragment slot="intro"><span class="eyebrow">Let’s talk</span><h1>A conversation can be<br />the first step.</h1><p>Get in touch for yourself, your family, your household or someone you are referring professionally.</p></Fragment>
-    <h2>Ways to reach us</h2><div class="contact-options"><a class="button" href="/support?kind=callback">Request a callback ↗</a>{phone && <a class="button secondary" href={`tel:${phone}`}>Call {settings.phone}</a>}{whatsapp && <a class="button secondary" href={`https://wa.me/${whatsapp}`} rel="noreferrer">Message on WhatsApp</a>}{settings.email && <a class="button secondary" href={`mailto:${settings.email}`}>Email the team</a>}</div>
+    <h2>Ways to reach us</h2><div class="contact-options"><a class="button" href="/support?kind=callback">Request a callback <CareIcon name="arrow-right" /></a>{phone && <a class="button secondary" href={`tel:${phone}`}>Call {settings.phone}</a>}{whatsapp && <a class="button secondary" href={`https://wa.me/${whatsapp}`} rel="noreferrer">Message on WhatsApp</a>}{settings.email && <a class="button secondary" href={`mailto:${settings.email}`}>Email the team</a>}</div>
     {!phone && !whatsapp && !settings.email && <p>Direct phone, WhatsApp and email details will appear here once the team has confirmed them. You can use the request form in the meantime.</p>}
-    <div class="notice">This service does not provide emergency response. Seek urgent medical assistance rather than waiting for a website reply when urgent care is needed.</div>
+    <div class="notice">Seek urgent medical assistance rather than waiting for a website reply when urgent care is needed.</div>
     <div slot="aside" class="aside-panel"><h2>Availability</h2><p>{settings.responseNote || 'Contact hours and response times are being confirmed. A submitted request does not guarantee an immediate response.'}</p><h2>Home support in Nairobi</h2><p>Tell us your area when you enquire. The team confirms coverage, travel arrangements and availability before agreeing a visit.</p></div>
   </ContentFrame>
 </SiteLayout>

@@ -1,4 +1,6 @@
 ---
+import PageIntro from '../components/PageIntro.astro';
+import CareIcon from '../components/CareIcon.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import SupportForm from '../components/SupportForm.astro';
 import { publicContent, cms } from '../lib/cms';
@@ -38,15 +40,14 @@ if (Astro.request.method === 'POST') {
 }
 ---
 <SiteLayout title={Object.keys(errors).length ? 'Check your request' : 'Request support'} settings={content.settings}>
-  <div class="wrap">
-    <header class="page-intro support-intro"><span class="eyebrow">You can start here</span><h1>We’re ready to listen.</h1><p>Tell us how to reach you. The details can wait for a conversation with a nurse.</p></header>
+  <PageIntro class="support-intro"><span class="eyebrow">You can start here</span><h1>We’re ready to listen.</h1><p>Tell us how to reach you. The details can wait for a conversation with a nurse.</p></PageIntro><div class="wrap">
     <div class="form-layout">
       <SupportForm services={content.services} courses={content.courses} values={values} errors={errors} />
       <aside class="form-aside">
         <span class="eyebrow">One step at a time</span><h2>What happens next?</h2>
         <ol class="next-steps"><li>A nurse reviews your enquiry and replies using your chosen contact method.</li><li>You discuss the right support, availability and any fees before arrangements are confirmed.</li></ol>
-        <div class="aside-box"><h3>Support through loss</h3><p>Spiritual and bereavement support is complimentary.</p><a class="text-link" href="/services/spiritual-bereavement">What’s included ↗</a></div>
-        <p class="small-note">This service does not provide emergency response. Seek urgent medical assistance when needed; don’t wait for a website reply.</p>
+        <div class="aside-box"><h3>Support through loss</h3><p>Spiritual and bereavement support is complimentary.</p><a class="text-link" href="/services/spiritual-bereavement">What’s included <CareIcon name="arrow-right" /></a></div>
+        <p class="small-note">Seek urgent medical assistance when needed; don’t wait for a website reply.</p>
       </aside>
     </div>
   </div>

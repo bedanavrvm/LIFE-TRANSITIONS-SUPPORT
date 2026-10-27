@@ -27,7 +27,7 @@ test('families can browse all six services and both training routes', async ({ p
   await page.screenshot({ path: test.info().outputPath('homepage-desktop.png'), fullPage: true });
   await page.goto('/services');
   await expect(page.locator('.service-card')).toHaveCount(6);
-  await page.getByRole('link', { name: 'Find out more' }).nth(2).click();
+  await page.getByRole('link', { name: 'Explore Spiritual & bereavement support', exact: true }).click();
   await expect(page.getByText('Offered free of charge')).toBeVisible();
   await page.goto('/training');
   await expect(page.locator('.course-card')).toHaveCount(3);

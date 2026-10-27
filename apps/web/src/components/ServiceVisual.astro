@@ -1,0 +1,9 @@
+﻿---
+import CarePhoto from './CarePhoto.astro';
+import { getServicePresentation } from '../lib/servicePresentation';
+interface Props { slug: string; }
+const { photo, tone } = getServicePresentation(Astro.props.slug);
+---
+<div class="service-visual" data-tone={tone} data-visual="photo">
+  <CarePhoto photo={photo} priority sizes="(max-width: 780px) calc(100vw - 36px), (max-width: 1100px) calc(100vw - 48px), 616px" />
+</div>

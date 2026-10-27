@@ -139,6 +139,7 @@ test('a backend outage preserves entries and offers an honest retry message', as
   });
   try {
     await expect.poll(async () => { try { return (await request.get('http://127.0.0.1:4422/support')).status(); } catch { return 0; } }, { timeout: 60000 }).toBe(200);
+    expect((await request.get('http://127.0.0.1:4422/services/home-follow-up')).status()).toBe(503);
     await page.goto('http://127.0.0.1:4422/support?kind=callback');
     await page.locator('#name').fill('Synthetic backend outage');
     await page.locator('#preferredContact').selectOption('email');
