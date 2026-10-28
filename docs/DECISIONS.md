@@ -1,6 +1,6 @@
 # Decisions and open questions
 
-First recorded: 2026-10-26. Last updated: 2026-10-27.
+First recorded: 2026-10-26. Last updated: 2026-10-28.
 
 This register is the authority for project decision status. The earlier pasted conversation has no known original date; entries imported from it use the recording date, not an invented decision date.
 
@@ -48,6 +48,18 @@ Research verification is a separate issue: an externally supported fact can info
 | C24 | Separate the navbar, page introductions and reading surfaces with stronger colour. | The user selected "Navbar and page introductions (Recommended)" and authorised implementation. | Forest-green navigation, pale-sage introductions and warm-white reading surfaces; retain the deep-green footer, readable type and existing pinned/directional navigation. |
 | C25 | Remove the sentence "This service does not provide emergency response." from the public site. | The user explicitly requested removal and authorised the plan's interpretation. | Remove the exact sentence from the footer, Contact and support form; retain the remaining urgent-care guidance on Contact/support. This does not establish emergency-response capability. |
 | C26 | Add a manual homepage training carousel. | The user selected "Training showcase (Recommended)" and authorised the plan. | Use the existing first three courses in CMS order, native horizontal scrolling, previous/next controls and range feedback. No autoplay/looping. Keep the training catalogue as a grid. See the [current UI specification](RESEARCH_AND_OPTIONS.md#professional-icons-colour-and-training-carousel). |
+| C27 | Prefer Render and minimise recurring hosting cost. | On 2026-10-28 the user accepted Render, noted prior experience and prioritised the lowest price. | Render is the preferred target; the earlier $51 allocation is a conservative proposal rather than a minimum. Compare smaller paid instances, durable SQLite and a sleeping preview frontend. Instance sizes, production database, region, paid workspace and deployment remain unselected. |
+| C28 | Run the local preview and provide ngrok account setup for temporary sharing. | The user identified ngrok, confirmed they have an account, and asked for the server and setup details. | Expose the public website on port 4321 and retain the staff backend locally on port 3000. Use the exact public WEB_URL for host/origin checks, keep credentials local and use synthetic submissions. This is temporary sharing, not the Render deployment or approval for live intake. See [ngrok setup](NGROK_PREVIEW.md). |
+
+## Official brand update — confirmed 2026-10-28
+
+| ID | Decision | Evidence | Implementation boundary |
+| --- | --- | --- | --- |
+| C29 | Use the supplied official logo, gold/cream/black colour families and floral edge decoration inspired by the flyer. | The user supplied two images, requested an alignment plan and authorised its implementation. | Replace the temporary leaf mark and green/terracotta palette throughout the public website. Preserve the exact supplied logo artwork. Hex values and responsive placements are adopted web-design defaults, not supplied brand standards. |
+| C30 | Adopt "Walking life’s seasons with you." as the brand tagline. | The user selected "Adopt logo tagline". | Retain "No one should navigate life's transitions alone." as supporting mission copy and preserve the original brief verbatim. This supersedes only C01's former tagline placement. |
+| C31 | Include the flyer service information and dedicated editable pages for all three signature packages. | The user selected "Brand and service content", "Dedicated package pages" and "Enquiry-based wording", then authorised implementation. | Preserve the original six service routes, add community home visits, and separate services from packages using the existing Payload services collection. Publish only clear supplied details, with enquiry wording for undefined packages; no anonymity, availability or outcome promises. See the [brief addendum](BUSINESS_BRIEF.md#official-brand-and-flyer-addendum--2026-10-28). |
+
+The colour portions of C12, C15 and C24 are superseded by C29. Their readability, layout, photography and navigation behaviour remain. C23's package icons and C26's manual training showcase remain in use; the temporary branding and gutter artwork are replaced.
 
 ## Delegated default
 
@@ -70,6 +82,8 @@ All entries below remain proposals. Their detailed descriptions and alternatives
 | P10 | Evaluate hosted checkout or payment links from IntaSend or Pesapal; retain direct Daraja as an alternative. | Allows online payment without building a card-entry experience. No merchant approval, fee comparison, or provider selection has occurred. |
 | P11 | Present spiritual support respectfully and explain the complimentary scope clearly. | The founder already identifies the service as free; inclusive wording and boundaries with other services need review. |
 | P12 | Replace illustrative stock with consented organisation photography when available, alongside verifiable team information and clear next steps. | Authentic Kenyan people and homes remain the long-term imagery goal; C13 authorises licensed stock for the current refresh. No invented testimonials, qualifications or outcomes. |
+| P13 | Evaluate Render service topology and the smallest viable database/runtime allocation. | C27 confirms the Render preference and cost priority. The earlier two-service/1GB-Postgres $51 proposal is retained as historical sizing. Lower-cost options, current prices and limits are recorded in [hosting deployment options](RESEARCH_AND_OPTIONS.md#hosting-deployment-options); database, size and deployment choices remain proposals. |
+| P14 | Use Neon PostgreSQL for Payload's database while retaining Render for the application services. | Researched on 2026-10-28 after the user asked about Neon. Within Neon Free allowances, proposed base hosting is $7/month with a free sleeping Astro service or $14/month with both Render apps paid, without a SQLite disk. This needs a PostgreSQL adapter/migrations and quota/recovery checks. It remains an option, not a selected database or authorisation to migrate/deploy. See [hosting deployment options](RESEARCH_AND_OPTIONS.md#hosting-deployment-options). |
 
 ## Superseded advice
 
@@ -88,6 +102,7 @@ All entries below remain proposals. Their detailed descriptions and alternatives
 | S11 | Keep the header visible under reduced motion or whenever any header element retains focus. | C22 clarifies directional visibility. The earlier focus guard also pinned the bar after pointer clicks; the corrected guard distinguishes keyboard-visible focus. Reduced-motion mode keeps direction changes without animated movement. |
 | S12 | Keep original hand-drawn utility icons and functional arrows/checkmarks as text glyphs. | C23 replaces these with Lucide SVG components for consistent geometry and rendering. The original logo and gutter decoration remain independent brand assets. |
 | S13 | Use a pale-sage navbar and cream introduction/background as the current default. | C24 adopts forest-green navigation, sage introductions and warm-white reading surfaces following the user's selected stronger colour separation. Earlier palette rationale remains in the research history. |
+| S14 | Retain forest-green navigation, sage introductions, green footer and temporary leaf/gutter artwork as current identity. | C29 replaces these with the supplied official logo, cream/gold/black and floral decoration. The previous colour separation, photography and navigation behaviours remain. |
 
 Earlier inaccurate technical claims, including a compulsory separate Astro backend and accessibility "for free", are corrected in [the evidence review](RESEARCH_AND_OPTIONS.md#corrections-to-earlier-advice). They are not project requirements.
 
@@ -97,7 +112,7 @@ Earlier inaccurate technical claims, including a compulsory separate Astro backe
 | --- | --- | --- |
 | O01 | Maintenance team and budget | Who will maintain the selected TypeScript-based stack, ongoing support costs, budget and acceptable vendor dependence. |
 | O02 | Production data and editing | Payload is selected; SQLite is a local development default. Select production database/storage/migrations and validate nurse editing, preview, publishing and updates. |
-| O03 | Hosting and data flow | Identify where public content, private records, uploads if needed, backups, logs, notifications, and vendor systems are processed and stored. Confirm relevant safeguards and transfer arrangements. |
+| O03 | Hosting and data flow | Render is preferred under C27. Select service sizes, region, database and recovery arrangement; identify where public content, private records, uploads if needed, backups, logs, notifications and vendor systems are processed and stored. Confirm relevant safeguards and transfer arrangements. |
 | O04 | Detailed intake | C16 selects a short public first enquiry. Define the necessary follow-up information, who may submit for another person, consent/lawful-basis handling, identity checks if needed, staff access, retention and correction/deletion. Medical history, attachments, and client accounts are not assumed. |
 | O05 | Appointment operations | Nurse review before confirmation is selected. Define staff availability, coverage, travel, durations, capacity and any remote appointments; local coordination is manual. |
 | O06 | Prices and complimentary services | Set fees, travel charges, deposits, subsidies if any, and the precise free-service boundary. Preserve the original inclusion of family therapy/counselling under complimentary spiritual care while clarifying overlap. |
@@ -106,7 +121,7 @@ Earlier inaccurate technical claims, including a compulsory separate Astro backe
 | O09 | Training | Define each curriculum, prerequisites, duration, practical competency assessment, instructors, dates, delivery format, capacity, price, and the status of any certificate. |
 | O10 | Referral network and support groups | Establish partners, vetting criteria, eligibility, costs, consent to sharing, feedback, and follow-up. Linking clients to groups does not itself require a website forum. |
 | O11 | Privacy and regulatory review | Confirm the organisation's legal form, actual activities, ODPC classification/registration, health-data obligations, any impact assessment needs, and relevant professional requirements. |
-| O12 | Brand and imagery | C12–C15 select the current local presentation, stock imagery and scrolling/layout direction. Final production identity/logo, organisation photography and permissions, and founder review of the finished presentation remain open. |
+| O12 | Brand and imagery | C29?C31 confirm the supplied official logo, gold/cream/black direction, new tagline and flyer content. Higher-quality source artwork, consented organisation photography, clinical/operating verification and founder review of the finished presentation remain open. |
 | O13 | Languages and accessibility | Decide whether English and Kiswahili are required at launch, who maintains translations, and whether additional contrast/theme options are needed. Agree acceptance checks for the proposed accessibility target. |
 | O14 | Content ownership | Identify who drafts, clinically reviews, publishes, and updates service information, resources, training dates, and staff profiles. Confirm permission for any stories or testimonials. |
 | O15 | Response and availability | Establish published hours and realistic callback/WhatsApp response expectations. Clarify emergency boundaries without implying a 24-hour or crisis service. |

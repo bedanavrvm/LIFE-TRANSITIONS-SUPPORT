@@ -20,7 +20,7 @@ const breadcrumbs: { label: string; href?: string }[] = path === '/' ? [] : [
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} | Life Transitions Support Partners</title><meta name="description" content={description} />
-    <meta name="theme-color" content="#244c40" /><meta name="robots" content={demoMode ? 'noindex,nofollow' : 'index,follow'} />
+    <meta name="theme-color" content="#191815" /><meta name="robots" content={demoMode ? 'noindex,nofollow' : 'index,follow'} />
     <link rel="icon" type="image/svg+xml" href="/mark.svg" />
     <link rel="preload" href="/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/lora.woff2" as="font" type="font/woff2" crossorigin />
@@ -28,7 +28,7 @@ const breadcrumbs: { label: string; href?: string }[] = path === '/' ? [] : [
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="header-shell"><div class="site-header wrap">
-      <a href="/" class="brand" aria-label="Life Transitions Support Partners home"><img src="/mark.svg" width="44" height="44" alt="" /><span>Life Transitions<small>SUPPORT PARTNERS</small></span></a>
+      <a href="/" class="brand" aria-label="Life Transitions Support Partners home"><img class="brand-mark" src="/mark.svg" width="44" height="44" alt="" /><span>Life Transitions<small>SUPPORT PARTNERS</small></span></a>
       <nav class="desktop-nav" aria-label="Main navigation">{navigation.map(([label, href]) => <a class:list={{ active: !!current(href) }} href={href} aria-current={current(href)}>{label}</a>)}</nav>
       <a class="button small header-cta" href="/support" aria-current={current('/support')}>Let’s talk <CareIcon name="arrow-right" /></a>
       <details class="mobile-nav">
@@ -43,7 +43,7 @@ const breadcrumbs: { label: string; href?: string }[] = path === '/' ? [] : [
     {breadcrumbs.length > 0 && <div class="breadcrumb-bar"><nav class="breadcrumb wrap" aria-label="Breadcrumb"><ol>{breadcrumbs.map(crumb => <li class:list={{ 'breadcrumb-current': !crumb.href }}>{crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span aria-current="page" title={crumb.label}>{crumb.label}</span>}</li>)}</ol></nav></div>}
     <main id="main" tabindex="-1"><slot /></main>
     <footer class="site-footer"><div class="wrap footer-grid">
-      <div><a class="brand" href="/"><img src="/mark.svg" width="40" height="40" alt="" /><span>Life Transitions<small>SUPPORT PARTNERS</small></span></a><p>No one should navigate life's transitions alone.</p><p class="muted">A nurse-led initiative · Nairobi, Kenya</p></div>
+      <div><a class="footer-brand official-brand-panel" href="/" aria-label="Life Transitions Support Partners home"><img src="/brand/official-logo.jpeg" width="1599" height="1066" loading="lazy" alt="Life Transitions Support Partners. Walking life’s seasons with you." /></a><p class="muted">A nurse-led initiative · Nairobi, Kenya</p></div>
       <div><h2>Find your way</h2><a href="/services">Our services</a><a href="/training">Caregiver training</a><a href="/support?kind=referral">Refer someone</a><a href="/contact">Contact us</a></div>
       <div><h2>Here to listen</h2>{settings.phone && <a href={`tel:${settings.phone.replace(/[^+\d]/g, '')}`}>{settings.phone}</a>}{settings.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}<p>{settings.responseNote || 'Send a request and agree a suitable time to speak with the team.'}</p><a href="/support">Request a callback <CareIcon name="arrow-right" /></a></div>
     </div><div class="wrap footer-bottom"><span>© {new Date().getFullYear()} Life Transitions Support Partners</span><a href="/privacy">Privacy & your information</a></div></footer>

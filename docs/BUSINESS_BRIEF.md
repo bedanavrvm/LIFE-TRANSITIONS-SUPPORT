@@ -56,6 +56,8 @@ Tagline: No one should navigate life's transitions alone.
 
 ## Interpretation for website planning
 
+The original description above is retained as supplied. The later [official brand and flyer addendum](#official-brand-and-flyer-addendum--2026-10-28) updates the website tagline and expands the service presentation.
+
 This section is editorial interpretation; it does not amend the original description.
 
 | Source area | Capability to explain clearly | Matters still to establish |
@@ -77,3 +79,29 @@ This section is editorial interpretation; it does not amend the original descrip
 - Website copy may use gentler language, such as helping caregivers put a care plan into practice. Such copy remains a proposal until reviewed.
 
 For website scope and decision status, use [the decision register](DECISIONS.md). For proposed navigation and wording, use [research and options](RESEARCH_AND_OPTIONS.md#proposed-positioning-and-navigation).
+
+## Official brand and flyer addendum — 2026-10-28
+
+Source: two founder-supplied JPEGs in the workspace, inspected at original resolution on 2026-10-28: `WhatsApp Image 2026-10-28 at 19.44.51.jpeg` (official logo, 1599 × 1066) and `WhatsApp Image 2026-10-28 at 19.57.17.jpeg` (services flyer, 1200 × 1600). These are supplied organisation materials, not independent verification of clinical capability or operating arrangements.
+
+The user selected the logo's exact tagline, **Walking life’s seasons with you.**, as the current brand tagline. **No one should navigate life's transitions alone.** remains supporting mission copy. The organisation name is unchanged. Gold, cream and black are confirmed colour families; specific web colour values are adopted design defaults recorded in [the brand specification](RESEARCH_AND_OPTIONS.md#official-brand-and-service-alignment).
+
+### Additional information supplied by the flyer
+
+| Area | Founder-supplied information |
+| --- | --- |
+| Signature packages | Sacred Therapy; Heart to Heart Therapy; Letters of Hope. |
+| Sacred Therapy | Last-minute family visits, family talks and memory preservation; family accompaniment to ICU and home. The flyer ends this description with the unclear repeated words "home home". No immediate availability or facility access is established. |
+| Heart to Heart Therapy | Telephone therapy with "Anonymous counsellors", an opportunity to air challenges, hear others' experiences and brainstorm solutions. It is unclear who is anonymous and how sessions operate. |
+| Letters of Hope | A name only; no description, format or intended outcome is supplied. |
+| Psychological support | Mental wellness including children and teenagers; referral facilitation; wedding and birth preparation; breaking bad news to children and vulnerable people; pregnancy and postnatal support; therapy to schools, institutions and families. |
+| Professional and peer connections | Nurses, doctors, consultants, chaplaincy, imams, community groups and peer connections. These are linkage descriptions, not proof of employment or formal partnerships. |
+| Spiritual support — FREE | Online prayers for Christians and Muslims who are in distress and would like spiritual support. This supplements, rather than removes, the original complimentary bereavement-care description. |
+| Community support | Home visits to first-time mothers and families of children with disabilities. |
+| Education | Home education for caregivers of bedridden family members; nanny training in childcare and emergency preparedness. |
+
+### Approved website interpretation
+
+The user selected both visual and service-content updates, dedicated editable package pages, and enquiry-based wording for unclear package details. The six original service routes remain. A seventh service explains community home visits; the three named packages have their own pages under Services.
+
+Public package copy uses the clear supplied details, explains that arrangements are discussed with the team, and invites questions about Letters of Hope. It does not repeat "home home", promise anonymous care, invent a package format, quote unconfirmed prices, or guarantee appointments or ICU access. Complimentary spiritual/bereavement support remains explicitly free. Further professional, privacy and operating details remain launch prerequisites.

@@ -8,5 +8,5 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   devToolbar: { enabled: false },
-  security: { allowedDomains: [{ hostname: website.hostname, protocol: website.protocol.slice(0, -1), port: website.port || (website.protocol === 'https:' ? '443' : '80') }] },
+  security: { allowedDomains: [{ hostname: website.hostname, protocol: website.protocol.slice(0, -1), port: website.port }] },
 });

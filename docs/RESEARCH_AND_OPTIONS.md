@@ -1,10 +1,10 @@
 # Research and options
 
-First recorded: 2026-10-26. Last updated: 2026-10-27.
+First recorded: 2026-10-26. Last updated: 2026-10-28.
 
 This document consolidates the substantive brainstorming in the founder's supplied conversation and the subsequent research discussion. It is a structured record, not a verbatim transcript or a final implementation specification.
 
-Current update: the user has selected Astro with Payload, nurse review before care confirmation, and both group/private training. A runnable local MVP was subsequently authorised. Earlier comparisons below are retained as history; use [the decision register](DECISIONS.md) and [MVP plan](MVP_PLAN.md) for current choices and behaviour.
+Current update: Astro/Payload, nurse review before care confirmation and both training formats remain selected. C29–C31 adopt the supplied official logo, gold/cream/black palette, floral decoration, new tagline and expanded service/package content; see [official brand alignment](#official-brand-and-service-alignment). Render remains preferred with recurring cost minimised; final resource sizing remains open. Earlier comparisons are history; use [the decision register](DECISIONS.md) and [MVP plan](MVP_PLAN.md) for current choices and behaviour.
 
 Use [the decision register](DECISIONS.md) to determine what has been selected. Use [the business brief](BUSINESS_BRIEF.md) for the original service wording. An option described here is not automatically a requirement.
 
@@ -125,7 +125,7 @@ A proposed homepage sequence is a short introduction, situation entry points, an
 
 ## Visual directions
 
-The warm direction was adopted for the local visual refresh in C12/C13. The other directions below remain alternatives; this table preserves the original comparison. Production identity and final logo still need review.
+The warm direction was adopted for the local visual refresh in C12/C13. The other directions below remain alternatives; this table preserves the original comparison. C29–C31 later adopt the supplied official logo and gold/cream/black; see the [current brand specification](#official-brand-and-service-alignment).
 
 | Direction | Proposed visual ingredients | Benefit | Design risk to check |
 | --- | --- | --- | --- |
@@ -143,7 +143,7 @@ Single light theme, dark mode, and a high-contrast option were discussed. Their 
 
 ### Adopted local visual refresh
 
-The sections below record successive design passes. [C23–C26](#professional-icons-colour-and-training-carousel) set the current icon, colour and training-preview defaults; earlier descriptions retain their historical rationale.
+The sections below record successive design passes. [C29–C31](#official-brand-and-service-alignment) set the current brand and service presentation; C23/C26 retain the professional icons and manual training preview. Earlier descriptions retain their historical rationale.
 
 Selected after the user described the initial build as lacking photos, hard to read, and too rigid; the user then authorised implementation of the proposed refresh. These are implementation choices for the local public website, not a production launch or a change to clinical services.
 
@@ -279,6 +279,45 @@ Primary references accessed on **2026-10-27**:
 | [WAI carousel pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) | Use labelled previous/next controls and ordinary keyboard navigation; activating controls should preserve focus. This implementation chooses manual navigation without automatic rotation. |
 | [WAI carousel tutorial](https://www.w3.org/WAI/tutorials/carousels/) | Keyboard operation, understandable focus and communicated item changes matter. A visible preview and persistent catalogue link help discovery; these design choices still require user/device testing. |
 
+## Official brand and service alignment
+
+Confirmed **2026-10-28**, C29–C31, after inspection of both supplied images and the user's explicit choices. This section supersedes the earlier green/terracotta palette and temporary logo/gutter artwork. Earlier design descriptions remain historical; existing photography, readable typography, short enquiries, Lucide icons, directional header, persistent reading navigation and manual training carousel remain current.
+
+### Brand assets and composition
+
+- The founder's logo JPEG is copied byte-for-byte to `apps/web/public/brand/official-logo.jpeg`. The compact emblem and favicon use an SVG viewport containing the same original JPEG; no tracing, AI approximation or raster alteration is involved. The full wordmark/tagline remains in light panels on About and the footer. The compact header pairs the emblem with live organisation text, retaining the normal 75px desktop / 72px phone header and allowing text enlargement to grow it as before.
+- Gold, cream and black are supplied brand colour families. The hex values below are adopted web defaults, not sampled or supplied formal brand standards. Use gold selectively, cream for reading, and warm black for navigation/footer and main text. Preserve semantic error styling.
+- `floral-corner.svg` and `floral-divider.svg` are original local vector compositions inspired by the flyer: fine-line flowers, buds, leaves, curling stems and an ornamental centre divider. Corner bouquets use spare desktop gutters in introductions, selected homepage bands and the footer. They are static, non-interactive decoration. Narrow-screen gutters are hidden; the small homepage divider remains in section spacing. Decorative imagery is excluded from the accessibility tree.
+- Keep Lora headings and DM Sans text, the existing 18–20px body scale, real stock photographs and neutral shadows. Script lettering remains within the supplied logo. No additional dependency, remote image request, animation library or icon font is introduced.
+- The supplied logo's white background remains deliberately enclosed in its logo panel; the surrounding page uses cream. The JPEG limits very large or high-resolution reproduction; replace it with a founder-supplied vector/transparent original when available rather than inventing a replacement.
+
+| Semantic role | Value | Use |
+| --- | --- | --- |
+| Surface | #FBF6EA | Main cream reading area. |
+| Raised surface | #FFFCF5 | Cards, form surfaces, breadcrumbs. |
+| Soft surface | #F0E4C9 | Champagne introductions and context panels. |
+| Warm surface | #E9D9B7 | A deeper alternating band and selected medallions. |
+| Ink | #191815 | Text, navigation, footer, dark care band. |
+| Muted | #635B4E | Supporting text on light surfaces. |
+| Accent | #B58A32 | Gold buttons, active navigation, decorative artwork. |
+| Accent ink | #765719 | Gold-brown text on cream, button hover, focus. |
+| Decorative line | #D9C9A7 | Section and card dividers. |
+| Control border | #8B7A58 | Input and interactive control boundaries. |
+
+Calculated colour pairs: ink on cream 16.46:1; ink on gold 5.62:1; accent ink on cream 6.19:1 and champagne 5.29:1; muted on cream 6.21:1; control border on cream 3.88:1 and champagne 3.31:1. Bright gold on cream is only 2.93:1, so it is reserved for decoration rather than informative text or required control boundaries. Button hover swaps to dark gold with cream text; the background/text change is immediate so a colour transition does not briefly create cream text on bright gold.
+
+Primary accessibility references checked **2026-10-28**: [W3C text contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) specifies 4.5:1 for ordinary text; [W3C non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html) specifies 3:1 for necessary control/state cues. These measured pairs and browser checks do not establish whole-site accessibility.
+
+### Content and compatibility
+
+The [business brief addendum](BUSINESS_BRIEF.md#official-brand-and-flyer-addendum--2026-10-28) owns the founder-supplied details and ambiguity record. The current brand tagline is **Walking life’s seasons with you.**; the original sentence remains mission copy on About. The supplied original business description is unchanged.
+
+- Retain the six established service slugs; expand psychological support, caregiver education, spiritual care and referral wording from the flyer. Keep home follow-up distinct from general community visits. Add `community-support`, covering first-time mothers and families of children with disabilities.
+- Add `sacred-therapy`, `heart-to-heart-therapy` and `letters-of-hope` as signature packages. Sacred Therapy explains family conversations, memory preservation and possible accompaniment without immediate-visit/ICU-access promises. Heart to Heart describes telephone support without claiming anonymity or a session format. Letters of Hope invites an enquiry without inventing its service details. Prices and availability remain discussed arrangements.
+- Services remain one public Payload collection. Its optional `category` select defaults to `service`, with `package` as the other value. Legacy missing categories are treated as services. The listing separates seven services from three packages, in their CMS order; record detail URLs and service-prefilled enquiries use the existing mechanisms. Editors can move records between groups without code changes. No new intake field, public endpoint or private-record access is added.
+- Keep spiritual/bereavement support explicitly complimentary, including its original family-therapy wording and the flyer's free Christian/Muslim online prayer support. A package's association with illness or grief does not automatically make it part of that complimentary service.
+- Seed defaults cover fresh installations, while ordinary seeding still only adds missing slugs. Update existing local copy with a backed-up, slug-scoped Payload operation, retaining IDs and unmodified fields. Do not reset the database or broadly overwrite staff edits. Public launch, operational verification, provider integration and hosting changes remain separate.
+
 ## Design systems and components
 
 ### Systems discussed
@@ -383,6 +422,67 @@ The earlier suggestion to favour a Nairobi/Kenya host considered latency and dat
 Do not use an assumed global CDN configuration to publish private intake data. The actual deployment must account for public caching, private responses, and operational data flows.
 
 No framework bundle-size benchmark was run. Fast public pages remain a design goal: optimise images, fonts, page complexity, third-party embeds, and the amount of browser JavaScript. Validate representative pages on realistic mobile connections.
+
+### Hosting deployment options
+
+Researched **2026-10-27**; prices in **USD**. **Historical proposal:** deploy Astro SSR and Payload/Next as two Node services, with a separate PostgreSQL database, on one provider. A static-site upload alone cannot run the current server-side enquiries and staff backend. The user subsequently selected Render and prioritised cost in the revision below; resource sizes and public-launch approval remain open.
+
+| Option | Suggested starting arrangement and cost assumptions |
+| --- | --- |
+| **Render — preferred for predictable service pricing and managed database recovery** | Astro `0.5c-512mb` ($7/month), Payload `1c-2g` ($25/month), and Postgres `0.5c-1g` ($19/month): **$51/month compute**, before storage, excess traffic, tax and optional workspace fees. The $6/256MB database reduces the base to $38, but the 1GB database is the more conservative proposed launch starting point. Hobby workspace is $0; Pro adds $25/month. These are pricing calculations, not measured capacity guarantees. [Official pricing](https://render.com/pricing), [current compute plan names](https://render.com/docs/compute-plans). |
+| **Railway — alternative for usage-based billing and one project canvas** | Pro has a **$20/month minimum including $20 usage**, rather than a $20 charge added to all resource usage. Container RAM is $10/GB/month, CPU $20/vCPU/month, volumes $0.15/GB/month and egress $0.05/GB. A planning allowance of **$35–$60/month** assumes roughly 3GB average aggregate RAM across both apps/database, modest CPU/traffic and small storage; actual usage must be measured. Hobby's $5 minimum suits a developer prototype; Pro is positioned for production teams. [Plans and usage rates](https://docs.railway.com/pricing/plans). |
+
+**Persistence and recovery:** Render continuously backs up paid Postgres with a three-day PITR window on Hobby and seven days on Pro or higher; free databases have no recovery capability. Railway's maintained single-node PostgreSQL can be upgraded to HA; backups/PITR must be enabled and verified rather than assumed from creating a database. Railway supports scheduled volume backups, with retention of six days daily, 27 days weekly and 89 days monthly, and bills incremental backup storage. Neither proposed price is an HA configuration. [Render recovery](https://render.com/docs/postgresql-backups), [Railway PostgreSQL](https://docs.railway.com/databases/postgresql), [Railway backups](https://docs.railway.com/volumes/backups).
+
+**Regions and repository:** Render offers Frankfurt and Singapore plus three US regions; Railway offers Amsterdam and Singapore plus California/Virginia. Neither lists a Kenya region. Keep apps and database together; measure Kenyan-network latency before choosing. This is not a data-protection approval. Both support monorepos: retain repository-root access to the shared workspace and configure separate app build/start commands, rather than hiding shared packages behind an app-only root directory. [Render regions](https://render.com/docs/regions), [Railway regions](https://docs.railway.com/deployments/regions), [Render monorepos](https://render.com/docs/monorepo-support), [Railway shared monorepos](https://docs.railway.com/deployments/monorepo).
+
+#### Cost-first Render revision — 2026-10-28
+
+**Confirmed direction:** Render, with the lowest feasible recurring cost. The earlier $51/month sizing is retained as a **superseded recommendation**, not a minimum hosting price. The options below are proposed configurations and advertised arithmetic, not proven capacity. They assume the $0 Hobby workspace, one instance per app, USD/month, and exclude domain registration, tax, overages and independent backup storage. [Current prices](https://render.com/pricing).
+
+| Configuration | Base/month | Tradeoff or work required |
+| --- | --- | --- |
+| Free Astro SSR + paid 512MB Payload + 1GB SQLite disk | **$7.25** | Smallest change to the current architecture, but the public frontend sleeps after 15 idle minutes and can take about a minute to wake. |
+| Two paid 512MB Node services + 1GB SQLite disk | **$14.25** | Lowest proposed always-on arrangement preserving separate SSR apps; test Payload within 512MB and implement SQLite recovery. |
+| Two paid 512MB services + smallest paid Postgres | **$20 + database storage** | Adds a PostgreSQL adapter/migration; avoids operating SQLite backups on an app disk. |
+| Future free static Astro + paid 512MB Payload + SQLite disk / paid Postgres | **$7.25 / $13 + database storage** | Requires moving dynamic forms/payment pages to a backend and rebuilding public content after CMS publication. This is application work, not a hosting toggle. [Static hosting](https://render.com/docs/static-sites). |
+
+**Disk evidence and limits:** pricing is $0.25/GB/month; the [official Terraform example](https://raw.githubusercontent.com/render-oss/terraform-provider-render/main/docs/resources/web_service.md) explicitly configures a 1GB disk. The main docs do not state an absolute minimum; 10GB in the Blueprint reference is a default, not evidence of a 10GB minimum. Disks require a paid service, attach to one instance, cannot be shared between apps and disable zero-downtime deployment. Only the mount persists; include database sidecars. Disks are unavailable during build/pre-deploy commands, so SQLite initialization/migrations must account for runtime access. [Disk documentation](https://render.com/docs/disks).
+
+**Recovery and free limits:** Render warns against restoring custom databases from disk snapshots because recovery can be corrupt. Use a SQLite-aware online backup, store copies independently and test restoration; snapshots alone are insufficient. Free web services cannot attach disks, and free Postgres expires after 30 days without backups. [SQLite backup API](https://www.sqlite.org/backup.html), [Render free limits](https://render.com/docs/free).
+
+**Cohosting:** one paid service plus disk has a theoretical $7.25 base, but running Astro and Payload together needs routing/proxying, supervision and combined-memory checks. Render exposes one public HTTP port and explicitly recommends separate services. Do not promise this works within 512MB. [Port binding](https://render.com/docs/web-services#binding-to-multiple-ports), [Render FAQ](https://render.com/docs/faq#can-i-deploy-multiple-apps-to-a-single-render-service).
+
+**Practical proposal:** trial the $7.25 sleeping-frontend option for a demo, or $14.25 for always-on; upgrade only if measured memory requires it. A local Windows Payload-only sample used about 137MiB warm RSS on read-only routes, supporting a trial but not proving Render/Linux or authenticated-editor capacity. No cloud deployment, load or backup-restore test has been performed.
+
+#### Neon database alternative — 2026-10-28
+
+**Proposed only (P14):** keep the Astro and Payload/Next applications on Render, and use Neon for Payload's PostgreSQL database. Neon now also offers Node.js Functions, but its current documentation explicitly distinguishes them from full-stack app hosting and says they do not host websites. They are not a drop-in host for this checkout's complete Next/Payload staff interface. [Neon Functions](https://neon.com/docs/compute/functions/overview).
+
+| Arrangement | Advertised base/month, USD |
+| --- | --- |
+| Free Render Astro SSR + paid 512MB Render Payload + Neon Free | **$7**, with the public frontend's Render sleep/cold-start tradeoff |
+| Paid Render Astro + paid 512MB Render Payload + Neon Free | **$14**, with both Render apps always on; the database can still idle |
+
+These figures reuse the Render prices above, exclude other usage/taxes/domains and assume Payload fits 512MB. They remove the SQLite disk charge, not the Payload application host. Neon Free is conditional on usage, rather than a promise that this database will remain free indefinitely.
+
+**Current free limits:** 1GB PostgreSQL storage per project (20GB total across the account), 100 CU-hours per project per month and 5GB public transfer per project per month. At 0.25 CU, 100 CU-hours covers **400 active hours**, less than a continuously active month. CU-hour or transfer exhaustion suspends compute until the next billing period or upgrade; storage-limit violations block operations that increase storage until capacity is freed or the plan changes. These limits do not delete data. The limited six-hour restore window does not establish a sufficient backup policy. [Neon plans and quota behaviour](https://neon.com/docs/introduction/plans).
+
+**Idling:** Free compute necessarily suspends after five inactive minutes. Neon says the next query normally reactivates it within a few hundred milliseconds; this is a provider description, not measured end-to-end latency for this application. Repeated database queries and health checks can consume the compute allowance. [Scale to Zero](https://neon.com/docs/introduction/scale-to-zero).
+
+**Required work:** replace the hardcoded SQLite adapter with a matching Payload PostgreSQL adapter, configure a server-only Neon TLS connection, review pooling/migration connections, and migrate/test the schema and any retained content. Changing DATABASE_URI alone cannot convert a SQLite file into PostgreSQL. Test cold starts, quota-failure feedback and restoration before live intake. [Payload PostgreSQL adapter](https://payloadcms.com/docs/database/postgres). No application changes, Neon account, deployment or migration are included in this proposal.
+
+**Preparation required in this checkout (source inspection, not a deployed result):**
+
+- The Astro app already uses Node standalone SSR. Keep the two applications and shared npm workspace accessible from the repository root; provide separate production builds/starts and bind each server to the provider's assigned port/interface. Use the project's supported Node 24.22.1 runtime. [Astro Node deployment](https://docs.astro.build/en/guides/integrations-guide/node/), [Payload deployment](https://payloadcms.com/docs/production/deployment).
+- Payload currently hardcodes sqliteAdapter. The lowest-cost option keeps SQLite, configuring its persistent mount, runtime schema setup/migrations and SQLite-aware backup/restore. PostgreSQL remains an optional adapter/migration path with additional cost; it is not a deployment requirement. Keep local synthetic development data separate from the hosted database. [Payload PostgreSQL adapter](https://payloadcms.com/docs/database/postgres).
+- Inject server secrets and actual WEB_URL/CMS_URL values through the host. WEB_URL must be correct when Astro is built because its host allowlist is compiled. The [CMS build helper](../scripts/next.mjs) unconditionally loads a local .env, and bootstrap scripts assume the same file; adapt them to accept host-injected environment variables without committing .env or production secrets.
+- Review proxy/client-address handling and the process-local enquiry limiter, configure working email/password recovery, and verify HTTPS, staff access and live payment settings before accepting real enquiries. Keep a staging deployment private and synthetic: DEMO_MODE currently changes messaging/payment availability but does not disable enquiry storage.
+- Existing photographs/fonts ship with the app and Payload has no upload collection. Object storage is unnecessary for this version; revisit it if staff-managed uploads are added. Render is preferred; region, resource sizing and live-data privacy requirements remain open.
+
+An all-Vercel deployment is possible but would require replacing the Astro Node adapter and still providing persistent database services. Its Hobby plan is restricted to personal non-commercial use; Pro starts at $20/month plus applicable usage, so a free Hobby deployment is not the proposed business-hosting baseline. [Astro Vercel adapter](https://docs.astro.build/en/guides/integrations-guide/vercel/), [Vercel plans](https://vercel.com/pricing), [Hobby terms](https://vercel.com/docs/plans/hobby). This is an alternative, not a statement that Payload cannot run on Vercel.
+
+Provider documentation and published prices were checked; no cloud account, deployment, load test or restore test was performed. Prices/limits need confirmation in the chosen provider's checkout. Production database migration, environment/start commands and live-intake controls remain implementation work.
 
 ## Intake, booking, payments, and staff workflows
 

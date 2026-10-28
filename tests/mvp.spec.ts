@@ -21,12 +21,12 @@ test.beforeAll(async ({ request }) => {
   courseSlug = (await (await request.get(`${backend}/api/courses`)).json()).docs[0].slug;
 });
 
-test('families can browse all six services and both training routes', async ({ page }) => {
+test('families can browse services, signature packages and both training routes', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Life changes.');
   await page.screenshot({ path: test.info().outputPath('homepage-desktop.png'), fullPage: true });
   await page.goto('/services');
-  await expect(page.locator('.service-card')).toHaveCount(6);
+  await expect(page.locator('.service-card')).toHaveCount(10);
   await page.getByRole('link', { name: 'Explore Spiritual & bereavement support', exact: true }).click();
   await expect(page.getByText('Offered free of charge')).toBeVisible();
   await page.goto('/training');

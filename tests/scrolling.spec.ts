@@ -85,7 +85,7 @@ test('navigation and article content work without JavaScript', async ({ browser 
     await page.locator('.mobile-nav summary').click();
     await page.getByRole('navigation', { name: 'Mobile navigation' }).getByRole('link', { name: 'Services', exact: true }).click();
     await expect(page).toHaveURL(/\/services$/);
-    await expect(page.locator('.service-card')).toHaveCount(6);
+    await expect(page.locator('.service-card')).toHaveCount(10);
   } finally { await context.close(); }
 });
 
@@ -104,7 +104,7 @@ test('article anchors clear the sticky header and hover feedback has a keyboard 
   expect(await item.evaluate(el => getComputedStyle(el).outlineStyle)).toBe('solid');
   const colours = await page.locator('.chapter').evaluateAll(elements => elements.map(el => getComputedStyle(el).backgroundColor));
   expect(new Set(colours).size).toBeGreaterThanOrEqual(5);
-  expect(await page.locator('.site-footer').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(24, 56, 47)');
+  expect(await page.locator('.site-footer').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(25, 24, 21)');
 });
 
 for (const width of [320, 390, 768, 1440, 1920]) {

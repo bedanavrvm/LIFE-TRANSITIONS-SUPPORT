@@ -5,15 +5,15 @@ const backend = 'http://127.0.0.1:3100';
 
 test('unmapped service names have a neutral presentation, including object-property names', () => {
   for (const slug of ['a-new-service', 'constructor', 'toString', '__proto__']) {
-    expect(getServicePresentation(slug)).toEqual({ icon: 'hands', tone: 'sage', photo: 'companionship' });
+    expect(getServicePresentation(slug)).toEqual({ icon: 'hands', tone: 'cream', photo: 'companionship' });
   }
 });
 
-test('all six service pages show the agreed visual, current content and a contextual request action', async ({ page, request }) => {
+test('all service and signature package pages show the agreed visual, current content and a contextual request action', async ({ page, request }) => {
   const services = (await (await request.get(`${backend}/api/services?limit=20&sort=number`)).json()).docs;
-  expect(services).toHaveLength(6);
+  expect(services).toHaveLength(10);
   await page.goto('/services');
-  await expect(page.locator('.service-card')).toHaveCount(6);
+  await expect(page.locator('.service-card')).toHaveCount(10);
   await expect(page.locator('.service-card .badge')).toHaveCount(1);
   for (const service of services) {
     await page.goto('/services');

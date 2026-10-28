@@ -13,7 +13,7 @@ if (!service) Astro.response.status = available ? 404 : 503;
     <Fragment slot="intro">
       {service ? <div class="service-hero">
         <div class="service-hero-copy">
-          <span class="eyebrow">Here for your next step</span><h1>{service.title}</h1><p>{service.summary}</p>
+          <span class="eyebrow">{service.category === 'package' ? 'A signature package' : 'Here for your next step'}</span><h1>{service.title}</h1><p>{service.summary}</p>
           <dl class="service-facts">
             <div><dt>Who this is for</dt><dd>{service.audience}</dd></div>
             <div><dt>Fees & arrangements</dt><dd>{service.free ? <span class="badge">Offered free of charge</span> : 'Any fees and travel arrangements are explained and agreed before you proceed.'}</dd></div>

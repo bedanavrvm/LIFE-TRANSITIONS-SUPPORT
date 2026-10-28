@@ -20,6 +20,7 @@ const situations: [string, string, string, CareIconName][] = [
   <div class="hero wrap">
     <div class="hero-copy">
       <span class="eyebrow">Nurse-led care · Nairobi, Kenya</span>
+      <p class="brand-tagline">Walking life’s seasons with you.</p>
       <h1>Life changes.<br />You don’t have to<br />face it <em>alone.</em></h1>
       <p>Compassionate guidance and practical support for your family, through new beginnings, uncertain days and difficult goodbyes.</p>
       <div class="actions"><a class="button" href="/support">Find the support you need <CareIcon name="arrow-right" /></a><a class="text-link" href="/services">Explore our services</a></div>
@@ -34,7 +35,7 @@ const situations: [string, string, string, CareIconName][] = [
   </section>
   {!available && <div class="wrap notice error" role="status">Service information is temporarily unavailable. Please try again shortly.</div>}
   <section class="page-band chapter near-white section" id="find-support"><div class="wrap situation-section">
-    <div class="situation-intro"><span class="eyebrow">Start where you are</span><h2>What brings<br />you <em>here?</em></h2><p>Every family’s story is different. We’ll help you take the next step, wherever you are in yours.</p><span class="chapter-flourish"><CareIcon name="hands" /></span></div>
+    <div class="situation-intro"><span class="eyebrow">Start where you are</span><h2>What brings<br />you <em>here?</em></h2><p>Every family’s story is different. We’ll help you take the next step, wherever you are in yours.</p><img class="chapter-flourish" src="/brand/floral-divider.svg" width="360" height="64" alt="" aria-hidden="true" /></div>
     <div class="situation-grid">
       {situations.map(([title, summary, slug, icon]) => <a class="situation" href={`/services/${slug}`}><span class="icon"><CareIcon name={icon} /></span><div><h3>{title}</h3><p>{summary}</p></div><span class="arrow"><CareIcon name="arrow-right" /></span></a>)}
       <a class="situation special" href="/support"><span class="icon"><CareIcon name="conversation" /></span><div><h3>Not sure what you need?</h3><p>You don’t need to have the answers before reaching out. Let’s talk it through.</p></div><span class="arrow"><CareIcon name="arrow-right" /></span></a>
@@ -65,7 +66,7 @@ const situations: [string, string, string, CareIconName][] = [
     </div>
     <div class="actions"><a class="text-link" href="/training">All training & private sessions <CareIcon name="arrow-right" /></a></div>
   </div></section>
-  <section class="page-band chapter green-section" id="through-loss"><div class="wrap care-banner"><div><span class="eyebrow">A little reassurance</span><h2>Support through loss,<br />offered with care.</h2><p>Our spiritual and bereavement support is complimentary. There is space to talk, remember, and find support for the whole family.</p></div><a class="button light" href="/services/spiritual-bereavement">Explore free support <CareIcon name="arrow-right" /></a></div></section>
+  <section class="page-band chapter dark-section" id="through-loss"><div class="wrap care-banner"><div><span class="eyebrow">A little reassurance</span><h2>Support through loss,<br />offered with care.</h2><p>Our spiritual and bereavement support is complimentary. There is space to talk, remember, and find support for the whole family.</p></div><a class="button light" href="/services/spiritual-bereavement">Explore free support <CareIcon name="arrow-right" /></a></div></section>
   <section class="page-band chapter near-white section" id="questions"><div class="wrap"><div class="section-head"><div><span class="eyebrow">Before we talk</span><h2>A few things you may be wondering.</h2></div></div><div class="faq"><details><summary>Do I need to know which service to choose?<CareIcon name="chevron" /></summary><p>No. You can request a conversation and a nurse will help you explore the right support.</p></details><details><summary>Can I get in touch for someone else?<CareIcon name="chevron" /></summary><p>Yes. Let us know your relationship to the person who needs support. We will discuss the appropriate arrangements and permissions with you.</p></details><details><summary>Is all support free?<CareIcon name="chevron" /></summary><p>Spiritual and bereavement care described on its service page is complimentary. The team will explain any fees for other services before you agree to proceed.</p></details><details><summary>Is an appointment confirmed when I submit?<CareIcon name="chevron" /></summary><p>No. A nurse reviews care requests first. The team will discuss availability and agree the arrangements with you.</p></details></div></div></section>
 </SiteLayout>
 <script>import '../scripts/training-carousel';</script>

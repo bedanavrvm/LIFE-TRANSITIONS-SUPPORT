@@ -5,21 +5,27 @@ import CareIcon from '../../components/CareIcon.astro';
 import { getServicePresentation } from '../../lib/servicePresentation';
 import { publicContent } from '../../lib/cms';
 const { services, settings, available } = await publicContent();
+const groups = [
+  { id: 'family-support', title: 'Care for life’s transitions', description: 'Practical, emotional and spiritual support, shaped around your family.', items: services.filter(service => service.category !== 'package') },
+  { id: 'signature-packages', title: 'Our signature packages', description: 'Thoughtful ways to connect, talk and find support. Ask the team which package may suit you.', items: services.filter(service => service.category === 'package') },
+];
 ---
 <SiteLayout title="Support for your family" settings={settings}>
   <PageIntro><span class="eyebrow">Our services</span><h1>Support for the whole family.</h1><p>From the practical to the deeply personal, find guidance for the transition your family is navigating.</p></PageIntro><div class="wrap">
     {!available && <p class="notice error">Service information is temporarily unavailable. Please try again shortly.</p>}
-    <div class="service-list">{services.map((service, index) => {
+    {groups.filter(group => group.items.length).map(group => <section class="service-group" id={group.id} aria-labelledby={`${group.id}-heading`}>
+    <div class="section-head"><div><span class="eyebrow">{group.id === 'signature-packages' ? 'Space for what matters' : 'Alongside your family'}</span><h2 id={`${group.id}-heading`}>{group.title}</h2><p>{group.description}</p></div></div>
+    <div class="service-list">{group.items.map((service, index) => {
       const { icon, tone } = getServicePresentation(service.slug);
       return <article class="service-card" data-tone={tone}>
-        <a class="service-card-link" href={`/services/${encodeURIComponent(service.slug)}`} aria-labelledby={`service-action-${index}`}>
+        <a class="service-card-link" href={`/services/${encodeURIComponent(service.slug)}`} aria-labelledby={`${group.id}-action-${index}`}>
           <span class="service-medallion"><CareIcon name={icon} /></span>
-          <h2>{service.title}</h2><p>{service.summary}</p>
+          <h3>{service.title}</h3><p>{service.summary}</p>
           {service.free && <span class="badge">Complimentary support</span>}
-          <span class="text-link service-card-action" id={`service-action-${index}`}>Explore {service.title} <CareIcon name="arrow-right" /></span>
+          <span class="text-link service-card-action" id={`${group.id}-action-${index}`}>Explore {service.title} <CareIcon name="arrow-right" /></span>
         </a>
       </article>;
-    })}</div>
+    })}</div></section>)}
     <section class="service-choice"><div><h2>Not sure what you need?</h2><p>A conversation is a good place to start.</p></div><a class="button" href="/support">Help me choose support <CareIcon name="arrow-right" /></a></section>
   </div>
 </SiteLayout>

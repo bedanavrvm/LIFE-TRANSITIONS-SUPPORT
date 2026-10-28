@@ -39,6 +39,7 @@ const Services: CollectionConfig = {
   access: { read: () => true, create: isEditor, update: isEditor, delete: isAdmin },
   fields: [
     { name: 'title', type: 'text', required: true }, { name: 'slug', type: 'text', required: true, unique: true },
+    { name: 'category', type: 'select', defaultValue: 'service', options: [{ label: 'Service', value: 'service' }, { label: 'Signature package', value: 'package' }] },
     { name: 'number', type: 'text', required: true }, { name: 'summary', type: 'textarea', required: true },
     { name: 'description', type: 'textarea', required: true }, { name: 'audience', type: 'text', required: true },
     { name: 'free', type: 'checkbox', defaultValue: false },
