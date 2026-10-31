@@ -104,7 +104,9 @@ test('article anchors clear the sticky header and hover feedback has a keyboard 
   expect(await item.evaluate(el => getComputedStyle(el).outlineStyle)).toBe('solid');
   const colours = await page.locator('.chapter').evaluateAll(elements => elements.map(el => getComputedStyle(el).backgroundColor));
   expect(new Set(colours).size).toBeGreaterThanOrEqual(5);
-  expect(await page.locator('.site-footer').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(25, 24, 21)');
+  expect(await page.locator('.header-shell').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(255, 252, 245)');
+  expect(await page.locator('#through-loss').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(245, 235, 213)');
+  expect(await page.locator('.site-footer').evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(233, 220, 191)');
 });
 
 for (const width of [320, 390, 768, 1440, 1920]) {

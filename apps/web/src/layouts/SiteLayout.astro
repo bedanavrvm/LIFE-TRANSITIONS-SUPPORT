@@ -20,7 +20,7 @@ const breadcrumbs: { label: string; href?: string }[] = path === '/' ? [] : [
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} | Life Transitions Support Partners</title><meta name="description" content={description} />
-    <meta name="theme-color" content="#191815" /><meta name="robots" content={demoMode ? 'noindex,nofollow' : 'index,follow'} />
+    <meta name="theme-color" content="#fffcf5" /><meta name="robots" content={demoMode ? 'noindex,nofollow' : 'index,follow'} />
     <link rel="icon" type="image/svg+xml" href="/mark.svg" />
     <link rel="preload" href="/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/lora.woff2" as="font" type="font/woff2" crossorigin />
@@ -41,12 +41,15 @@ const breadcrumbs: { label: string; href?: string }[] = path === '/' ? [] : [
       </details>
     </div></header>
     {breadcrumbs.length > 0 && <div class="breadcrumb-bar"><nav class="breadcrumb wrap" aria-label="Breadcrumb"><ol>{breadcrumbs.map(crumb => <li class:list={{ 'breadcrumb-current': !crumb.href }}>{crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span aria-current="page" title={crumb.label}>{crumb.label}</span>}</li>)}</ol></nav></div>}
+    <div class="site-canvas">
+    <div class="botanical-backdrop" aria-hidden="true"></div>
     <main id="main" tabindex="-1"><slot /></main>
     <footer class="site-footer"><div class="wrap footer-grid">
       <div><a class="footer-brand official-brand-panel" href="/" aria-label="Life Transitions Support Partners home"><img src="/brand/official-logo.jpeg" width="1599" height="1066" loading="lazy" alt="Life Transitions Support Partners. Walking life’s seasons with you." /></a><p class="muted">A nurse-led initiative · Nairobi, Kenya</p></div>
       <div><h2>Find your way</h2><a href="/services">Our services</a><a href="/training">Caregiver training</a><a href="/support?kind=referral">Refer someone</a><a href="/contact">Contact us</a></div>
       <div><h2>Here to listen</h2>{settings.phone && <a href={`tel:${settings.phone.replace(/[^+\d]/g, '')}`}>{settings.phone}</a>}{settings.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}<p>{settings.responseNote || 'Send a request and agree a suitable time to speak with the team.'}</p><a href="/support">Request a callback <CareIcon name="arrow-right" /></a></div>
     </div><div class="wrap footer-bottom"><span>© {new Date().getFullYear()} Life Transitions Support Partners</span><a href="/privacy">Privacy & your information</a></div></footer>
+    </div>
   </body>
   <script>import '../scripts/header'; import '../scripts/page-navigation';</script>
 </html>

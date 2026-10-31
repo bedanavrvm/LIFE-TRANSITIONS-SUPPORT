@@ -1,10 +1,10 @@
 # Research and options
 
-First recorded: 2026-10-26. Last updated: 2026-10-28.
+First recorded: 2026-10-26. Last updated: 2026-10-31.
 
 This document consolidates the substantive brainstorming in the founder's supplied conversation and the subsequent research discussion. It is a structured record, not a verbatim transcript or a final implementation specification.
 
-Current update: Astro/Payload, nurse review before care confirmation and both training formats remain selected. C29–C31 adopt the supplied official logo, gold/cream/black palette, floral decoration, new tagline and expanded service/package content; see [official brand alignment](#official-brand-and-service-alignment). Render remains preferred with recurring cost minimised; final resource sizing remains open. Earlier comparisons are history; use [the decision register](DECISIONS.md) and [MVP plan](MVP_PLAN.md) for current choices and behaviour.
+Current update: Astro/Payload, nurse review before care confirmation and both training formats remain selected. C29–C33 adopt the supplied official logo, gold/cream palette with black ink, light public surfaces, continuous floral background, new tagline and expanded service/package content; see [official brand alignment](#official-brand-and-service-alignment). Render remains preferred with recurring cost minimised; final resource sizing remains open. Earlier comparisons are history; use [the decision register](DECISIONS.md) and [MVP plan](MVP_PLAN.md) for current choices and behaviour.
 
 Use [the decision register](DECISIONS.md) to determine what has been selected. Use [the business brief](BUSINESS_BRIEF.md) for the original service wording. An option described here is not automatically a requirement.
 
@@ -286,8 +286,10 @@ Confirmed **2026-10-28**, C29–C31, after inspection of both supplied images an
 ### Brand assets and composition
 
 - The founder's logo JPEG is copied byte-for-byte to `apps/web/public/brand/official-logo.jpeg`. The compact emblem and favicon use an SVG viewport containing the same original JPEG; no tracing, AI approximation or raster alteration is involved. The full wordmark/tagline remains in light panels on About and the footer. The compact header pairs the emblem with live organisation text, retaining the normal 75px desktop / 72px phone header and allowing text enlargement to grow it as before.
-- Gold, cream and black are supplied brand colour families. The hex values below are adopted web defaults, not sampled or supplied formal brand standards. Use gold selectively, cream for reading, and warm black for navigation/footer and main text. Preserve semantic error styling.
-- `floral-corner.svg` and `floral-divider.svg` are original local vector compositions inspired by the flyer: fine-line flowers, buds, leaves, curling stems and an ornamental centre divider. Corner bouquets use spare desktop gutters in introductions, selected homepage bands and the footer. They are static, non-interactive decoration. Narrow-screen gutters are hidden; the small homepage divider remains in section spacing. Decorative imagery is excluded from the accessibility tree.
+- Gold, cream and black are supplied brand colour families. The hex values below are adopted web defaults, not sampled or supplied formal brand standards. C29 initially used large warm-black navigation, care-banner and footer surfaces. C33 supersedes those after the user found them dark and too strongly contrasted: use pale cream for navigation, light gold for reassurance and champagne for the footer. Warm black remains main text and official-logo artwork. Gold borders, soft shadows and gentle background changes distinguish regions. Navigation/footer hover and focus text use dark gold, not the former light text. Preserve semantic error styling.
+- The first C29 composition used `floral-corner.svg` as isolated bouquets in narrow section gutters. C32 supersedes that placement after the user found it stiff and cut off. The small original `floral-divider.svg` remains in section spacing.
+- C32 uses one continuous background from the page introduction through the footer. `floral-vine.svg` reuses the original vector flowers, buds and leaves along connected curling stems and irregular branches. Matching top/bottom stem positions and tangents let the artwork continue vertically without a broken seam. Left/right vines use different widths, opacity and vertical phase rather than restarting at each section. Their boxes extend behind the composition instead of being squeezed into spare gutters; only the page's horizontal boundary clips them. The top/bottom of the page fade softly.
+- The shared page canvas places section backgrounds below the botanical layer and content above it. Cards, photographs and form panels cover the vines naturally; transparent text areas allow a faint background trace. The fixed section index stays above the footer. The layer is non-interactive, hidden from assistive technology and static, and needs no JavaScript or extra dependency. On phones the vines remain visible at lower opacity with more of their width outside the viewport, without creating horizontal scrolling.
 - Keep Lora headings and DM Sans text, the existing 18–20px body scale, real stock photographs and neutral shadows. Script lettering remains within the supplied logo. No additional dependency, remote image request, animation library or icon font is introduced.
 - The supplied logo's white background remains deliberately enclosed in its logo panel; the surrounding page uses cream. The JPEG limits very large or high-resolution reproduction; replace it with a founder-supplied vector/transparent original when available rather than inventing a replacement.
 
@@ -297,14 +299,16 @@ Confirmed **2026-10-28**, C29–C31, after inspection of both supplied images an
 | Raised surface | #FFFCF5 | Cards, form surfaces, breadcrumbs. |
 | Soft surface | #F0E4C9 | Champagne introductions and context panels. |
 | Warm surface | #E9D9B7 | A deeper alternating band and selected medallions. |
-| Ink | #191815 | Text, navigation, footer, dark care band. |
-| Muted | #635B4E | Supporting text on light surfaces. |
+| Reassurance surface | #F5EBD5 | Light gold care/reassurance section, adopted under C33. |
+| Footer surface | #E9DCBF | Champagne footer, adopted under C33. |
+| Ink | #191815 | Dark text and icon detail; no large black public surfaces under C33. |
+| Muted | #595143 | Supporting text, darkened under C32 for backgrounds with vine strokes. |
 | Accent | #B58A32 | Gold buttons, active navigation, decorative artwork. |
-| Accent ink | #765719 | Gold-brown text on cream, button hover, focus. |
+| Accent ink | #6B4F17 | Gold-brown text, button hover and focus, darkened under C32. |
 | Decorative line | #D9C9A7 | Section and card dividers. |
 | Control border | #8B7A58 | Input and interactive control boundaries. |
 
-Calculated colour pairs: ink on cream 16.46:1; ink on gold 5.62:1; accent ink on cream 6.19:1 and champagne 5.29:1; muted on cream 6.21:1; control border on cream 3.88:1 and champagne 3.31:1. Bright gold on cream is only 2.93:1, so it is reserved for decoration rather than informative text or required control boundaries. Button hover swaps to dark gold with cream text; the background/text change is immediate so a colour transition does not briefly create cream text on bright gold.
+Calculated unchanged pairs: ink on cream 16.46:1; ink on gold 5.62:1; control border on cream 3.88:1 and champagne 3.31:1. Under C32, supporting text and accent ink are darker so a conservative 21% gold composite over the darkest light surface (#E9D9B7) still measures 4.80:1 and 4.67:1 respectively. This bound covers the overlapping low-opacity mobile layers; desktop side layers do not overlap. Bright gold on cream is only 2.93:1, so it is reserved for decoration rather than informative text or required control boundaries. Button hover swaps to dark gold with cream text; the background/text change is immediate so a colour transition does not briefly create cream text on bright gold.
 
 Primary accessibility references checked **2026-10-28**: [W3C text contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) specifies 4.5:1 for ordinary text; [W3C non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html) specifies 3:1 for necessary control/state cues. These measured pairs and browser checks do not establish whole-site accessibility.
 

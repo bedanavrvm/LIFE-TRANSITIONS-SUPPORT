@@ -17,7 +17,7 @@ test('official assets and tagline replace the temporary brand without distorting
   expect(Buffer.from(embedded, 'base64').equals(await fullLogo.body())).toBe(true);
   await page.goto('/');
   await expect(page.locator('.brand-tagline')).toHaveText('Walking life’s seasons with you.');
-  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#191815');
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#fffcf5');
   expect(await page.locator('.brand-mark').evaluate(image => image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0)).toBe(true);
   await page.goto('/about');
   await expect(page.locator('.article-copy')).toContainText("No one should navigate life's transitions alone.");
@@ -32,7 +32,7 @@ test('official assets and tagline replace the temporary brand without distorting
 
 test('rendered brand text, button states and form boundaries retain sufficient contrast', async ({ page }) => {
   await page.goto('/');
-  for (const selector of ['.header-shell', '.hero-copy .brand-tagline', '.site-footer']) {
+  for (const selector of ['.header-shell', '.hero-copy .brand-tagline', '.care-banner', '.care-banner p', '.care-banner .eyebrow', '.site-footer', '.site-footer .muted', '.footer-bottom']) {
     const colours = await page.locator(selector).evaluate(element => {
       let background = element;
       while (getComputedStyle(background).backgroundColor === 'rgba(0, 0, 0, 0)' && background.parentElement) background = background.parentElement;
@@ -40,12 +40,16 @@ test('rendered brand text, button states and form boundaries retain sufficient c
     });
     expect(contrast(...colours as [string, string]), selector).toBeGreaterThanOrEqual(4.5);
   }
-  for (const selector of ['.hero .button', '.header-cta']) {
+  for (const selector of ['.hero .button', '.header-cta', '.desktop-nav a:first-child', '.site-footer a[href="/services"]']) {
     const button = page.locator(selector);
     for (const state of ['rest', 'hover', 'focus']) {
       if (state === 'hover') await button.hover();
       if (state === 'focus') await button.focus();
-      const colours = await button.evaluate(element => [getComputedStyle(element).color, getComputedStyle(element).backgroundColor]);
+      const colours = await button.evaluate(element => {
+        let background = element;
+        while (getComputedStyle(background).backgroundColor === 'rgba(0, 0, 0, 0)' && background.parentElement) background = background.parentElement;
+        return [getComputedStyle(element).color, getComputedStyle(background).backgroundColor];
+      });
       expect(contrast(...colours as [string, string]), `${selector} ${state}`).toBeGreaterThanOrEqual(4.5);
     }
   }
@@ -57,24 +61,46 @@ test('rendered brand text, button states and form boundaries retain sufficient c
   await page.locator('.mobile-support').focus();
   const colours = await page.locator('.mobile-support').evaluate(element => [getComputedStyle(element).color, getComputedStyle(element).backgroundColor]);
   expect(contrast(...colours as [string, string])).toBeGreaterThanOrEqual(4.5);
+  const decoratedText = await page.evaluate(() => {
+    const tokens = getComputedStyle(document.documentElement);
+    const channels = (token: string) => tokens.getPropertyValue(token).trim().slice(1).match(/../g)!.map(channel => parseInt(channel, 16));
+    const gold = channels('--accent');
+    const background = channels('--surface-warm').map((channel, index) => channel * .79 + gold[index] * .21);
+    return ['--muted', '--accent-ink'].map(token => [`rgb(${channels(token).join(',')})`, `rgb(${background.join(',')})`]);
+  });
+  for (const pair of decoratedText) expect(contrast(...pair as [string, string])).toBeGreaterThanOrEqual(4.5);
 });
 
-test('floral decoration stays outside interactions and disappears from narrow gutters', async ({ page }) => {
-  await page.setViewportSize({ width: 1920, height: 1000 });
-  await page.goto('/');
-  const decoration = await page.locator('.introduction').evaluate(element => {
-    const style = getComputedStyle(element, '::before');
-    return { image: style.backgroundImage, pointer: style.pointerEvents, width: parseFloat(style.width), animation: style.animationName };
-  });
-  expect(decoration.image).toContain('/brand/floral-corner.svg');
-  expect(decoration.pointer).toBe('none');
-  expect(decoration.width).toBeGreaterThan(0);
-  expect(decoration.animation).toBe('none');
-  await expect(page.locator('.chapter-flourish')).toHaveAttribute('aria-hidden', 'true');
-  await page.setViewportSize({ width: 390, height: 844 });
-  expect(await page.locator('.introduction').evaluate(element => getComputedStyle(element, '::before').display)).toBe('none');
-  await expect(page.locator('.chapter-flourish')).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+test('continuous vines cover the page through the footer behind content, including narrow screens', async ({ page }) => {
+  for (const width of [320, 390, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 1000 });
+    for (const route of ['/', '/services', '/privacy', '/support']) {
+      await page.goto(route);
+      const backdrop = page.locator('.botanical-backdrop');
+      await expect(backdrop).toHaveCount(1);
+      await expect(backdrop).toHaveAttribute('aria-hidden', 'true');
+      const bounds = await backdrop.boundingBox();
+      const footer = await page.locator('.site-footer').boundingBox();
+      const main = await page.locator('main').boundingBox();
+      expect(bounds!.y).toBeLessThanOrEqual(main!.y);
+      expect(Math.abs(bounds!.y + bounds!.height - footer!.y - footer!.height)).toBeLessThan(1);
+      const decoration = await backdrop.evaluate(element => {
+        const style = getComputedStyle(element, '::before');
+        return { image: style.backgroundImage, repeat: style.backgroundRepeat, pointer: style.pointerEvents, width: parseFloat(style.width), animation: style.animationName, layer: Number(getComputedStyle(element).zIndex) };
+      });
+      expect(decoration.image).toContain('/brand/floral-vine.svg');
+      expect(decoration.repeat).toBe('repeat-y');
+      expect(decoration.pointer).toBe('none');
+      expect(decoration.width).toBeGreaterThanOrEqual(300);
+      expect(decoration.animation).toBe('none');
+      const contentLayer = await page.locator('main .wrap').first().evaluate(element => Number(getComputedStyle(element).zIndex));
+      expect(contentLayer).toBeGreaterThan(decoration.layer);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+  }
+  await page.goto('/services');
+  await page.locator('.service-card').first().getByRole('link').click({ position: { x: 20, y: 20 } });
+  await expect(page).toHaveURL(/\/services\/psychological-support$/);
 });
 
 test('services and signature packages are separate and all new pages retain their enquiry context without JavaScript', async ({ browser }) => {

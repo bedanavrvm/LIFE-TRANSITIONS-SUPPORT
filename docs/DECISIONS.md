@@ -1,6 +1,6 @@
 # Decisions and open questions
 
-First recorded: 2026-10-26. Last updated: 2026-10-28.
+First recorded: 2026-10-26. Last updated: 2026-10-31.
 
 This register is the authority for project decision status. The earlier pasted conversation has no known original date; entries imported from it use the recording date, not an invented decision date.
 
@@ -58,8 +58,10 @@ Research verification is a separate issue: an externally supported fact can info
 | C29 | Use the supplied official logo, gold/cream/black colour families and floral edge decoration inspired by the flyer. | The user supplied two images, requested an alignment plan and authorised its implementation. | Replace the temporary leaf mark and green/terracotta palette throughout the public website. Preserve the exact supplied logo artwork. Hex values and responsive placements are adopted web-design defaults, not supplied brand standards. |
 | C30 | Adopt "Walking life’s seasons with you." as the brand tagline. | The user selected "Adopt logo tagline". | Retain "No one should navigate life's transitions alone." as supporting mission copy and preserve the original brief verbatim. This supersedes only C01's former tagline placement. |
 | C31 | Include the flyer service information and dedicated editable pages for all three signature packages. | The user selected "Brand and service content", "Dedicated package pages" and "Enquiry-based wording", then authorised implementation. | Preserve the original six service routes, add community home visits, and separate services from packages using the existing Payload services collection. Publish only clear supplied details, with enquiry wording for undefined packages; no anonymity, availability or outcome promises. See the [brief addendum](BUSINESS_BRIEF.md#official-brand-and-flyer-addendum--2026-10-28). |
+| C32 | Make the floral decoration a continuous background that grows around and behind page elements. | The user found the isolated corner motifs stiff, predictable and cut off, and requested vines/flowers extending through whole pages. | Replace section/gutter-bound bouquets with connected, asymmetrically scaled and offset vine artwork spanning the introduction, main content and footer. Keep content, cards and controls in front; retain a quieter mobile treatment and readable contrast. Supersedes C29's original fixed-corner placement, not the logo or colour direction. |
+| C33 | Use light, friendly surfaces throughout the public website. | On 2026-10-31 the user rejected the black header and sections because they felt like dark mode and contrasted too strongly with the lighter content. | Use a pale-cream header, light gold reassurance section and champagne footer. Retain section distinction through gentle tonal changes, gold rules and soft shadows. Black remains ink and part of the official logo; C29's large black surfaces are superseded. Preserve the continuous vines, compact directional header and reading navigation. |
 
-The colour portions of C12, C15 and C24 are superseded by C29. Their readability, layout, photography and navigation behaviour remain. C23's package icons and C26's manual training showcase remain in use; the temporary branding and gutter artwork are replaced.
+The colour portions of C12, C15 and C24 are superseded by C29 and C33. Their readability, layout, photography and navigation behaviour remain. C23's package icons and C26's manual training showcase remain in use; the temporary branding and gutter artwork are replaced.
 
 ## Delegated default
 
@@ -121,7 +123,7 @@ Earlier inaccurate technical claims, including a compulsory separate Astro backe
 | O09 | Training | Define each curriculum, prerequisites, duration, practical competency assessment, instructors, dates, delivery format, capacity, price, and the status of any certificate. |
 | O10 | Referral network and support groups | Establish partners, vetting criteria, eligibility, costs, consent to sharing, feedback, and follow-up. Linking clients to groups does not itself require a website forum. |
 | O11 | Privacy and regulatory review | Confirm the organisation's legal form, actual activities, ODPC classification/registration, health-data obligations, any impact assessment needs, and relevant professional requirements. |
-| O12 | Brand and imagery | C29?C31 confirm the supplied official logo, gold/cream/black direction, new tagline and flyer content. Higher-quality source artwork, consented organisation photography, clinical/operating verification and founder review of the finished presentation remain open. |
+| O12 | Brand and imagery | C29–C33 confirm the supplied official logo, gold/cream with black ink, light public surfaces, new tagline, flyer content and continuous floral background. Higher-quality source artwork, consented organisation photography, clinical/operating verification and founder review of the finished presentation remain open. |
 | O13 | Languages and accessibility | Decide whether English and Kiswahili are required at launch, who maintains translations, and whether additional contrast/theme options are needed. Agree acceptance checks for the proposed accessibility target. |
 | O14 | Content ownership | Identify who drafts, clinically reviews, publishes, and updates service information, resources, training dates, and staff profiles. Confirm permission for any stories or testimonials. |
 | O15 | Response and availability | Establish published hours and realistic callback/WhatsApp response expectations. Clarify emergency boundaries without implying a 24-hour or crisis service. |
