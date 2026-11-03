@@ -1,6 +1,6 @@
 import type { Course, Service, SiteSettings } from '@ltsp/shared';
 
-export const cmsURL = process.env.CMS_URL || 'http://127.0.0.1:3000';
+export const cmsURL = process.env.CMS_INTERNAL_URL || process.env.CMS_URL || 'http://127.0.0.1:3000';
 export const demoMode = process.env.DEMO_MODE !== 'false';
 export async function cms<T>(pathname: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${cmsURL}/api/${pathname}`, { ...init, signal: AbortSignal.timeout(10000), cache: 'no-store' });

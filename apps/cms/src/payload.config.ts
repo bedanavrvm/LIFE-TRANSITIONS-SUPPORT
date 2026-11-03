@@ -2,10 +2,14 @@ import { randomUUID, timingSafeEqual } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
+import { postgresAdapter } from '@payloadcms/db-postgres';
 import { APIError, buildConfig, type Access, type CollectionConfig, type PayloadRequest } from 'payload';
 import { requestSchema, safeCheckoutUrl } from '@ltsp/shared';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
+const databaseURI = process.env.DATABASE_URI || process.env.DATABASE_URL;
+const usePostgres = /^postgres(ql)?:\/\//.test(databaseURI || '');
+if (process.env.RENDER === 'true' && !usePostgres) throw new Error('Render requires a PostgreSQL DATABASE_URL or DATABASE_URI; local SQLite is not persistent there.');
 const isAdmin: Access = ({ req }) => req.user?.role === 'admin';
 const isCare: Access = ({ req }) => ['admin', 'care-team'].includes(String(req.user?.role));
 const isEditor: Access = ({ req }) => ['admin', 'care-team', 'editor'].includes(String(req.user?.role));
@@ -19,7 +23,7 @@ const internal = (req: PayloadRequest) => {
 
 const Users: CollectionConfig = {
   slug: 'users', auth: true, admin: { useAsTitle: 'email', group: 'Administration' },
-  endpoints: [{ path: '/first-register', method: 'post', handler: () => Response.json({ error: 'Create the first administrator locally with npm run admin.' }, { status: 403 }) }],
+  endpoints: [{ path: '/first-register', method: 'post', handler: () => Response.json({ error: 'Create the first administrator with npm run admin.' }, { status: 403 }) }],
   access: { create: isAdmin, read: ({ req }) => req.user?.role === 'admin' ? true : req.user ? { id: { equals: req.user.id } } : false, update: isAdmin, delete: isAdmin, admin: ({ req }) => Boolean(req.user) },
   fields: [
     { name: 'name', type: 'text', required: true },
@@ -122,15 +126,20 @@ const Payments: CollectionConfig = {
   }], beforeChange: [({ data }) => ({ ...data, publicUrl: `${process.env.WEB_URL}/payment/${data.reference}` })] },
 };
 
-if (!process.env.PAYLOAD_SECRET || process.env.PAYLOAD_SECRET.length < 32) throw new Error('Run npm run setup and provide a PAYLOAD_SECRET of at least 32 characters.');
+if (!process.env.PAYLOAD_SECRET || process.env.PAYLOAD_SECRET.length < 32) throw new Error('Provide a PAYLOAD_SECRET of at least 32 characters (npm run setup creates a local development secret).');
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET,
   graphQL: { disable: true },
   email: () => ({ name: 'local-disabled', defaultFromAddress: 'no-reply@example.test', defaultFromName: 'Life Transitions local preview', sendEmail: async () => { console.info('Email delivery is disabled in local preview; no message content was logged.'); } }),
-  serverURL: process.env.CMS_URL || 'http://127.0.0.1:3000',
+  serverURL: process.env.CMS_URL || process.env.WEB_URL || 'http://127.0.0.1:3000',
   admin: { user: 'users', importMap: { baseDir: directory }, meta: { titleSuffix: ' | Life Transitions' } },
-  db: sqliteAdapter({ client: { url: process.env.DATABASE_URI || `file:${path.resolve(directory, '../../../data/development.sqlite').replaceAll('\\', '/')}` } }),
+  db: usePostgres ? postgresAdapter({
+    pool: { connectionString: databaseURI, max: 5, connectionTimeoutMillis: 15000, idleTimeoutMillis: 30000 },
+    disableCreateDatabase: true,
+    push: false,
+    migrationDir: path.resolve(directory, 'migrations/postgres'),
+  }) : sqliteAdapter({ client: { url: databaseURI || `file:${path.resolve(directory, '../../../data/development.sqlite').replaceAll('\\', '/')}` } }),
   typescript: { autoGenerate: false },
   collections: [Users, Services, Courses, Requests, Appointments, Payments],
   globals: [{ slug: 'site-settings', access: { read: () => true, update: isEditor }, fields: [

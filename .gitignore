@@ -12,3 +12,4 @@ apps/web/dist/
 playwright-report/
 test-results/
 *.log
+.neon

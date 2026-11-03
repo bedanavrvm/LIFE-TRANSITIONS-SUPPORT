@@ -4,6 +4,7 @@ import { courseSeed, serviceSeed } from '@ltsp/shared';
 
 // A one-shot seed must exit even when the development CMS is running.
 process.env.DISABLE_PAYLOAD_HMR = 'true';
+if (process.env.RENDER === 'true' && process.env.LTSP_TEST_MODE === 'true') throw new Error('Synthetic test credentials must not be seeded on Render.');
 const payload = await getPayload({ config });
 for (const [collection, records] of [['services', serviceSeed], ['courses', courseSeed]] as const) {
   for (const record of records) {
@@ -16,3 +17,5 @@ if (process.env.LTSP_TEST_MODE === 'true') {
   await payload.create({ collection: 'users', data: { name: 'Test administrator', email: 'admin@example.test', password: 'Synthetic-test-passphrase-2026', role: 'admin' } });
 }
 await payload.destroy();
+// Payload's PostgreSQL adapter retains pool handles after destroy; all writes above are awaited.
+process.exit(0);

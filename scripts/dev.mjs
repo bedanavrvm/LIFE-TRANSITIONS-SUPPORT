@@ -1,9 +1,10 @@
 import { spawn } from 'node:child_process';
 import { loadEnvFile } from 'node:process';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import './setup.mjs';
 
+if (existsSync('.env.local')) loadEnvFile('.env.local');
 loadEnvFile('.env');
 const testMode = process.argv.includes('--test');
 if (testMode) {

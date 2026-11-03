@@ -8,9 +8,16 @@
   ],
   "scripts": {
     "setup": "node scripts/setup.mjs",
-    "admin": "node --env-file=.env --import tsx scripts/create-admin.ts",
+    "admin": "node --env-file-if-exists=.env --env-file-if-exists=.env.local --import tsx scripts/create-admin.ts",
     "dev": "node scripts/dev.mjs",
-    "seed": "node --env-file=.env --import tsx scripts/seed.ts",
+    "seed": "node --env-file-if-exists=.env --env-file-if-exists=.env.local --import tsx scripts/seed.ts",
+    "start": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/start.mjs",
+    "payload": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/payload.mjs",
+    "test:deployment": "node --test tests/deployment.test.mjs",
+    "test:bootstrap": "node --test tests/bootstrap.test.mjs",
+    "test:build-env": "node --test tests/build-env.test.mjs",
+    "test:deployment:integration": "node tests/deployment-integration.mjs",
+    "smoke:deployment": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/smoke-deployment.mjs",
     "check": "npm run check --workspace @ltsp/cms && npm run check --workspace @ltsp/web",
     "build": "npm run build --workspace @ltsp/cms && npm run build --workspace @ltsp/web",
     "test": "playwright test",
@@ -25,5 +32,9 @@
     "node": "24.22.1",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
+  },
+  "dependencies": {
+    "@neon/config": "^1.10.0",
+    "@neon/env": "^1.6.8"
   }
 }

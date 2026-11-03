@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: life-transitions-support
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run check && npm run build
+    startCommand: npm run payload -- migrate && npm run seed && npm run admin && exec node scripts/start.mjs
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: WEB_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_URL_UNPOOLED
+        sync: false
+      - key: PAYLOAD_SECRET
+        generateValue: true
+      - key: INTERNAL_API_KEY
+        generateValue: true
+      - key: INITIAL_ADMIN_EMAIL
+        sync: false
+      - key: INITIAL_ADMIN_PASSWORD
+        generateValue: true
+      - key: DEMO_MODE
+        value: "true"

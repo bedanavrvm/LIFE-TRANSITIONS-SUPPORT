@@ -1,7 +1,9 @@
 import { spawn } from 'node:child_process';
 import { loadEnvFile } from 'node:process';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 
+if (existsSync('.env.local')) loadEnvFile('.env.local');
 loadEnvFile('.env');
 const website = new URL(process.env.WEB_URL || 'http://127.0.0.1:4321');
 const formHeaders = { Origin: website.origin, 'X-Forwarded-Host': website.host, 'X-Forwarded-Proto': website.protocol.slice(0, -1), 'Content-Type': 'application/x-www-form-urlencoded' };

@@ -1,10 +1,10 @@
 # Research and options
 
-First recorded: 2026-10-26. Last updated: 2026-10-31.
+First recorded: 2026-10-26. Last updated: 2026-11-02.
 
 This document consolidates the substantive brainstorming in the founder's supplied conversation and the subsequent research discussion. It is a structured record, not a verbatim transcript or a final implementation specification.
 
-Current update: Astro/Payload, nurse review before care confirmation and both training formats remain selected. C29–C33 adopt the supplied official logo, gold/cream palette with black ink, light public surfaces, continuous floral background, new tagline and expanded service/package content; see [official brand alignment](#official-brand-and-service-alignment). Render remains preferred with recurring cost minimised; final resource sizing remains open. Earlier comparisons are history; use [the decision register](DECISIONS.md) and [MVP plan](MVP_PLAN.md) for current choices and behaviour.
+Current update: C36 reverts the entire C34/C35 floral-kit experiment after the user found it rigid and rejected the rose spray, borders and torn-paper treatment. The public website returns to the C32 flowing vines and C33 light cream/gold surfaces, with the official logo, tagline and established services. Astro/Payload and the care/training workflows remain selected. Render remains preferred with recurring cost minimised; final resource sizing remains open. The kit discussion below is superseded history, not current implementation guidance.
 
 Use [the decision register](DECISIONS.md) to determine what has been selected. Use [the business brief](BUSINESS_BRIEF.md) for the original service wording. An option described here is not automatically a requirement.
 
@@ -285,6 +285,8 @@ Confirmed **2026-10-28**, C29–C31, after inspection of both supplied images an
 
 ### Brand assets and composition
 
+**Current decoration:** C36 restores the C32 flowing vines and C33 light surfaces described below. The [C34/C35 kit experiment](#floral-kit-placement-and-motion) is superseded history.
+
 - The founder's logo JPEG is copied byte-for-byte to `apps/web/public/brand/official-logo.jpeg`. The compact emblem and favicon use an SVG viewport containing the same original JPEG; no tracing, AI approximation or raster alteration is involved. The full wordmark/tagline remains in light panels on About and the footer. The compact header pairs the emblem with live organisation text, retaining the normal 75px desktop / 72px phone header and allowing text enlargement to grow it as before.
 - Gold, cream and black are supplied brand colour families. The hex values below are adopted web defaults, not sampled or supplied formal brand standards. C29 initially used large warm-black navigation, care-banner and footer surfaces. C33 supersedes those after the user found them dark and too strongly contrasted: use pale cream for navigation, light gold for reassurance and champagne for the footer. Warm black remains main text and official-logo artwork. Gold borders, soft shadows and gentle background changes distinguish regions. Navigation/footer hover and focus text use dark gold, not the former light text. Preserve semantic error styling.
 - The first C29 composition used `floral-corner.svg` as isolated bouquets in narrow section gutters. C32 supersedes that placement after the user found it stiff and cut off. The small original `floral-divider.svg` remains in section spacing.
@@ -321,6 +323,45 @@ The [business brief addendum](BUSINESS_BRIEF.md#official-brand-and-flyer-addendu
 - Services remain one public Payload collection. Its optional `category` select defaults to `service`, with `package` as the other value. Legacy missing categories are treated as services. The listing separates seven services from three packages, in their CMS order; record detail URLs and service-prefilled enquiries use the existing mechanisms. Editors can move records between groups without code changes. No new intake field, public endpoint or private-record access is added.
 - Keep spiritual/bereavement support explicitly complimentary, including its original family-therapy wording and the flyer's free Christian/Muslim online prayer support. A package's association with illness or grief does not automatically make it part of that complimentary service.
 - Seed defaults cover fresh installations, while ordinary seeding still only adds missing slugs. Update existing local copy with a backed-up, slug-scoped Payload operation, retaining IDs and unmodified fields. Do not reset the database or broadly overwrite staff edits. Public launch, operational verification, provider integration and hosting changes remain separate.
+
+## Floral kit placement and motion
+
+**Superseded by C36 on 2026-11-02.** The user requested a full revert because the result felt rigid and they disliked the rose spray, borders and torn-paper treatment. The following records the authorised experiment and its rationale; none of its application components, assets or particle effects remain active. The original supplied kit remains untouched; implementation additions are archived under ignored `.test-data/reverted-decor-kit/`.
+
+Originally confirmed 2026-11-02 under C34/C35. Source: the founder-supplied `gold-floral-decor-kit` directory and the placement guide in this conversation. All 20 SVG assets and the four canvas motion modes were reviewed in an isolated Chromium page before selection. Selected assets were copied and adapted locally, without a new package, external font or animation library.
+
+### Composition and page recipes
+
+Reading areas have solid light surfaces and no vines behind paragraphs. The shared canvas now uses 40px margin vines only at 1400px and above, where the 1280px reading composition has at least 60px margins. Corner illustrations scale to available outer space and are hidden when space is inadequate, rather than clipped or allowed to touch text. Normal main frames are thin; photo/card compositions use brackets and package introductions use double outlines. The footer has one quiet repeating vine strip above its content. Title flourishes sit between the title and lead with 24–32px spacing. Topic washes are small introductory accents: rose #F7E8E4, sage #ECF0E5 or indigo #ECEBF5, with one topic hue per page. The existing cream/gold surfaces, black ink, typography, photographs and official logo remain.
+
+| Page | Static recipe | Decorative motion |
+| --- | --- | --- |
+| Home | Rose spray, thin frame, restrained gold corner glow, title flourish and leaf-vine separator. | Six calm gold motes in introductory side margins. |
+| Services | Retain catalogue layout; moon phases above Signature Packages; only Sacred Therapy has a foil-bordered card. | One .8s foil pass on that card's hover/focus. |
+| Sacred Therapy | Olive branch, pale indigo accent, still warm heading glow, double introductory frame. | Six calm gold motes. |
+| Spiritual/bereavement | Olive branch, pale indigo accent, still warm glow, arched introductory panel. | Six calm gold motes. |
+| Heart to Heart / Psychological support | Lotus corner, sage accent, lotus pond beside the service information. Heart to Heart has a double introductory frame. | None. |
+| Letters of Hope | Pressed flower beside the text, double introductory frame, torn-paper transition. | Four drifting dandelion seeds. |
+| Safe baby care | Rose spray/wash and three blooms. | Two butterflies, exclusive to this page. |
+| Childcare foundations / Community home visits | Rose spray/wash and three blooms. | None. |
+| Training / Caregiver education / Caring at home | Tree of life beside the introductory information, laurel details, bracket framing. | None. |
+| About | Tree of life beside the introduction, rose details and quiet flourish. | None. |
+| Contact / Support | Very faint paper grain, restrained brackets and diamond separators outside form fields. | None. |
+| Resources / Privacy / Other services | Quiet brackets, flourish, occasional small section separators. | None. |
+| Thanks | Pressed flower beside the introductory message. | None. |
+| Payment / Error | Plain light composition and minimal decoration. | None. |
+
+Spot illustrations have reserved space, not text overlays. Service pages keep their real photograph; an additional decorative spot sits beside the reading content. No testimonials, memorial stories, certification claims or new service pages are invented. Recipes for wedding, pregnancy/postnatal, certificates and memorial pages remain future guidance.
+
+### Motion and technical boundaries
+
+One decorative effect per page takes precedence over the guide's combined effects: no animated candle, opening line draw, falling blossoms or photo parallax alongside particles. The manual training carousel, functional header direction changes and ordinary hover/focus feedback remain. Decoration is hidden from assistive technology and cannot intercept pointer input.
+
+Ambient motion is confined to the introduction's side margins, with particle sizes bounded to their available width. Two edge canvases share the selected kind, with the stated total count. Motion runs only above 1100px with no reduced-motion preference. An explicit Pause/Resume background animation button reports its pressed state and has reserved space below the introduction. User pause persists through off-screen suspension and preference/viewport changes within the page. Off-screen and hidden-tab render loops stop. Live reduced-motion or narrow-viewport changes destroy the canvases; static ornaments and readable content remain. Without JavaScript, the pause button stays hidden and all content remains available.
+
+The existing frontend presentation module owns page recipes. Unmapped routes remain neutral and still. No CMS fields, public APIs, care records, payment logic or database migrations change. The kit's stock page/frame typography and its global force-motion API are not adopted. Future adaptations must retain explicit pause, automatic suspension and static fallbacks.
+
+Primary accessibility references checked 2026-11-02: [W3C Pause, Stop, Hide](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html) and [reduced-motion technique C39](https://www.w3.org/WAI/WCAG22/Techniques/css/C39). These define design/test targets, not a whole-site accessibility certification. Physical-device, screen-reader and low-end-device performance results must be reported separately.
 
 ## Design systems and components
 
@@ -429,6 +470,12 @@ No framework bundle-size benchmark was run. Fast public pages remain a design go
 
 ### Hosting deployment options
 
+**Neon setup completed, C39 (2026-11-03):** the supplied production branch is authenticated, linked and reconciled through `neon deploy`. The existing Payload/node-postgres pool uses Neon's pooled runtime URL and direct migration URL. Schema and write workflows passed on a temporary schema-only Neon branch before the production migration/public seed and non-writing production smoke. The verification branch was deleted; Render app deployment remains pending. [Full command/database/browser evidence](NEON_SETUP.md) supersedes the earlier statements that Neon setup had not been performed. Driver guidance checked against [Neon connection methods](https://neon.com/docs/connect/choose-connection) and [pooling](https://neon.com/docs/connect/connection-pooling); existing ORM/driver/authentication were retained.
+
+**Render Free correction, C38 (2026-11-03):** the selected single-service Blueprint now uses Free with an ordered startup command for migration, missing-content seed, first-admin bootstrap and app launch. First-admin credentials come from Render environment settings, so no paid pre-deploy feature, Render Shell or manual local seed/admin command is needed. Existing content/accounts/passwords are preserved. The current [setup guide](RENDER_DEPLOYMENT.md) supersedes earlier paid pre-deploy/shell recommendations. Primary sources rechecked: [pre-deploy availability](https://render.com/docs/deploys#pre-deploy-command), [Free sleep and shell limitations](https://render.com/docs/free). Actual Free memory and cloud operation remain unverified.
+
+**Selected implementation, C37 (2026-11-02):** one Render Node service runs Astro and Payload/Next.js through a shared production proxy, with Neon PostgreSQL. Local SQLite remains supported. The launcher, Render Blueprint and initial PostgreSQL migration are implemented; [the deployment guide](RENDER_DEPLOYMENT.md) records setup, bootstrap, boundaries and recovery. No provider resource/deployment is claimed. Earlier multi-service, SQLite-disk and Firebase suggestions remain alternatives/history; instance capacity and actual billing still need verification.
+
 Researched **2026-10-27**; prices in **USD**. **Historical proposal:** deploy Astro SSR and Payload/Next as two Node services, with a separate PostgreSQL database, on one provider. A static-site upload alone cannot run the current server-side enquiries and staff backend. The user subsequently selected Render and prioritised cost in the revision below; resource sizes and public-launch approval remain open.
 
 | Option | Suggested starting arrangement and cost assumptions |
@@ -456,6 +503,12 @@ Researched **2026-10-27**; prices in **USD**. **Historical proposal:** deploy As
 **Recovery and free limits:** Render warns against restoring custom databases from disk snapshots because recovery can be corrupt. Use a SQLite-aware online backup, store copies independently and test restoration; snapshots alone are insufficient. Free web services cannot attach disks, and free Postgres expires after 30 days without backups. [SQLite backup API](https://www.sqlite.org/backup.html), [Render free limits](https://render.com/docs/free).
 
 **Cohosting:** one paid service plus disk has a theoretical $7.25 base, but running Astro and Payload together needs routing/proxying, supervision and combined-memory checks. Render exposes one public HTTP port and explicitly recommends separate services. Do not promise this works within 512MB. [Port binding](https://render.com/docs/web-services#binding-to-multiple-ports), [Render FAQ](https://render.com/docs/faq#can-i-deploy-multiple-apps-to-a-single-render-service).
+
+**Single-service SSR follow-up (2026-11-02, within P13):** the Astro public website and Payload/Next.js can be evaluated in one Render service with Neon as the external database. Astro already powers the webpage; the second application is the Payload/Next.js staff backend. This is a proposed topology, not a selected deployment or measured compatibility result. Rechecked primary sources: [Render's one-public-port constraint](https://render.com/docs/web-services#binding-to-multiple-ports), [Render's recommendation to separate applications](https://render.com/docs/faq#can-i-deploy-multiple-apps-to-a-single-render-service), and [Astro standalone/middleware modes](https://docs.astro.build/en/guides/integrations-guide/node/), accessed 2026-11-02.
+
+One approach preserves both production servers behind a small reverse proxy in one container: forward `/admin`, `/api` and Next assets such as `/_next` to Payload/Next, and public pages including `/support` and `/payment/...` plus Astro assets to Astro. Only the proxy binds to Render's public `PORT`; app listeners can remain internal. Build both workspaces and supervise startup, shutdown and failures together; the current development launcher is not the production entry point. Preserve original host/protocol and reviewed client-address handling, existing form-origin checks and internal API authentication. This retains request-time CMS content and current server-side form/payment behaviour without static publishing automation, subject to routing and deployment verification. Astro middleware is another integration mechanism, but no combined custom server has been designed or validated.
+
+The apps share memory, CPU, restarts and deployments. Render recommends separate services for resource isolation, although its documentation does not establish a blanket prohibition on multiple apps. A larger single instance could cost more than two small instances; do not promise the smallest plan will fit. With Neon, this arrangement needs no SQLite disk, but still requires the PostgreSQL adapter/migrations described below. Benchmark both apps together under public-page requests and authenticated staff editing before selecting capacity. Compared with static Firebase + Render, a combined-service interruption also affects the public pages. No application, container, process configuration, provider account or deployment was changed for this follow-up.
 
 **Practical proposal:** trial the $7.25 sleeping-frontend option for a demo, or $14.25 for always-on; upgrade only if measured memory requires it. A local Windows Payload-only sample used about 137MiB warm RSS on read-only routes, supporting a trial but not proving Render/Linux or authenticated-editor capacity. No cloud deployment, load or backup-restore test has been performed.
 
@@ -487,6 +540,22 @@ These figures reuse the Render prices above, exclude other usage/taxes/domains a
 An all-Vercel deployment is possible but would require replacing the Astro Node adapter and still providing persistent database services. Its Hobby plan is restricted to personal non-commercial use; Pro starts at $20/month plus applicable usage, so a free Hobby deployment is not the proposed business-hosting baseline. [Astro Vercel adapter](https://docs.astro.build/en/guides/integrations-guide/vercel/), [Vercel plans](https://vercel.com/pricing), [Hobby terms](https://vercel.com/docs/plans/hobby). This is an alternative, not a statement that Payload cannot run on Vercel.
 
 Provider documentation and published prices were checked; no cloud account, deployment, load test or restore test was performed. Prices/limits need confirmation in the chosen provider's checkout. Production database migration, environment/start commands and live-intake controls remain implementation work.
+
+#### Firebase Hosting frontend + Render Payload + Neon — 2026-11-02
+
+**Proposal P15, not an implementation or deployment selection:** the user's suggested split is viable. Host a statically built Astro public website on Firebase Hosting, retain Payload/Next.js and operational endpoints on one Render web service, and use Neon PostgreSQL for the database. The earlier two-Render-service arrangement preserves the current server-rendered application; it is not the only valid topology. Render also offers static hosting, so separating static content from server work enables the saving rather than Firebase alone.
+
+**Current source boundary:** `apps/web/astro.config.mjs` selects Node standalone SSR. Public pages fetch Payload content at request time through `src/lib/cms.ts`; `src/pages/support.astro` validates POST submissions and forwards them with a server-only internal key; `src/pages/payment/[reference].astro` retrieves private payment summaries server-side. Firebase Hosting's static file service cannot execute these existing handlers by uploading the current build.
+
+**Recommended low-cost adaptation:** generate public service/training routes at build time from Payload's public feeds; handle intake validation, abuse controls and private payment pages on Render. Preserve progressive enhancement and usable form errors when changing the form destination. Browser requests must not contain the existing internal API key or database credentials: add an explicitly public, validated submission boundary rather than exposing the trusted internal endpoint. Restrict cross-origin browser access where needed, and keep private payment/intake data out of generated HTML and public feeds. Domain and origin handling require review; this is more than changing `output` in Astro's configuration.
+
+**Nurse editing:** retain the Payload editor and trigger a CI build/deploy after public-content changes, with a manual retry path. Updated public content becomes visible after the build/deployment completes. A failed CMS fetch/build should retain the previous published site rather than publish empty fallback content. The public pages can then load without a running Render frontend; form submissions and private pages still depend on Render. Existing visual interactions do not inherently require server rendering.
+
+**Cost and limits:** Firebase Hosting provides CDN delivery and automatic SSL, with no-cost quotas currently including 10GB hosting storage and 10GB/month transfer. On Spark, exceeding transfer allowance can disable the site after a grace period; free hosting is conditional on usage. One paid Render CMS service replaces the two paid app services in the earlier estimate, subject to measured memory requirements and Neon limits. This is a proposal, not a measured capacity or billing result.
+
+**SSR alternative:** the Astro server can instead run in Cloud Run (with Firebase Hosting routing requests to it), or dynamic handlers can use Cloud Functions. These require a billing account/Blaze and introduce a Google server runtime alongside Render. They preserve dynamic capabilities but do not deliver the same static-only operational simplicity. Firebase App Hosting is a separate product; its preconfigured framework support currently lists Next.js and Angular. Do not assume an existing Astro standalone build has automatic App Hosting integration.
+
+Primary sources accessed **2026-11-02**: [Firebase Hosting capabilities](https://firebase.google.com/docs/hosting), [Hosting quotas and overage behaviour](https://firebase.google.com/docs/hosting/usage-quotas-pricing), [Hosting with Functions/Cloud Run and billing requirements](https://firebase.google.com/docs/hosting/serverless-overview), [App Hosting framework support](https://firebase.google.com/docs/app-hosting/frameworks-tooling), [Astro rendering modes](https://docs.astro.build/en/guides/on-demand-rendering/). Architecture recommendations and source-based observations above are our analysis. No application configuration, provider account, deployment or database migration was changed or tested for P15.
 
 ## Intake, booking, payments, and staff workflows
 
