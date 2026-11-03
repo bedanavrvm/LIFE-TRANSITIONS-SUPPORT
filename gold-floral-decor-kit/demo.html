@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Decor kit demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Source+Sans+3:wght@400;500&display=swap">
+<link rel="stylesheet" href="decor.css">
+<style>body{margin:0;background:#EFE9DA;font:400 1rem/1.6 "Source Sans 3",system-ui,sans-serif;color:#2B261D}
+.decor-page{max-width:980px;margin:24px auto}.decor-page .inner{max-width:34rem;margin:auto}
+.decor-page li b{color:#8A641B}</style></head>
+<body>
+<main class="decor-page decor-wash" style="--decor-corner:url(corners/lotus-corner.svg);--decor-divider:url(dividers/moon-phases.svg)">
+  <i class="decor-candle" aria-hidden="true"></i>
+  <i class="decor-corner decor-corner--tl" aria-hidden="true"></i>
+  <i class="decor-corner decor-corner--br" aria-hidden="true"></i>
+  <div class="inner">
+    <h1 class="decor-title">Services Offered</h1>
+    <i class="decor-divider" aria-hidden="true"></i>
+    <h2 class="decor-subhead">Signature Packages:</h2>
+    <ul><li><b>Sacred Therapy</b> and family talks</li><li><b>Heart to Heart Therapy</b> over the phone</li><li><b>Letters of Hope</b></li></ul>
+    <span class="decor-pill">Life Transitions Support Partners</span>
+  </div>
+</main>
+<script src="decor-fall.js"></script>
+<script>DecorFall(document.querySelector('.decor-page'), { kind: 'motes', wind: 'calm' });</script>
+</body></html>
