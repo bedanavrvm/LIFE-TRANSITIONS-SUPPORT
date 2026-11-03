@@ -5,6 +5,7 @@ import { sqliteAdapter } from '@payloadcms/db-sqlite';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { APIError, buildConfig, type Access, type CollectionConfig, type PayloadRequest } from 'payload';
 import { requestSchema, safeCheckoutUrl } from '@ltsp/shared';
+import { requestId, reportFailure, safePayloadLog } from '../../../scripts/observability.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
 const databaseURI = process.env.DATABASE_URI || process.env.DATABASE_URL;
@@ -23,7 +24,7 @@ const internal = (req: PayloadRequest) => {
 
 const Users: CollectionConfig = {
   slug: 'users', auth: true, admin: { useAsTitle: 'email', group: 'Administration' },
-  endpoints: [{ path: '/first-register', method: 'post', handler: () => Response.json({ error: 'Create the first administrator with npm run admin.' }, { status: 403 }) }],
+  endpoints: [{ path: '/first-register', method: 'post', handler: () => { throw new APIError('Public account registration is closed. Configure the administrator in the server environment and redeploy.', 403); } }],
   access: { create: isAdmin, read: ({ req }) => req.user?.role === 'admin' ? true : req.user ? { id: { equals: req.user.id } } : false, update: isAdmin, delete: isAdmin, admin: ({ req }) => Boolean(req.user) },
   fields: [
     { name: 'name', type: 'text', required: true },
@@ -130,6 +131,16 @@ if (!process.env.PAYLOAD_SECRET || process.env.PAYLOAD_SECRET.length < 32) throw
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET,
+  logger: { options: { level: 'info', hooks: { logMethod: safePayloadLog } } },
+  loggingLevels: { ValidationError: 'warn', Forbidden: 'warn', AuthenticationError: 'warn' },
+  hooks: { afterError: [({ error, req, collection, result }) => {
+    const id = requestId(req.headers.get('x-request-id'));
+    const status = error instanceof APIError ? error.status : 500;
+    reportFailure({ event: 'payload_request_failed', id, method: req.method, pathname: collection ? `/api/${collection.slug}` : '/api/other', status, error });
+    req.responseHeaders ??= new Headers();
+    req.responseHeaders.set('X-Request-ID', id);
+    return { status, response: { ...result, requestId: id, ...(status >= 500 ? { errors: [{ message: `We couldn't complete this request. Reference: ${id}` }] } : {}) } };
+  }] },
   graphQL: { disable: true },
   email: () => ({ name: 'local-disabled', defaultFromAddress: 'no-reply@example.test', defaultFromName: 'Life Transitions local preview', sendEmail: async () => { console.info('Email delivery is disabled in local preview; no message content was logged.'); } }),
   serverURL: process.env.CMS_URL || process.env.WEB_URL || 'http://127.0.0.1:3000',

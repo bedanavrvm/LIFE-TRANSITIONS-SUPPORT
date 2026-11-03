@@ -1,6 +1,6 @@
 # One Render service with Neon PostgreSQL
 
-Selected in C37, 2026-11-02; adjusted for Render Free in C38, 2026-11-03. C39 has now connected, migrated, seeded and verified Neon; [the Neon report](NEON_SETUP.md) records that evidence. Render application deployment remains pending. Keep staging synthetic until the [launch prerequisites](MVP_PLAN.md#launch-prerequisites-still-open) are resolved.
+Selected in C37, 2026-11-02; adjusted for Render Free in C38, 2026-11-03. C39 connected, migrated, seeded and verified Neon; [the Neon report](NEON_SETUP.md) records that evidence. On 2026-11-03 the user reported that the Render application is live; its URL and dashboard have not been independently checked. C40 adds environment-managed administrator credentials and runtime error reporting. Deployment alone does not resolve the [launch prerequisites](MVP_PLAN.md#launch-prerequisites-still-open).
 
 ## Architecture
 
@@ -18,7 +18,7 @@ The launcher admits traffic only after successful CMS/public-page startup checks
 
 ## 1. Create Neon
 
-The supplied Neon project is connected under C39; do not create a duplicate. Its `production` branch currently has only schema/public defaults and no client/staff test records. For a different staging environment, use an isolated branch/database. Supply its pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED` to Render from the private env file, retaining TLS parameters. Do not commit or paste connection strings into chat.
+The supplied Neon project is connected under C39; do not create a duplicate. The C39 verification found only schema/public defaults and no client/staff test records; the subsequently deployed application may have added records. For a different staging environment, use an isolated branch/database. Supply its pooled `DATABASE_URL` and direct `DATABASE_URL_UNPOOLED` to Render from the private env file, retaining TLS parameters. Do not commit or paste connection strings into chat.
 
 Payload allows five pool connections per process and disables automatic schema push/database creation. The database must already exist. The committed migration creates an empty schema; it does not convert SQLite data. Seeding adds missing public defaults without overwriting edits. Existing local content, staff and private records require a separate reviewed transfer if they need to be retained.
 
@@ -35,7 +35,7 @@ Push the reviewed source to the repository connected to Render, excluding `.env`
 | Node version | `24.22.1` |
 | Compute | Free for preview; measure both apps together |
 
-The Blueprint declares one Free service and no Render database/disk. No pre-deploy field is required. Startup applies pending migrations, seeds missing public services/training, creates the first administrator if needed, then starts the apps. `&&` stops the sequence on failure. Applied migrations are skipped, edited content is preserved, and existing accounts/passwords are never replaced. Keep schema changes backwards-compatible with any old version still serving during deployment handover.
+The Blueprint declares one Free service and no Render database/disk. No pre-deploy field is required. Startup applies pending migrations, seeds missing public services/training, configures administrator access, then starts the apps. `&&` stops the sequence on failure. Applied migrations are skipped and edited content is preserved. `INITIAL_ADMIN_*` creates only the first account; optional `SUPERUSER_*` updates only the matching administrator as described below. Keep schema changes backwards-compatible with any old version still serving during deployment handover.
 
 After bootstrap succeeds, `exec` replaces the startup shell with Node so shutdown signals reach the supervisor. `npm start` remains the local command that also loads an optional `.env`; it does not automatically migrate the database. Free services sleep after 15 idle minutes and can take about a minute to wake, plus bootstrap/application startup. They have no Render Shell/SSH or one-off jobs; the setup below uses the dashboard only. Free-tier limits and unmeasured memory make this a preview arrangement; Neon data persists independently of Render's ephemeral filesystem.
 
@@ -52,9 +52,12 @@ After bootstrap succeeds, `exec` replaces the startup shell with Node so shutdow
 | `INITIAL_ADMIN_EMAIL` | Email to use for the first administrator |
 | `INITIAL_ADMIN_PASSWORD` | Unique password, at least 12 characters; required only before the first account exists |
 | `INITIAL_ADMIN_NAME` | Optional; defaults to `Website administrator` |
+| `SUPERUSER_EMAIL` | Optional managed administrator email; use with `SUPERUSER_PASSWORD` |
+| `SUPERUSER_PASSWORD` | Unique password, at least 12 characters; applied to that administrator on startup |
+| `SUPERUSER_NAME` | Optional managed administrator display name; email remains the sign-in identifier |
 | `DEMO_MODE` | `true` during synthetic staging |
 
-The Blueprint generates the application secrets and initial administrator password, and asks for the initial email. For a manually created service, enter those values in Render's **Environment** tab. Retrieve the generated initial password there when signing in. After the first successful login, remove `INITIAL_ADMIN_PASSWORD` from Render's environment and save; existing accounts let later restarts skip bootstrap. Changing bootstrap variables does not reset an existing password. Public signup remains closed. Render supplies `PORT` and `RENDER=true`. Leave the app ports at their defaults. Do not set `HOST` to localhost on Render or enable `LTSP_TEST_MODE` there.
+The Blueprint generates the application secrets and initial administrator password, and asks for the initial email. For a manually created service, enter those values in Render's **Environment** tab. Retrieve the generated initial password there when signing in. With create-once `INITIAL_ADMIN_*` settings, remove `INITIAL_ADMIN_PASSWORD` after the first successful login; changing those settings does not reset an existing password. For the user's selected managed-account behaviour, use the `SUPERUSER_*` settings below. Public signup remains closed. Render supplies `PORT` and `RENDER=true`. Leave the app ports at their defaults. Do not set `HOST` to localhost on Render or enable `LTSP_TEST_MODE` there.
 
 Use the final Render hostname shown in the dashboard as `WEB_URL` before the first successful build. If necessary, save it after service creation and redeploy. Astro compiles the hostname into its allowlist: changing to a custom domain requires updating `WEB_URL` **and rebuilding**. Other hosts receive 421; `/healthz` remains available to health probes. Use one canonical hostname.
 
@@ -62,14 +65,50 @@ The launcher derives public `CMS_URL` from `WEB_URL` and sets private `CMS_INTER
 
 Legacy `DATABASE_URI` remains supported and takes precedence. Remove an obsolete value if configuring the Neon variables above; local tests deliberately use that override to remain isolated. Neon CLI writes `.env` if it exists, otherwise `.env.local`; application commands load either file.
 
+### Managed administrator credentials
+
+In Render **Environment**, set the following keys privately, then save and redeploy the revision containing C40. Local development can use the same keys in ignored `.env`/`.env.local`, followed by `npm run admin`; local `npm start` does not run bootstrap itself.
+
+```dotenv
+SUPERUSER_EMAIL=administrator@example.com
+SUPERUSER_PASSWORD=replace-with-a-unique-password-of-at-least-12-characters
+SUPERUSER_NAME=Website administrator
+```
+
+Use your actual administrator email and a unique password; the values above are examples. Do not upload the local env file or share credentials in chat. Both email and password are required when managed mode is enabled. `SUPERUSER_*` takes precedence over `INITIAL_ADMIN_*`.
+
+Startup creates that administrator if absent, or updates the administrator with the matching email. It never changes other staff accounts. An email belonging to a non-admin stops bootstrap rather than silently promoting that person. Changing the email creates another administrator; it does not rename or delete the previous account. Removing these variables leaves the account in place.
+
+Unchanged settings preserve the existing password hash. Changing the configured password or display name applies at the next bootstrap. A password changed manually in Payload is restored to the env value at the next bootstrap, so rotate a managed password through Render's Environment settings. Only keyed fingerprints are stored for change detection; plaintext passwords are not stored in that bookkeeping or printed in logs. `SUPERUSER_NAME` is a display name, not a separate login username. Sign in with email at `/admin/login`.
+
 ## 4. Initialise and verify
 
 1. Enter the environment values above and deploy from Render's dashboard. The start command automatically migrates, seeds and bootstraps the first administrator. Missing/invalid initial credentials on an empty database stop startup with a configuration message; they never open public registration or create default test credentials.
 2. In Render's **Logs**, confirm migration completion, seed readiness and administrator creation or the existing-account message. Any failure blocks application startup. Never use reset/fresh/down commands as a routine deployment fix.
-3. Open `WEB_URL/admin/login` and sign in with the configured initial email/password. Remove the initial password environment variable after confirming access. Manage later accounts through Payload and check that editors cannot access care/payment records.
+3. Open `WEB_URL/admin/login` and sign in with the configured email/password. Remove the initial password only when using create-once `INITIAL_ADMIN_*`; retain `SUPERUSER_*` to keep managing that account. Manage later accounts through Payload and check that editors cannot access care/payment records.
 4. Browse services/training, make a synthetic enquiry and find it in the staff interface. Edit a service, redeploy and confirm the edit persists. Seeding only fills missing default entries and must not overwrite the edited value.
 
 These setup steps require no terminal or Render Shell. Developers can additionally run `npm run smoke:deployment` for automated routing, validation and anonymous-access checks without creating records. Email delivery/password recovery is still disabled. `DEMO_MODE=true` disables public checkout but **still stores enquiries**. Keep staging private and synthetic until live-intake permissions, retention, email delivery and operational/security reviews are complete.
+
+## Runtime logs and user-creation errors
+
+Open the Render dashboard, select this **Web Service**, then **Logs**. Choose **Live tail**, clear search/level filters, reproduce the problem and inspect the new lines. Build/deploy output is separate from the runtime log view. Application logging here uses stdout/stderr and needs no additional logging service. Render's provider-generated HTTP request logs require a Pro workspace or higher; our application error events do not depend on that feature. See [Render's logging guide](https://render.com/docs/logging), checked 2026-11-03.
+
+Search for these event names or a request ID:
+
+| Event | Meaning |
+| --- | --- |
+| `superuser_configuration_failed` | Managed credentials are missing/invalid or collide with a non-admin account; bootstrap stops. |
+| `payload_request_failed` | Payload handled a failed API request, including permission and validation failures. |
+| `http_request_failed` | The combined proxy completed an HTTP 4xx/5xx response. |
+| `admin_server_action_failed` | A staff-interface server action threw an exception. |
+| `payload_error` | A Payload error was sanitised before its logger wrote it. |
+
+The response's `X-Request-ID` header links a failed request to runtime events. Payload error JSON also includes `requestId`; unexpected server-error messages include that reference. In browser developer tools, find the failed Network request and read its response headers/JSON. Share only the reference and safe error text, not cookies, authentication headers or request bodies. Validation/permission failures are recorded at warning level, so an error-only filter can hide them.
+
+Logs retain method, a general route label, status, error class, safe database codes/constraint names, validation field names and source locations. They omit request bodies, passwords, tokens, SQL/parameters, raw error messages and care details. Logging is diagnostic metadata, not an audit trail of private records. The supervisor forwards both child servers' stdout/stderr to Render. Keep `DISABLE_LOGGING` unset; do not enable verbose body/query logging to investigate a client issue.
+
+One reproduced cause of the generic unknown-error message was the closed `/api/users/first-register` endpoint returning `{error: ...}`. Payload's form expects its standard error shape; over HTTP/2 the empty status text left the UI with no message. The endpoint now throws Payload's `APIError`, so the UI explains that public registration is closed and administrator access must be configured in the environment. Signed-in administrators can still create staff in **Administration > Users**. Other live failures need their request ID; this reproduction does not establish the cause of every unknown-error report.
 
 ## Migrations and recovery
 
@@ -81,7 +120,7 @@ Keep independent PostgreSQL backups and test restoration into a separate databas
 
 Normal `npm run dev` retains SQLite defaults. To test the combined production service, set `WEB_URL=http://127.0.0.1:8080` before `npm run build`, then run `npm start`. Staff login is on the same origin at `/admin/login`. If changing `PORT`, change `WEB_URL` too. `CMS_PORT` and `ASTRO_PORT` allow unused loopback ports for isolated verification.
 
-`npm run test:deployment` tests routing and security/error handling without a database. `npm run smoke:deployment` checks an already running combined service. The existing Playwright suite uses isolated synthetic SQLite databases; it is separate evidence from PostgreSQL migration and combined production checks.
+`npm run test:deployment` tests routing, security/error handling and log redaction without a database. `npm run test:bootstrap` checks create-once and managed administrator behaviour in isolated synthetic databases. `npm run test:admin` runs a built-server Chromium check of the initial-account error, managed login, staff creation and duplicate-email runtime reporting; build first with the local `WEB_URL` above and leave ports 8080/3000/4321 free. `npm run smoke:deployment` checks an already running combined service. The existing Playwright suite uses isolated synthetic SQLite databases; it is separate evidence from PostgreSQL migration and combined production checks.
 
 `npm run test:deployment:integration` additionally checks the built service in Chromium against a dedicated local PostgreSQL database ending in `_test`. Set `DEPLOYMENT_TEST_DATABASE_URI` to that database after applying migrations and seeding with `LTSP_TEST_MODE=true` in the isolated test environment. Its default is the workspace's synthetic test cluster on port 5547. This check deliberately creates fictional enquiries, payments and an editor, verifies a restart, and stops the servers; never point it at development/client data. Build with `WEB_URL=http://127.0.0.1:8080` first. Test ports 8080/3000/4321 must be free.
 
@@ -110,6 +149,16 @@ If the build reports `scripts/next.mjs:5` calling `loadEnvFile` unconditionally,
 
 On 2026-11-03, the failing stack matched GitHub/main commit `4665d01`; the approved deployment changes still existed only in the workspace. An isolated reproduction of that committed helper failed with `ENOENT`, while the corrected helper passed the same real Next CLI invocation without either env file. Three regression checks cover missing files, local-file priority and injected-value priority; run them with `npm run test:build-env`. Full CMS/Astro type checks and both production builds then passed in a clean source copy with `RENDER=true`, only injected synthetic settings, no env files and no reachable database. Deploy the new revision containing these approved changes; rebuilding the old revision or adding secrets to Git will not fix the source mismatch.
 
+## Administrator and logging verification, 2026-11-03
+
+CMS and Astro checks passed with zero diagnostics (29 Astro files), and both production builds passed. All 76 existing browser/API tests passed. Ten deployment/logging unit checks passed, including error metadata redaction and the actual Pino hook. Two bootstrap regressions passed: create-once behaviour and managed creation/rotation, unchanged password hashes on repeat startup, other staff unchanged, no plaintext password in bookkeeping/output and rejection of a matching non-admin account.
+
+`npm run test:admin` passed against the compiled combined service in Chromium with a fresh synthetic SQLite database. The browser recreated HTTP/2's empty status text for the blocked first-account POST, displayed the setup message, then signed in with an env-managed administrator, created a staff user through the UI and received an actionable duplicate-email validation response. Its request ID matched runtime events; captured logs contained none of the submitted passwords, emails or names.
+
+The user's report that the site is live is not an independent check of the current Render revision or the reported live failure. These tests did not change production credentials/records, contact a payment provider or repeat PostgreSQL/Neon integration. The initial-account failure is one confirmed local reproduction; a different live failure requires the failed request's reference and context.
+
 ## Primary sources
+
+Administrator/error-reporting sources, checked 2026-11-03: [Payload root afterError hooks](https://payloadcms.com/docs/hooks/overview#root-hooks), [Payload logger configuration](https://payloadcms.com/docs/configuration/overview), [Render runtime logs, filtering and Live tail](https://render.com/docs/logging). Installed Payload source and the actual browser form were also inspected to reproduce its error-response handling.
 
 Accessed 2026-11-02: [Render port binding](https://render.com/docs/web-services#binding-to-multiple-ports), [deploy/pre-deploy commands](https://render.com/docs/deploys), [Blueprint specification](https://render.com/docs/blueprint-spec), [Render client-IP guidance](https://render.com/articles/host-pocketbase-on-render), [Payload PostgreSQL](https://payloadcms.com/docs/database/postgres), [Payload migrations](https://payloadcms.com/docs/database/migrations), [Neon connections](https://neon.com/docs/connect/connect-from-any-app). Rechecked 2026-11-03: [paid pre-deploy restriction](https://render.com/docs/deploys#pre-deploy-command) and [Free limits, sleep and lack of shell/one-off jobs](https://render.com/docs/free). Local checks do not establish a cloud deployment or compliance result.

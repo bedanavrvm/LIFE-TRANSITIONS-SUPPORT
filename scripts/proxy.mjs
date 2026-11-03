@@ -1,5 +1,6 @@
 import http from 'node:http';
 import { isIP } from 'node:net';
+import { requestId, reportFailure } from './observability.mjs';
 
 const hopHeaders = ['connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'transfer-encoding', 'upgrade'];
 function endToEnd(headers) {
@@ -12,6 +13,11 @@ function endToEnd(headers) {
 export function createProxy({ website, cmsPort, webPort, render = false, ready = () => true }) {
   const origin = new URL(website);
   return http.createServer({ requestTimeout: 60000, headersTimeout: 15000, maxHeaderSize: 16384 }, (req, res) => {
+    const id = requestId();
+    res.setHeader('X-Request-ID', id);
+    res.on('finish', () => {
+      if (res.statusCode >= 400 && req.url !== '/healthz') reportFailure({ event: 'http_request_failed', id, method: req.method, pathname: req.url?.split('?')[0], status: res.statusCode });
+    });
     const reply = (status, message) => {
       if (!res.headersSent) { res.writeHead(status, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(message); }
       else res.destroy();
@@ -41,6 +47,7 @@ export function createProxy({ website, cmsPort, webPort, render = false, ready =
     headers['x-forwarded-proto'] = origin.protocol.slice(0, -1);
     headers['x-forwarded-port'] = origin.port || (origin.protocol === 'https:' ? '443' : '80');
     headers['x-forwarded-for'] = clientIP;
+    headers['x-request-id'] = id;
     const upstream = http.request({ hostname: '127.0.0.1', port, method: req.method, path: req.url, headers }, response => {
       res.writeHead(response.statusCode || 502, endToEnd(response.headers));
       response.on('error', () => res.destroy());
