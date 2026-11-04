@@ -25,7 +25,8 @@
     "smoke": "node scripts/smoke.mjs",
     "test:content-migration": "node --import tsx tests/content-migration.mjs",
     "test:content": "node --import tsx --test tests/content.test.mjs",
-    "test:media-deployment": "node tests/media-deployment.mjs"
+    "test:media-deployment": "node tests/media-deployment.mjs",
+    "test:render-startup": "node --import tsx tests/render-startup.mjs"
   },
   "overrides": {
     "dompurify": "3.4.17",

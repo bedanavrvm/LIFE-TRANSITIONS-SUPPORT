@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     buildCommand: npm ci --include=dev && npm run check && npm run build
-    startCommand: npm run payload -- migrate && npm run seed && npm run admin && exec node scripts/start.mjs
+    startCommand: node scripts/start.mjs
     healthCheckPath: /healthz
     envVars:
       - key: NODE_VERSION

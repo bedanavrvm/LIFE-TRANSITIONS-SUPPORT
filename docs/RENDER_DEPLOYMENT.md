@@ -30,14 +30,36 @@ Push the reviewed source to the repository connected to Render, excluding `.env`
 | --- | --- |
 | Root directory | Leave blank; shared workspaces require the repository root |
 | Build command | `npm ci --include=dev && npm run check && npm run build` |
-| Start command | `npm run payload -- migrate && npm run seed && npm run admin && exec node scripts/start.mjs` |
+| Start command | `node scripts/start.mjs` |
 | Health check | `/healthz` |
 | Node version | `24.22.1` |
 | Compute | Free for preview; measure both apps together |
 
-The Blueprint declares one Free service and no Render database/disk. No pre-deploy field is required. Startup applies pending migrations, seeds missing public services/training, configures administrator access, then starts the apps. `&&` stops the sequence on failure. Applied migrations are skipped and edited content is preserved. `INITIAL_ADMIN_*` creates only the first account; optional `SUPERUSER_*` updates only the matching administrator as described below. Keep schema changes backwards-compatible with any old version still serving during deployment handover.
+The Blueprint declares one Free service and no Render database/disk. No pre-deploy field is required. On Render, the launcher itself applies pending migrations, seeds missing public services/training and configures administrator access before starting either app or opening the public port. Failure at any step stops startup. Applied migrations are skipped and edited content is preserved. `INITIAL_ADMIN_*` creates only the first account; optional `SUPERUSER_*` updates only the matching administrator as described below. Keep schema changes backwards-compatible with any old version still serving during deployment handover.
 
-After bootstrap succeeds, `exec` replaces the startup shell with Node so shutdown signals reach the supervisor. `npm start` remains the local command that also loads an optional `.env`; it does not automatically migrate the database. Free services sleep after 15 idle minutes and can take about a minute to wake, plus bootstrap/application startup. They have no Render Shell/SSH or one-off jobs; the setup below uses the dashboard only. Free-tier limits and unmeasured memory make this a preview arrangement; Neon data persists independently of Render's ephemeral filesystem.
+This also protects existing services whose dashboard still uses `node scripts/start.mjs`: updating `render.yaml` alone does not change a manually configured service. The older shell-chain start command remains safe but repeats the idempotent setup; replace it with the command above. `npm start` also loads an optional local `.env`. Outside Render, the launcher starts the apps without automatic database setup. Free services sleep after 15 idle minutes and can take about a minute to wake, plus bootstrap/application startup. They have no Render Shell/SSH or one-off jobs; the setup below uses the dashboard only. Free-tier limits and unmeasured memory make this a preview arrangement; Neon data persists independently of Render's ephemeral filesystem.
+
+## Troubleshooting: build succeeds, runtime reports PostgreSQL `42703`
+
+On 2026-11-04 the supplied Render log showed a successful build followed by `node scripts/start.mjs` and repeated API failures with SQLSTATE `42703` (`undefined_column`). A read-only inspection of the configured Neon database confirmed that only `20261102_134951_initial` was recorded and the new service columns `body`, `_status` and `meta_title` were absent. The CMS workspace upgrade migration had not run. The initial readiness 503, TLS deprecation warning and npm audit summary are separate from this missing-column failure.
+
+C42 moves setup into the shared launcher so an older dashboard command cannot bypass it. Deploy the revision containing C42 and keep **Start Command** set to `node scripts/start.mjs`. No pre-deploy command or hosted shell access is required. Expected runtime messages, in order:
+
+```text
+Preparing production migrations.
+Preparing production public content.
+Preparing production administrator.
+Production bootstrap complete.
+Combined production service ready on port ...
+```
+
+If a stage fails, neither app starts; inspect the preceding configuration/migration error in Render's runtime logs. Preserve the existing database, secrets and administrator settings. Do not reset the database, run `migrate:fresh`, or use a destructive `down` migration to resolve this error. Back up the database before a schema upgrade, as described in [the CMS rollout guide](CMS_STAFF_GUIDE.md#operator-setup-and-rollout).
+
+`npm run test:render-startup` exercises that exact launcher with `RENDER=true` and an isolated local PostgreSQL database populated using the original migration. Build both apps first and leave ports 8080/3000/4321 free; the test expects the local synthetic PostgreSQL cluster on port 5547 used by the existing deployment integration checks. Before the fix it reproduced HTTP 500 with `42703`; after the fix the CMS API returned HTTP 200, the legacy service retained its content and publication state, rich text was backfilled and the configured administrator existed before serving requests. Separate migration, seed and administrator failures each blocked both servers. Repeated setup preserved public content and the unchanged administrator password hash. Ten proxy/logging unit checks also passed. This test reaches the built CMS over loopback; it does not establish live Render recovery or test Render's HTTPS edge. Production recovery remains unverified until the new revision is deployed and observed.
+
+Primary sources checked 2026-11-04: [PostgreSQL SQLSTATE reference](https://www.postgresql.org/docs/current/errcodes-appendix.html), [Render start-command configuration](https://render.com/docs/blueprint-spec) and [Render deploy behaviour](https://render.com/docs/deploys). The root-cause conclusion also uses the supplied runtime log, the read-only schema inspection and the local failing/passing reproduction.
+
+A fresh private production backup was created with verified TLS and restored successfully into an isolated local database before publishing this fix. Backup files remain outside source control; no production records were changed by the inspection or recovery tests.
 
 ## 3. Set environment variables before building
 
@@ -67,7 +89,7 @@ Legacy `DATABASE_URI` remains supported and takes precedence. Remove an obsolete
 
 ### Managed administrator credentials
 
-In Render **Environment**, set the following keys privately, then save and redeploy the revision containing C40. Local development can use the same keys in ignored `.env`/`.env.local`, followed by `npm run admin`; local `npm start` does not run bootstrap itself.
+In Render **Environment**, set the following keys privately, then save and redeploy the revision containing C40. Local development can use the same keys in ignored `.env`/`.env.local`, followed by `npm run admin`; outside Render, `npm start` does not run bootstrap itself.
 
 ```dotenv
 SUPERUSER_EMAIL=administrator@example.com

@@ -36,7 +36,7 @@ Use the SEO tab on Services, Courses or Site settings. Set the title, descriptio
 
 ## Operator setup and rollout
 
-Dependencies are pinned to Payload 3.92.0: Lexical, S3 storage and SEO. The CMS import map is committed; regenerate it after changing registered components. The existing automatic startup sequence remains migration → seed/content upgrade → administrator bootstrap → application start.
+Dependencies are pinned to Payload 3.92.0: Lexical, S3 storage and SEO. The CMS import map is committed; regenerate it after changing registered components. On Render, `node scripts/start.mjs` enforces migration → seed/content upgrade → administrator bootstrap → application start. Outside Render, the launcher starts the apps without automatic database setup. See [missing-column startup failures](RENDER_DEPLOYMENT.md#troubleshooting-build-succeeds-runtime-reports-postgresql-42703).
 
 Configure these private environment keys together, locally and in Render as appropriate:
 

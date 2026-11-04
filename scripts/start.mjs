@@ -40,19 +40,41 @@ process.on('SIGTERM', () => stop());
 process.on('SIGINT', () => stop());
 if (process.send) process.on('message', message => { if (message === 'shutdown') stop(); });
 server.on('error', () => { console.error('Could not bind the public service port.'); stop(1); });
-launch([path.join(root, 'node_modules/next/dist/bin/next'), 'start', '--hostname', '127.0.0.1', '--port', String(cmsPort)], path.join(root, 'apps/cms'));
-launch([path.join(root, 'apps/web/dist/server/entry.mjs')], root, { HOST: '127.0.0.1', PORT: String(webPort) });
-server.listen(port, process.env.HOST || '0.0.0.0');
-const deadline = Date.now() + 120000;
-while (!stopping && Date.now() < deadline) {
-  try {
-    const responses = await Promise.all([
-      fetch(`http://127.0.0.1:${cmsPort}/api/services?limit=1&depth=0`, { signal: AbortSignal.timeout(5000) }),
-      fetch(`http://127.0.0.1:${webPort}/`, { headers: { 'X-Forwarded-Host': website.host, 'X-Forwarded-Proto': website.protocol.slice(0, -1) }, signal: AbortSignal.timeout(10000) }),
-    ]);
-    for (const response of responses) await response.arrayBuffer();
-    if (responses.every(response => response.ok)) { ready = true; console.log(`Combined production service ready on port ${port}.`); break; }
-  } catch {}
-  await new Promise(resolve => setTimeout(resolve, 500));
+// Existing Render dashboard commands can outlive render.yaml; enforce setup at the shared entrypoint.
+if (process.env.RENDER === 'true') {
+  for (const [label, args] of [
+    ['migrations', ['scripts/payload.mjs', 'migrate']],
+    ['public content', ['--import', 'tsx', 'scripts/seed.ts']],
+    ['administrator', ['--import', 'tsx', 'scripts/create-admin.ts']],
+  ]) {
+    console.log(`Preparing production ${label}.`);
+    const child = spawn(process.execPath, args, { cwd: root, env, stdio: 'inherit' });
+    children.push(child);
+    const code = await new Promise(resolve => {
+      child.once('error', () => resolve(1));
+      child.once('exit', code => resolve(code ?? 1));
+    });
+    children.splice(children.indexOf(child), 1);
+    if (stopping) break;
+    if (code !== 0) { console.error(`Production ${label} setup failed; application servers were not started.`); stop(1); break; }
+  }
+  if (!stopping) console.log('Production bootstrap complete.');
 }
-if (!ready && !stopping) { console.error('Production servers failed their startup checks.'); stop(1); }
+if (!stopping) {
+  launch([path.join(root, 'node_modules/next/dist/bin/next'), 'start', '--hostname', '127.0.0.1', '--port', String(cmsPort)], path.join(root, 'apps/cms'));
+  launch([path.join(root, 'apps/web/dist/server/entry.mjs')], root, { HOST: '127.0.0.1', PORT: String(webPort) });
+  server.listen(port, process.env.HOST || '0.0.0.0');
+  const deadline = Date.now() + 120000;
+  while (!stopping && Date.now() < deadline) {
+    try {
+      const responses = await Promise.all([
+        fetch(`http://127.0.0.1:${cmsPort}/api/services?limit=1&depth=0`, { signal: AbortSignal.timeout(5000) }),
+        fetch(`http://127.0.0.1:${webPort}/`, { headers: { 'X-Forwarded-Host': website.host, 'X-Forwarded-Proto': website.protocol.slice(0, -1) }, signal: AbortSignal.timeout(10000) }),
+      ]);
+      for (const response of responses) await response.arrayBuffer();
+      if (responses.every(response => response.ok)) { ready = true; console.log(`Combined production service ready on port ${port}.`); break; }
+    } catch {}
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  if (!ready && !stopping) { console.error('Production servers failed their startup checks.'); stop(1); }
+}
