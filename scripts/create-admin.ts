@@ -4,7 +4,9 @@ import { createHmac } from 'node:crypto';
 import { getPayload } from 'payload';
 import config from '../apps/cms/src/payload.config.ts';
 import { safeError } from './observability.mjs';
+import { prepareSQLite } from './prepare-sqlite.mjs';
 
+await prepareSQLite();
 const payload = await getPayload({ config });
 const superuserEmail = process.env.SUPERUSER_EMAIL?.trim().toLowerCase();
 const superuserPassword = process.env.SUPERUSER_PASSWORD;

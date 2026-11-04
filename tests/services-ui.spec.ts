@@ -68,7 +68,7 @@ test('editor ordering and a new service keep slug-based visuals and use the neut
   try {
     const changed = await request.patch(`${backend}/api/services/${original.id}`, { headers, data: { number: '00' } });
     expect(changed.ok()).toBeTruthy();
-    const created = await request.post(`${backend}/api/services`, { headers, data: { title: 'Synthetic additional support', slug: 'synthetic-additional-support', number: '99', summary: 'Fictional service for the isolated test database.', description: 'Synthetic description.', audience: 'Synthetic families', free: false } });
+    const created = await request.post(`${backend}/api/services`, { headers, data: { title: 'Synthetic additional support', _status: 'published', slug: 'synthetic-additional-support', number: '99', summary: 'Fictional service for the isolated test database.', description: 'Synthetic description.', audience: 'Synthetic families', free: false } });
     expect(created.ok(), await created.text()).toBeTruthy();
     createdID = (await created.json()).doc.id;
     await page.goto('/services');

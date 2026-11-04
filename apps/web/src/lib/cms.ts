@@ -10,8 +10,8 @@ export async function cms<T>(pathname: string, init: RequestInit = {}): Promise<
 export async function publicContent() {
   try {
     const [services, courses, settings] = await Promise.all([
-      cms<{ docs: Service[] }>('services?limit=20&sort=number'),
-      cms<{ docs: Course[] }>('courses?limit=30&sort=title'),
+      cms<{ docs: Service[] }>('services?limit=100&depth=1&sort=number&where[_status][equals]=published'),
+      cms<{ docs: Course[] }>('courses?limit=100&depth=1&sort=title&where[_status][equals]=published'),
       cms<SiteSettings>('globals/site-settings'),
     ]);
     return { services: services.docs, courses: courses.docs, settings, available: true };

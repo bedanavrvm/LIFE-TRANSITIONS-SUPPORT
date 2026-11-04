@@ -1,9 +1,15 @@
 import { randomUUID, timingSafeEqual } from 'node:crypto';
 import path from 'node:path';
+import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { APIError, buildConfig, type Access, type CollectionConfig, type PayloadRequest } from 'payload';
+import { lexicalEditor, ParagraphFeature, HeadingFeature, BoldFeature, ItalicFeature, OrderedListFeature, UnorderedListFeature, LinkFeature, FixedToolbarFeature } from '@payloadcms/richtext-lexical';
+import { s3Storage } from '@payloadcms/storage-s3';
+import { seoPlugin } from '@payloadcms/plugin-seo';
+import { syncContent, captureContentInput, mediaFields } from './content';
+import { Media, storageReady } from './media';
 import { requestSchema, safeCheckoutUrl } from '@ltsp/shared';
 import { requestId, reportFailure, safePayloadLog } from '../../../scripts/observability.mjs';
 
@@ -23,7 +29,7 @@ const internal = (req: PayloadRequest) => {
 };
 
 const Users: CollectionConfig = {
-  slug: 'users', auth: true, admin: { useAsTitle: 'email', group: 'Administration' },
+  slug: 'users', auth: true, admin: { useAsTitle: 'email', group: 'Administration', hidden: ({ user }) => user?.role !== 'admin' },
   endpoints: [{ path: '/first-register', method: 'post', handler: () => { throw new APIError('Public account registration is closed. Configure the administrator in the server environment and redeploy.', 403); } }],
   access: { create: isAdmin, read: ({ req }) => req.user?.role === 'admin' ? true : req.user ? { id: { equals: req.user.id } } : false, update: isAdmin, delete: isAdmin, admin: ({ req }) => Boolean(req.user) },
   fields: [
@@ -39,24 +45,36 @@ const Users: CollectionConfig = {
   }] },
 };
 
+const publicRead: Access = ({ req }) => isContentStaff(req.user) ? true : { _status: { equals: 'published' } };
+const isContentStaff = (user: any) => ['admin', 'care-team', 'editor'].includes(user?.role);
+const versions = { maxPerDoc: 20, drafts: { autosave: { interval: 5000 } } };
+const preview = (collection: string) => (doc: any) => `${process.env.WEB_URL || 'http://127.0.0.1:4321'}/preview/${collection}/${doc.id}`;
 const Services: CollectionConfig = {
-  slug: 'services', admin: { useAsTitle: 'title', group: 'Website content' },
-  access: { read: () => true, create: isEditor, update: isEditor, delete: isAdmin },
+  slug: 'services', endpoints: [{ path: '/versions/:id', method: 'post', handler: async req => {
+    if (!isContentStaff(req.user)) throw new APIError('Sign in to restore content.', 403);
+    const result = await req.payload.restoreVersion({ collection: 'services', id: String(req.routeParams?.id || ''), draft: true, req, overrideAccess: false });
+    return Response.json({ ...result, message: 'Version restored as draft. Preview and publish when ready.' });
+  } }], versions, hooks: { beforeOperation: [captureContentInput('description')], beforeValidate: [syncContent('description')] }, admin: { useAsTitle: 'title', group: 'Website content', preview: preview('services'), defaultColumns: ['title', 'category', '_status', 'updatedAt'] },
+  access: { read: publicRead, readVersions: isEditor, create: isEditor, update: isEditor, delete: isAdmin },
   fields: [
     { name: 'title', type: 'text', required: true }, { name: 'slug', type: 'text', required: true, unique: true },
     { name: 'category', type: 'select', defaultValue: 'service', options: [{ label: 'Service', value: 'service' }, { label: 'Signature package', value: 'package' }] },
     { name: 'number', type: 'text', required: true }, { name: 'summary', type: 'textarea', required: true },
-    { name: 'description', type: 'textarea', required: true }, { name: 'audience', type: 'text', required: true },
+    { name: 'description', type: 'textarea', required: true, admin: { hidden: true } }, { name: 'body', label: 'Detailed description', type: 'richText' }, ...mediaFields, { name: 'audience', type: 'text', required: true },
     { name: 'free', type: 'checkbox', defaultValue: false },
   ],
 };
 const Courses: CollectionConfig = {
-  slug: 'courses', admin: { useAsTitle: 'title', group: 'Website content' },
-  access: { read: ({ req }) => req.user ? true : { published: { equals: true } }, create: isEditor, update: isEditor, delete: isAdmin },
+  slug: 'courses', endpoints: [{ path: '/versions/:id', method: 'post', handler: async req => {
+    if (!isContentStaff(req.user)) throw new APIError('Sign in to restore content.', 403);
+    const result = await req.payload.restoreVersion({ collection: 'courses', id: String(req.routeParams?.id || ''), draft: true, req, overrideAccess: false });
+    return Response.json({ ...result, message: 'Version restored as draft. Preview and publish when ready.' });
+  } }], versions, hooks: { beforeOperation: [captureContentInput('details')], beforeValidate: [syncContent('details')] }, admin: { useAsTitle: 'title', group: 'Website content', preview: preview('courses'), defaultColumns: ['title', 'date', '_status', 'updatedAt'] },
+  access: { read: publicRead, readVersions: isEditor, create: isEditor, update: isEditor, delete: isAdmin },
   fields: [
     { name: 'title', type: 'text', required: true }, { name: 'slug', type: 'text', required: true, unique: true },
     { name: 'audience', type: 'text', required: true }, { name: 'summary', type: 'textarea', required: true },
-    { name: 'details', type: 'textarea', required: true }, { name: 'published', type: 'checkbox', defaultValue: false },
+    { name: 'details', type: 'textarea', required: true, admin: { hidden: true } }, { name: 'body', label: 'Detailed description', type: 'richText' }, ...mediaFields, { name: 'published', type: 'checkbox', defaultValue: false, admin: { hidden: true, readOnly: true } },
     { name: 'date', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
     { name: 'location', type: 'text' }, { name: 'capacity', type: 'number', min: 1 },
     { name: 'price', label: 'Fee in KES (leave blank until agreed)', type: 'number', min: 0, validate: validAmount },
@@ -68,13 +86,17 @@ const Requests: CollectionConfig = {
     { name: 'reference', type: 'text', required: true, unique: true, defaultValue: () => `LT-${randomUUID().slice(0, 8).toUpperCase()}`, admin: { readOnly: true } },
     { name: 'kind', type: 'select', required: true, options: ['care', 'callback', 'referral', 'training-group', 'training-private'] },
     { name: 'status', type: 'select', required: true, defaultValue: 'new', options: ['new', 'reviewed', 'closed'] },
+    { type: 'collapsible', label: 'Contact details', fields: [
     { name: 'name', type: 'text', required: true }, { name: 'phone', type: 'text' },
     { name: 'email', type: 'email' }, { name: 'preferredContact', type: 'select', options: ['phone', 'whatsapp', 'email'], required: true },
+    ] },
+    { type: 'collapsible', label: 'Support context', fields: [
     { name: 'service', type: 'relationship', relationTo: 'services' }, { name: 'course', type: 'relationship', relationTo: 'courses' },
     { name: 'relationship', type: 'select', options: ['self', 'family', 'employer', 'professional'] },
     { name: 'ageGroup', type: 'select', options: ['adult', 'child', 'not-applicable'] },
     { name: 'area', type: 'text' }, { name: 'availability', type: 'text' }, { name: 'message', type: 'textarea' },
     { name: 'consent', label: 'Privacy acknowledgement received', type: 'checkbox', required: true },
+    ] },
     { name: 'staffNotes', type: 'textarea', admin: { description: 'Necessary operational notes only. Do not use this MVP as a medical record.' } },
   ],
   hooks: { beforeValidate: [({ data, originalDoc }) => {
@@ -130,7 +152,12 @@ const Payments: CollectionConfig = {
 if (!process.env.PAYLOAD_SECRET || process.env.PAYLOAD_SECRET.length < 32) throw new Error('Provide a PAYLOAD_SECRET of at least 32 characters (npm run setup creates a local development secret).');
 
 export default buildConfig({
-  secret: process.env.PAYLOAD_SECRET,
+  secret: process.env.PAYLOAD_SECRET, sharp,
+  editor: lexicalEditor({ features: [ParagraphFeature(), HeadingFeature({ enabledHeadingSizes: ['h2', 'h3'] }), BoldFeature(), ItalicFeature(), OrderedListFeature(), UnorderedListFeature(), LinkFeature({ enabledCollections: [] }), FixedToolbarFeature()] }),
+  plugins: [
+    s3Storage({ enabled: storageReady, alwaysInsertFields: true, collections: { media: true }, bucket: process.env.R2_BUCKET || 'unconfigured', config: { endpoint: process.env.R2_ENDPOINT, region: 'auto', forcePathStyle: true, credentials: { accessKeyId: process.env.R2_ACCESS_KEY_ID || 'unconfigured', secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || 'unconfigured' } } }),
+    seoPlugin({ collections: ['services', 'courses'], globals: ['site-settings'], uploadsCollection: 'media', tabbedUI: true, generateTitle: ({ doc }) => `${doc.title || 'Care through life changes'} | Life Transitions Support Partners`, generateDescription: ({ doc }) => doc.summary || '', generateImage: ({ doc }) => doc.image || '' }),
+  ],
   logger: { options: { level: 'info', hooks: { logMethod: safePayloadLog } } },
   loggingLevels: { ValidationError: 'warn', Forbidden: 'warn', AuthenticationError: 'warn' },
   hooks: { afterError: [({ error, req, collection, result }) => {
@@ -144,7 +171,7 @@ export default buildConfig({
   graphQL: { disable: true },
   email: () => ({ name: 'local-disabled', defaultFromAddress: 'no-reply@example.test', defaultFromName: 'Life Transitions local preview', sendEmail: async () => { console.info('Email delivery is disabled in local preview; no message content was logged.'); } }),
   serverURL: process.env.CMS_URL || process.env.WEB_URL || 'http://127.0.0.1:3000',
-  admin: { user: 'users', importMap: { baseDir: directory }, meta: { titleSuffix: ' | Life Transitions' } },
+  admin: { user: 'users', theme: 'light', importMap: { baseDir: directory }, meta: { titleSuffix: ' | Life Transitions' }, components: { graphics: { Logo: './components/Brand#Logo', Icon: './components/Brand#Icon' } }, dashboard: { widgets: [{ slug: 'staff-home', label: 'Your workspace', Component: './components/StaffHome', minWidth: 'full' }], defaultLayout: [{ widgetSlug: 'staff-home', width: 'full' }, { widgetSlug: 'collections', width: 'full' }] } },
   db: usePostgres ? postgresAdapter({
     pool: { connectionString: databaseURI, max: 5, connectionTimeoutMillis: 15000, idleTimeoutMillis: 30000 },
     disableCreateDatabase: true,
@@ -152,8 +179,8 @@ export default buildConfig({
     migrationDir: path.resolve(directory, 'migrations/postgres'),
   }) : sqliteAdapter({ client: { url: databaseURI || `file:${path.resolve(directory, '../../../data/development.sqlite').replaceAll('\\', '/')}` } }),
   typescript: { autoGenerate: false },
-  collections: [Users, Services, Courses, Requests, Appointments, Payments],
-  globals: [{ slug: 'site-settings', access: { read: () => true, update: isEditor }, fields: [
+  collections: [Users, Services, Courses, Requests, Appointments, Payments, Media],
+  globals: [{ slug: 'site-settings', admin: { group: 'Website content' }, access: { read: () => true, update: isEditor }, fields: [
     { name: 'phone', type: 'text' }, { name: 'whatsapp', label: 'WhatsApp number including country code', type: 'text' },
     { name: 'email', type: 'email' }, { name: 'responseNote', type: 'text' }, { name: 'aboutText', type: 'textarea' },
   ] }],
@@ -166,8 +193,8 @@ export default buildConfig({
       if (!parsed.success) return Response.json({ error: 'Please check the form.' }, { status: 400 });
       const { service, course, ...values } = parsed.data;
       const [services, courses] = await Promise.all([
-        service ? req.payload.find({ collection: 'services', where: { slug: { equals: service } }, limit: 1, depth: 0, req, overrideAccess: false }) : null,
-        course ? req.payload.find({ collection: 'courses', where: { and: [{ slug: { equals: course } }, { published: { equals: true } }] }, limit: 1, depth: 0, req, overrideAccess: false }) : null,
+        service ? req.payload.find({ collection: 'services', where: { and: [{ slug: { equals: service } }, { _status: { equals: 'published' } }] }, limit: 1, depth: 0, req, overrideAccess: false }) : null,
+        course ? req.payload.find({ collection: 'courses', where: { and: [{ slug: { equals: course } }, { _status: { equals: 'published' } }] }, limit: 1, depth: 0, req, overrideAccess: false }) : null,
       ]);
       if ((service && !services?.docs.length) || (course && !courses?.docs.length)) return Response.json({ error: 'This service or course is unavailable.' }, { status: 400 });
       // Public creation is limited to the validated intake shape; no private document is returned.

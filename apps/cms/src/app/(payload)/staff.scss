@@ -1,0 +1,13 @@
+.staff-brand { display: grid; justify-items: center; gap: 12px; img { width: 180px; max-height: 150px; object-fit: contain; } span { font-size: 16px; color: #66583c; } }
+.staff-home { font-size: 16px; line-height: 1.65; color: #26241f; h1 { font-size: clamp(28px, 3vw, 40px); line-height: 1.2; margin: 8px 0; } h2 { font-size: 21px; line-height: 1.35; } a { text-underline-offset: 4px; } a:focus-visible { outline: 3px solid #85621c; outline-offset: 4px; } }
+.staff-eyebrow { color: #6e551c; font-weight: 600; letter-spacing: .05em; }
+.staff-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; a { padding: 10px 15px; border: 1px solid #d9c9a6; border-radius: 7px; background: #fffbf2; text-decoration: none; &:hover { background: #f4e7cd; } } }
+.staff-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.staff-stat, .staff-panel { border: 1px solid #e1d5bd; border-radius: 12px; padding: 22px; box-shadow: 0 3px 12px #34280908; background: #fffcf6; }
+.staff-stat { display: grid; text-decoration: none; strong { font-size: 30px; line-height: 1.4; } &:hover { box-shadow: 0 5px 18px #34280918; border-color: #a37c32; } }
+.staff-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px; }
+.staff-panel { background: #fff; h2 { margin-top: 0; } ul { padding-left: 20px; } li + li { margin-top: 12px; } }
+@font-face { font-family: 'Staff Sans'; src: url('../../../../web/public/fonts/dm-sans.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Staff Heading'; src: url('../../../../web/public/fonts/lora.woff2') format('woff2'); font-weight: 400 700; font-display: swap; }
+html { --font-body: 'Staff Sans', sans-serif; }
+.staff-home h1 { font-family: 'Staff Heading', Georgia, serif; }

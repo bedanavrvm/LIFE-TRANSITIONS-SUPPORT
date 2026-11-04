@@ -1,0 +1,23 @@
+---
+import ServiceDetail from '../../../components/ServiceDetail.astro';
+import CourseDetail from '../../../components/CourseDetail.astro';
+import { cmsURL, publicContent } from '../../../lib/cms';
+const { collection, id } = Astro.params;
+if (!['services', 'courses'].includes(collection || '') || !/^\d+$/.test(id || '')) return new Response('Preview unavailable.', { status: 404 });
+const cookie = Astro.request.headers.get('cookie') || '';
+const token = Astro.cookies.get('payload-token')?.value || '';
+const options = { headers: { Cookie: cookie, Authorization: `JWT ${token}` }, signal: AbortSignal.timeout(10000) };
+let record;
+try {
+  const response = await fetch(`${cmsURL}/api/users/me`, options);
+  const session = await response.json();
+  if (!['admin', 'care-team', 'editor'].includes(session.user?.role)) return Astro.redirect('/admin/login');
+  const draft = await fetch(`${cmsURL}/api/${collection}/${id}?draft=true&depth=1`, options);
+  if (draft.ok) record = await draft.json();
+} catch {}
+if (!record) return new Response('Preview unavailable.', { status: 404 });
+Astro.response.headers.set('Cache-Control', 'no-store');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+const { settings } = await publicContent();
+---
+{collection === 'services' ? <ServiceDetail service={record} settings={settings} preview /> : <CourseDetail course={record} settings={settings} preview />}

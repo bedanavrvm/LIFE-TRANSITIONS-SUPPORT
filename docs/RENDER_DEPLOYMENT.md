@@ -12,7 +12,7 @@ One Render **Node Web Service** runs [the production launcher](../scripts/start.
 | Other routes, including `/support`, `/payment/...`, `/_astro/...` | Astro, internal port 4321 |
 | `/healthz` | Launcher readiness/liveness |
 
-Neon stores PostgreSQL data. No SQLite disk is needed. Existing photos/fonts ship with the app; staff upload storage is not implemented. Both apps share memory, CPU, deployment and availability. The Blueprint uses Render Free for preview; capacity on that instance remains unverified.
+Neon stores PostgreSQL data. No SQLite disk is needed. Existing photos/fonts ship with the app; staff public uploads use the optional R2 configuration described in [the CMS guide](CMS_STAFF_GUIDE.md). Without credentials, bundled photos work and new uploads are unavailable. Both apps share memory, CPU, deployment and availability. The Blueprint uses Render Free for preview; capacity on that instance remains unverified.
 
 The launcher admits traffic only after successful CMS/public-page startup checks. Child process failure terminates the combined service. `/healthz` reports startup completion and child survival; it does not query Neon on every probe or guarantee continued database availability.
 

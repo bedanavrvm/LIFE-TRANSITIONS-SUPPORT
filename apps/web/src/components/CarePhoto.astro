@@ -1,17 +1,21 @@
 ---
+import type { MediaAsset } from '@ltsp/shared';
 import { Image } from 'astro:assets';
 import { photography } from '../lib/photography';
 
 interface Props {
   photo: keyof typeof photography;
+  asset?: MediaAsset | number | null;
   class?: string;
   sizes?: string;
   priority?: boolean;
 }
 const { photo, class: className, sizes = '(max-width: 780px) 100vw, 50vw', priority = false } = Astro.props;
 const image = photography[photo];
+const asset = typeof Astro.props.asset === 'object' ? Astro.props.asset : null;
+const variants = Object.values(asset?.sizes || {}).filter(size => size.url && size.width);
 ---
-<Image
+{asset?.url ? <img src={asset.sizes?.detail?.url || asset.url} srcset={variants.map(size => `${size.url} ${size.width}w`).join(', ') || undefined} sizes={sizes} alt={asset.alt || ''} width={asset.width} height={asset.height} loading={priority ? 'eager' : 'lazy'} class:list={['care-photo', className]} /> : <Image
   src={image.src}
   alt={image.alt}
   width={1200}
@@ -23,4 +27,4 @@ const image = photography[photo];
   fetchpriority={priority ? 'high' : 'auto'}
   class:list={['care-photo', className]}
   style={`object-position: ${image.position}`}
-/>
+/>}

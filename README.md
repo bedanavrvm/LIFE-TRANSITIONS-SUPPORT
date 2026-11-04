@@ -89,6 +89,8 @@ Deployment setup: [one Render service with Neon](docs/RENDER_DEPLOYMENT.md), inc
 | [MVP plan](docs/MVP_PLAN.md) | Initial scope, local implementation, defaults and launch prerequisites. | Understanding first-release behaviour and limits. |
 | [Decisions and open questions](docs/DECISIONS.md) | Confirmed requirements, delegated defaults, proposals, superseded advice, and unresolved questions. | Checking scope or recording a change in direction. |
 | [Research and options](docs/RESEARCH_AND_OPTIONS.md) | Website references, design and stack alternatives, workflows, source evidence, corrections, and limitations. | Comparing approaches or continuing research and design. |
+| [CMS staff guide](docs/CMS_STAFF_GUIDE.md) | Dashboard, drafts, preview, media, SEO and upgrade operations. | Using or deploying the upgraded staff workspace. |
+| [Payload CMS options](docs/PAYLOAD_CMS_OPTIONS.md) | Dashboard, editing and plugin research with version checks, priorities and integration limits. | Planning improvements to the nurse-facing CMS; recommendations remain proposals. |
 | [Agent instructions](AGENTS.md) | Persistent working rules and task-specific context pointers. | Working in this folder with an agent. |
 
 For an initial human review, read the business brief, the decision register, and then the research sections relevant to the discussion.
@@ -116,6 +118,8 @@ The initial documentation task created five Markdown files without application s
 - Keep real client data and secrets out of these files.
 
 ## Verification status
+
+CMS workspace upgrade, C41, 2026-11-04: the role-aware dashboard, Lexical public editing, drafts/history, protected preview, R2-ready public media and SEO are implemented. All 82 browser/API tests passed, together with focused content/permission checks, bootstrap/logging tests, legacy PostgreSQL/SQLite upgrade checks and the administrator build regression. A temporary schema-only Neon branch passed the migration and compiled browser/restart workflow, then was deleted. See [the staff/operator guide](docs/CMS_STAFF_GUIDE.md#verification-recorded-2026-11-04) for exact evidence and limitations. R2 credentials and live delivery are deferred; no production records or deployment were changed by these checks.
 
 Managed administrator and runtime diagnostics, C40, 2026-11-03: CMS/Astro checks and both production builds passed, together with all 76 browser/API tests, ten proxy/logging unit checks and two bootstrap regressions. The built-server Chromium check (`npm run test:admin`) passed for an HTTP/2-style empty-status-text first-account failure, env-managed administrator login, staff creation, duplicate-email reporting and correlated logs without credentials/user values. Credential rotation, unchanged-hash restart behaviour and preservation of other staff were checked using isolated SQLite databases. See [detailed evidence and limits](docs/RENDER_DEPLOYMENT.md#administrator-and-logging-verification-2026-11-03). No live Render account or production record was changed by these checks.
 

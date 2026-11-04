@@ -22,9 +22,12 @@ export const requestSchema = z.object({
 });
 export type SupportInput = z.infer<typeof requestSchema>;
 
-export type Service = { id?: number; slug: string; title: string; summary: string; description: string; audience: string; free: boolean; number: string; category?: 'service' | 'package' };
-export type Course = { id?: number; slug: string; title: string; audience: string; summary: string; details: string; date?: string | null; location?: string | null; capacity?: number | null; price?: number | null; published?: boolean };
-export type SiteSettings = { phone?: string; whatsapp?: string; email?: string; responseNote?: string; aboutText?: string };
+export type MediaAsset = { id: number; title: string; alt?: string; url?: string; mimeType?: string; filesize?: number; width?: number; height?: number; sizes?: Record<string, { url?: string; width?: number; height?: number }> };
+export type ContentMeta = { title?: string; description?: string; image?: MediaAsset | number | null };
+export type ContentExtras = { body?: unknown; image?: MediaAsset | number | null; downloads?: (MediaAsset | number)[]; meta?: ContentMeta; _status?: "draft" | "published" };
+export type Service = ContentExtras & { id?: number; slug: string; title: string; summary: string; description: string; audience: string; free: boolean; number: string; category?: 'service' | 'package' };
+export type Course = ContentExtras & { id?: number; slug: string; title: string; audience: string; summary: string; details: string; date?: string | null; location?: string | null; capacity?: number | null; price?: number | null; published?: boolean };
+export type SiteSettings = { meta?: ContentMeta; phone?: string; whatsapp?: string; email?: string; responseNote?: string; aboutText?: string };
 
 export const serviceSeed: Service[] = [
   { slug: 'psychological-support', number: '01', title: 'Psychological support', summary: 'Someone to listen. Space to prepare, understand and cope.', description: 'Support for mental wellness, including children and teenagers, and preparation for weddings, childbirth and parenthood. We support families during pregnancy and after birth, through serious or terminal illness, and with sharing difficult news with children and vulnerable people. Families, schools and other institutions can enquire about suitable support. A nurse reviews your request and discusses the right support and any specialist referral with you.', audience: 'Individuals, children, teenagers, parents, families and institutions', free: false },

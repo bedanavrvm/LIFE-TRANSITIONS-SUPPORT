@@ -1,0 +1,30 @@
+---
+import RichContent from './RichContent.astro';
+import ContentMedia from './ContentMedia.astro';
+import CareIcon from './CareIcon.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import ContentFrame from '../layouts/ContentFrame.astro';
+import ServiceVisual from './ServiceVisual.astro';
+
+
+const { service, settings, preview = false } = Astro.props;
+---
+<SiteLayout title={service?.title || 'Service unavailable'} preview={preview} settings={settings} meta={{ ...service?.meta, image: service?.meta?.image || service?.image }} description={service?.summary}>
+  <ContentFrame class="service-detail">
+    <Fragment slot="intro">
+      {service ? <div class="service-hero">
+        <div class="service-hero-copy">
+          <span class="eyebrow">{service.category === 'package' ? 'A signature package' : 'Here for your next step'}</span><h1>{service.title}</h1><p>{service.summary}</p>
+          <dl class="service-facts">
+            <div><dt>Who this is for</dt><dd>{service.audience}</dd></div>
+            <div><dt>Fees & arrangements</dt><dd>{service.free ? <span class="badge">Offered free of charge</span> : 'Any fees and travel arrangements are explained and agreed before you proceed.'}</dd></div>
+          </dl>
+          {!preview && <div class="actions"><a class="button" href={`/support?service=${encodeURIComponent(service.slug)}`}>Request this support <CareIcon name="arrow-right" /></a>{service.slug === 'caregiver-training' && <a class="text-link" href="/training">Explore training <CareIcon name="arrow-right" /></a>}</div>}
+        </div>
+        <ServiceVisual slug={service.slug} image={service.image} />
+      </div> : <><span class="eyebrow">Here for your next step</span><h1>We couldn’t find that service.</h1><p>Please return to the service list or try again shortly.</p></>}
+    </Fragment>
+    {service && <><h2>How we can support you</h2><RichContent body={service.body} fallback={service.description} /><ContentMedia content={service} /></>}
+    <Fragment slot="aside">{service && <div class="aside-panel service-next"><h2>What happens next?</h2><ol class="next-steps"><li>Share a brief request about the support you need.</li><li>A nurse discusses suitable support, availability and any fees with you.</li><li>Confirm your arrangements together before an appointment goes ahead.</li></ol></div>}</Fragment>
+  </ContentFrame>
+</SiteLayout>

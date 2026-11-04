@@ -1,0 +1,6 @@
+---
+import type { ContentExtras, MediaAsset } from '@ltsp/shared';
+const { content } = Astro.props as { content: ContentExtras };
+const files = (content.downloads || []).filter((file): file is MediaAsset => typeof file === 'object' && file.mimeType === 'application/pdf');
+---
+{files.length > 0 && <section aria-label="Downloads"><h2>Useful downloads</h2><ul>{files.map(file => <li><a href={file.url}>{file.title} (PDF{file.filesize ? `, ${Math.ceil(file.filesize / 1024)} KB` : ''})</a></li>)}</ul></section>}

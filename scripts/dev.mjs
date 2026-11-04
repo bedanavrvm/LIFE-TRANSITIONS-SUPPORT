@@ -15,6 +15,14 @@ if (testMode) {
   process.env.WEB_URL = 'http://127.0.0.1:4421';
   process.env.DEMO_MODE = 'true';
   process.env.LTSP_TEST_MODE = 'true';
+  const { default: S3rver } = await import('s3rver');
+  const storage = new S3rver({ port: 4578, address: '127.0.0.1', silent: true, directory, configureBuckets: [{ name: 'ltsp-test-media' }] });
+  await storage.run();
+  process.env.R2_BUCKET = 'ltsp-test-media';
+  process.env.R2_ENDPOINT = 'http://127.0.0.1:4578';
+  process.env.R2_ACCESS_KEY_ID = 'S3RVER';
+  process.env.R2_SECRET_ACCESS_KEY = 'S3RVER';
+  process.on('exit', () => storage.close());
 }
 const seed = spawn(process.execPath, ['--import', 'tsx', 'scripts/seed.ts'], { stdio: 'inherit' });
 const seedCode = await new Promise(resolve => seed.on('exit', resolve));

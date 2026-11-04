@@ -2,9 +2,16 @@
 import '../styles/global.css';
 import CareIcon from '../components/CareIcon.astro';
 import { demoMode } from '../lib/cms';
-import type { SiteSettings } from '@ltsp/shared';
-interface Props { title?: string; description?: string; settings?: SiteSettings; }
+import type { SiteSettings, ContentMeta } from '@ltsp/shared';
+interface Props { title?: string; description?: string; settings?: SiteSettings; meta?: ContentMeta; preview?: boolean; }
 const { title = 'Care through life’s changes', description = 'Nurse-led support for families in Nairobi through parenthood, caregiving, illness, recovery and loss.', settings = {} } = Astro.props;
+const meta = Astro.props.meta;
+const pageTitle = meta?.title || (Astro.url.pathname === '/' ? settings.meta?.title : undefined) || `${title} | Life Transitions Support Partners`;
+const pageDescription = meta?.description || Astro.props.description || settings.meta?.description || description;
+const imageMeta = meta?.image || settings.meta?.image;
+const shareImage = typeof imageMeta === 'object' ? imageMeta?.url : undefined;
+const canonical = new URL(Astro.url.pathname, process.env.WEB_URL || Astro.url.origin).href;
+const preview = Boolean(Astro.props.preview);
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const navigation = [['Services', '/services'], ['Caregiver training', '/training'], ['Our approach', '/about'], ['Resources', '/resources']];
 const current = (href: string): 'page' | 'location' | undefined => path === href ? 'page' : path.startsWith(`${href}/`) ? 'location' : undefined;
@@ -19,22 +26,27 @@ const breadcrumbs: { label: string; href?: string }[] = path === '/' ? [] : [
 <html lang="en" data-page={path === '/' ? 'home' : 'content'} data-breadcrumbs={breadcrumbs.length > 0}>
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} | Life Transitions Support Partners</title><meta name="description" content={description} />
-    <meta name="theme-color" content="#fffcf5" /><meta name="robots" content={demoMode ? 'noindex,nofollow' : 'index,follow'} />
+    <title>{pageTitle}</title><meta name="description" content={pageDescription} />
+    {!preview && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={pageTitle} /><meta property="og:description" content={pageDescription} />
+    {!preview && <meta property="og:url" content={canonical} />}<meta property="og:type" content="website" />
+    {shareImage && <meta property="og:image" content={new URL(shareImage, Astro.url.origin).href} />}
+    <meta name="theme-color" content="#fffcf5" /><meta name="robots" content={demoMode || preview ? 'noindex,nofollow' : 'index,follow'} />
     <link rel="icon" type="image/svg+xml" href="/mark.svg" />
     <link rel="preload" href="/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/lora.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
+    {preview && <div class="notice" role="status">Unpublished preview: visible to authorised staff only. <a href="/admin">Return to workspace</a></div>}
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="header-shell"><div class="site-header wrap">
       <a href="/" class="brand" aria-label="Life Transitions Support Partners home"><img class="brand-mark" src="/mark.svg" width="44" height="44" alt="" /><span>Life Transitions<small>SUPPORT PARTNERS</small></span></a>
       <nav class="desktop-nav" aria-label="Main navigation">{navigation.map(([label, href]) => <a class:list={{ active: !!current(href) }} href={href} aria-current={current(href)}>{label}</a>)}</nav>
-      <a class="button small header-cta" href="/support" aria-current={current('/support')}>Let’s talk <CareIcon name="arrow-right" /></a>
+      {!preview && <a class="button small header-cta" href="/support" aria-current={current('/support')}>Let’s talk <CareIcon name="arrow-right" /></a>}
       <details class="mobile-nav">
         <summary><span>Menu</span><CareIcon name="menu" class="menu-open-icon" /><CareIcon name="close" class="menu-close-icon" /></summary>
         <nav aria-label="Mobile navigation">
-          <a class="button mobile-support" href="/support" aria-current={current('/support')}>Request support <CareIcon name="arrow-right" /></a>
+          {!preview && <a class="button mobile-support" href="/support" aria-current={current('/support')}>Request support <CareIcon name="arrow-right" /></a>}
           {navigation.map(([label, href]) => <a href={href} aria-current={current(href)}>{label}</a>)}
           <a href="/contact" aria-current={current('/contact')}>Contact</a>
         </nav>
@@ -46,8 +58,8 @@ const breadcrumbs: { label: string; href?: string }[] = path === '/' ? [] : [
     <main id="main" tabindex="-1"><slot /></main>
     <footer class="site-footer"><div class="wrap footer-grid">
       <div><a class="footer-brand official-brand-panel" href="/" aria-label="Life Transitions Support Partners home"><img src="/brand/official-logo.jpeg" width="1599" height="1066" loading="lazy" alt="Life Transitions Support Partners. Walking life’s seasons with you." /></a><p class="muted">A nurse-led initiative · Nairobi, Kenya</p></div>
-      <div><h2>Find your way</h2><a href="/services">Our services</a><a href="/training">Caregiver training</a><a href="/support?kind=referral">Refer someone</a><a href="/contact">Contact us</a></div>
-      <div><h2>Here to listen</h2>{settings.phone && <a href={`tel:${settings.phone.replace(/[^+\d]/g, '')}`}>{settings.phone}</a>}{settings.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}<p>{settings.responseNote || 'Send a request and agree a suitable time to speak with the team.'}</p><a href="/support">Request a callback <CareIcon name="arrow-right" /></a></div>
+      <div><h2>Find your way</h2><a href="/services">Our services</a><a href="/training">Caregiver training</a>{!preview && <a href="/support?kind=referral">Refer someone</a>}<a href="/contact">Contact us</a></div>
+      <div><h2>Here to listen</h2>{settings.phone && <a href={`tel:${settings.phone.replace(/[^+\d]/g, '')}`}>{settings.phone}</a>}{settings.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}<p>{settings.responseNote || 'Send a request and agree a suitable time to speak with the team.'}</p>{!preview && <a href="/support">Request a callback <CareIcon name="arrow-right" /></a>}</div>
     </div><div class="wrap footer-bottom"><span>© {new Date().getFullYear()} Life Transitions Support Partners</span><a href="/privacy">Privacy & your information</a></div></footer>
     </div>
   </body>

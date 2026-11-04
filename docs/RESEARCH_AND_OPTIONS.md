@@ -434,6 +434,10 @@ The original recommendation was conditional on maintainer skills. The user subse
 
 Payload's [official plugin overview](https://payloadcms.com/docs/plugins/overview), checked on 2026-10-26, confirms official/community plugins and custom extensions. No plugin is required just because it exists. The local MVP uses core collections, access controls and custom validated intake endpoints rather than assuming a form-builder plugin supplies care workflows.
 
+### Payload CMS experience and plugin research — 2026-11-04
+
+The user requested research into making the current CMS more useful and complete. [The CMS options report](PAYLOAD_CMS_OPTIONS.md) compares core dashboard/branding, versions and preview with eight official packages and selected community navigation, activity and scheduling plugins. It records exact package metadata, source links, Astro integration, Render storage constraints and a proposed order of work. Dashboard widgets address the empty start screen; package installation alone does not create a tailored nurse workspace. These remain recommendations under P16, with no application or dependency change.
+
 ### Editing and content publication
 
 Nurses need to update service descriptions, resources, and training dates without code. A proposal is to offer structured fields and a few reusable sections rather than unrestricted page layouts.

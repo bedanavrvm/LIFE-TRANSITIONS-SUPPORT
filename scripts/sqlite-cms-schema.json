@@ -1,0 +1,470 @@
+[
+  {
+    "type": "table",
+    "name": "_courses_v",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE TABLE `_courses_v` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`parent_id` integer,\n\t`version_title` text,\n\t`version_slug` text,\n\t`version_audience` text,\n\t`version_summary` text,\n\t`version_details` text,\n\t`version_body` text,\n\t`version_image_id` integer,\n\t`version_published` integer DEFAULT false,\n\t`version_date` text,\n\t`version_location` text,\n\t`version_capacity` numeric,\n\t`version_price` numeric,\n\t`version_meta_title` text,\n\t`version_meta_description` text,\n\t`version_meta_image_id` integer,\n\t`version_updated_at` text,\n\t`version_created_at` text,\n\t`version__status` text DEFAULT 'draft',\n\t`created_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`updated_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`latest` integer,\n\t`autosave` integer,\n\tFOREIGN KEY (`parent_id`) REFERENCES `courses`(`id`) ON UPDATE no action ON DELETE set null,\n\tFOREIGN KEY (`version_image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null,\n\tFOREIGN KEY (`version_meta_image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null\n)"
+  },
+  {
+    "type": "table",
+    "name": "_courses_v_rels",
+    "tbl_name": "_courses_v_rels",
+    "sql": "CREATE TABLE `_courses_v_rels` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`order` integer,\n\t`parent_id` integer NOT NULL,\n\t`path` text NOT NULL,\n\t`media_id` integer,\n\tFOREIGN KEY (`parent_id`) REFERENCES `_courses_v`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`media_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE cascade\n)"
+  },
+  {
+    "type": "table",
+    "name": "_services_v",
+    "tbl_name": "_services_v",
+    "sql": "CREATE TABLE `_services_v` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`parent_id` integer,\n\t`version_title` text,\n\t`version_slug` text,\n\t`version_category` text DEFAULT 'service',\n\t`version_number` text,\n\t`version_summary` text,\n\t`version_description` text,\n\t`version_body` text,\n\t`version_image_id` integer,\n\t`version_audience` text,\n\t`version_free` integer DEFAULT false,\n\t`version_meta_title` text,\n\t`version_meta_description` text,\n\t`version_meta_image_id` integer,\n\t`version_updated_at` text,\n\t`version_created_at` text,\n\t`version__status` text DEFAULT 'draft',\n\t`created_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`updated_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`latest` integer,\n\t`autosave` integer,\n\tFOREIGN KEY (`parent_id`) REFERENCES `services`(`id`) ON UPDATE no action ON DELETE set null,\n\tFOREIGN KEY (`version_image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null,\n\tFOREIGN KEY (`version_meta_image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null\n)"
+  },
+  {
+    "type": "table",
+    "name": "_services_v_rels",
+    "tbl_name": "_services_v_rels",
+    "sql": "CREATE TABLE `_services_v_rels` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`order` integer,\n\t`parent_id` integer NOT NULL,\n\t`path` text NOT NULL,\n\t`media_id` integer,\n\tFOREIGN KEY (`parent_id`) REFERENCES `_services_v`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`media_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE cascade\n)"
+  },
+  {
+    "type": "table",
+    "name": "courses",
+    "tbl_name": "courses",
+    "sql": "CREATE TABLE `courses` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`title` text,\n\t`slug` text,\n\t`audience` text,\n\t`summary` text,\n\t`details` text,\n\t`body` text,\n\t`image_id` integer,\n\t`published` integer DEFAULT false,\n\t`date` text,\n\t`location` text,\n\t`capacity` numeric,\n\t`price` numeric,\n\t`meta_title` text,\n\t`meta_description` text,\n\t`meta_image_id` integer,\n\t`updated_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`created_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`_status` text DEFAULT 'draft',\n\tFOREIGN KEY (`image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null,\n\tFOREIGN KEY (`meta_image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null\n)"
+  },
+  {
+    "type": "table",
+    "name": "courses_rels",
+    "tbl_name": "courses_rels",
+    "sql": "CREATE TABLE `courses_rels` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`order` integer,\n\t`parent_id` integer NOT NULL,\n\t`path` text NOT NULL,\n\t`media_id` integer,\n\tFOREIGN KEY (`parent_id`) REFERENCES `courses`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`media_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE cascade\n)"
+  },
+  {
+    "type": "table",
+    "name": "media",
+    "tbl_name": "media",
+    "sql": "CREATE TABLE `media` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`title` text NOT NULL,\n\t`alt` text,\n\t`caption` text,\n\t`credit` text,\n\t`approved_for_public_use` integer DEFAULT false NOT NULL,\n\t`prefix` text DEFAULT '',\n\t`_objectkey` text,\n\t`updated_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`created_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`url` text,\n\t`thumbnail_u_r_l` text,\n\t`filename` text,\n\t`mime_type` text,\n\t`filesize` numeric,\n\t`width` numeric,\n\t`height` numeric,\n\t`focal_x` numeric,\n\t`focal_y` numeric,\n\t`sizes_card_url` text,\n\t`sizes_card_width` numeric,\n\t`sizes_card_height` numeric,\n\t`sizes_card_mime_type` text,\n\t`sizes_card_filesize` numeric,\n\t`sizes_card_filename` text,\n\t`sizes_detail_url` text,\n\t`sizes_detail_width` numeric,\n\t`sizes_detail_height` numeric,\n\t`sizes_detail_mime_type` text,\n\t`sizes_detail_filesize` numeric,\n\t`sizes_detail_filename` text,\n\t`sizes_large_url` text,\n\t`sizes_large_width` numeric,\n\t`sizes_large_height` numeric,\n\t`sizes_large_mime_type` text,\n\t`sizes_large_filesize` numeric,\n\t`sizes_large_filename` text\n)"
+  },
+  {
+    "type": "table",
+    "name": "payload_locked_documents_rels",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE TABLE `payload_locked_documents_rels` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`order` integer,\n\t`parent_id` integer NOT NULL,\n\t`path` text NOT NULL,\n\t`users_id` integer,\n\t`services_id` integer,\n\t`courses_id` integer,\n\t`support_requests_id` integer,\n\t`appointments_id` integer,\n\t`payments_id` integer,\n\t`media_id` integer,\n\tFOREIGN KEY (`parent_id`) REFERENCES `payload_locked_documents`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`users_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`services_id`) REFERENCES `services`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`courses_id`) REFERENCES `courses`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`support_requests_id`) REFERENCES `support_requests`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`appointments_id`) REFERENCES `appointments`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`payments_id`) REFERENCES `payments`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`media_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE cascade\n)"
+  },
+  {
+    "type": "table",
+    "name": "services",
+    "tbl_name": "services",
+    "sql": "CREATE TABLE `services` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`title` text,\n\t`slug` text,\n\t`category` text DEFAULT 'service',\n\t`number` text,\n\t`summary` text,\n\t`description` text,\n\t`body` text,\n\t`image_id` integer,\n\t`audience` text,\n\t`free` integer DEFAULT false,\n\t`meta_title` text,\n\t`meta_description` text,\n\t`meta_image_id` integer,\n\t`updated_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`created_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`_status` text DEFAULT 'draft',\n\tFOREIGN KEY (`image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null,\n\tFOREIGN KEY (`meta_image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null\n)"
+  },
+  {
+    "type": "table",
+    "name": "services_rels",
+    "tbl_name": "services_rels",
+    "sql": "CREATE TABLE `services_rels` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`order` integer,\n\t`parent_id` integer NOT NULL,\n\t`path` text NOT NULL,\n\t`media_id` integer,\n\tFOREIGN KEY (`parent_id`) REFERENCES `services`(`id`) ON UPDATE no action ON DELETE cascade,\n\tFOREIGN KEY (`media_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE cascade\n)"
+  },
+  {
+    "type": "table",
+    "name": "site_settings",
+    "tbl_name": "site_settings",
+    "sql": "CREATE TABLE `site_settings` (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`phone` text,\n\t`whatsapp` text,\n\t`email` text,\n\t`response_note` text,\n\t`about_text` text,\n\t`meta_title` text,\n\t`meta_description` text,\n\t`meta_image_id` integer,\n\t`updated_at` text,\n\t`created_at` text,\n\tFOREIGN KEY (`meta_image_id`) REFERENCES `media`(`id`) ON UPDATE no action ON DELETE set null\n)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_autosave_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_autosave_idx` ON `_courses_v` (`autosave`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_created_at_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_created_at_idx` ON `_courses_v` (`created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_latest_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_latest_idx` ON `_courses_v` (`latest`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_parent_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_parent_idx` ON `_courses_v` (`parent_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_rels_media_id_idx",
+    "tbl_name": "_courses_v_rels",
+    "sql": "CREATE INDEX `_courses_v_rels_media_id_idx` ON `_courses_v_rels` (`media_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_rels_order_idx",
+    "tbl_name": "_courses_v_rels",
+    "sql": "CREATE INDEX `_courses_v_rels_order_idx` ON `_courses_v_rels` (`order`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_rels_parent_idx",
+    "tbl_name": "_courses_v_rels",
+    "sql": "CREATE INDEX `_courses_v_rels_parent_idx` ON `_courses_v_rels` (`parent_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_rels_path_idx",
+    "tbl_name": "_courses_v_rels",
+    "sql": "CREATE INDEX `_courses_v_rels_path_idx` ON `_courses_v_rels` (`path`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_updated_at_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_updated_at_idx` ON `_courses_v` (`updated_at`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_version_meta_version_meta_image_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_version_meta_version_meta_image_idx` ON `_courses_v` (`version_meta_image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_version_version__status_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_version_version__status_idx` ON `_courses_v` (`version__status`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_version_version_created_at_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_version_version_created_at_idx` ON `_courses_v` (`version_created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_version_version_image_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_version_version_image_idx` ON `_courses_v` (`version_image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_version_version_slug_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_version_version_slug_idx` ON `_courses_v` (`version_slug`)"
+  },
+  {
+    "type": "index",
+    "name": "_courses_v_version_version_updated_at_idx",
+    "tbl_name": "_courses_v",
+    "sql": "CREATE INDEX `_courses_v_version_version_updated_at_idx` ON `_courses_v` (`version_updated_at`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_autosave_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_autosave_idx` ON `_services_v` (`autosave`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_created_at_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_created_at_idx` ON `_services_v` (`created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_latest_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_latest_idx` ON `_services_v` (`latest`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_parent_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_parent_idx` ON `_services_v` (`parent_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_rels_media_id_idx",
+    "tbl_name": "_services_v_rels",
+    "sql": "CREATE INDEX `_services_v_rels_media_id_idx` ON `_services_v_rels` (`media_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_rels_order_idx",
+    "tbl_name": "_services_v_rels",
+    "sql": "CREATE INDEX `_services_v_rels_order_idx` ON `_services_v_rels` (`order`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_rels_parent_idx",
+    "tbl_name": "_services_v_rels",
+    "sql": "CREATE INDEX `_services_v_rels_parent_idx` ON `_services_v_rels` (`parent_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_rels_path_idx",
+    "tbl_name": "_services_v_rels",
+    "sql": "CREATE INDEX `_services_v_rels_path_idx` ON `_services_v_rels` (`path`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_updated_at_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_updated_at_idx` ON `_services_v` (`updated_at`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_version_meta_version_meta_image_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_version_meta_version_meta_image_idx` ON `_services_v` (`version_meta_image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_version_version__status_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_version_version__status_idx` ON `_services_v` (`version__status`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_version_version_created_at_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_version_version_created_at_idx` ON `_services_v` (`version_created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_version_version_image_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_version_version_image_idx` ON `_services_v` (`version_image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_version_version_slug_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_version_version_slug_idx` ON `_services_v` (`version_slug`)"
+  },
+  {
+    "type": "index",
+    "name": "_services_v_version_version_updated_at_idx",
+    "tbl_name": "_services_v",
+    "sql": "CREATE INDEX `_services_v_version_version_updated_at_idx` ON `_services_v` (`version_updated_at`)"
+  },
+  {
+    "type": "index",
+    "name": "courses__status_idx",
+    "tbl_name": "courses",
+    "sql": "CREATE INDEX `courses__status_idx` ON `courses` (`_status`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_created_at_idx",
+    "tbl_name": "courses",
+    "sql": "CREATE INDEX `courses_created_at_idx` ON `courses` (`created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_image_idx",
+    "tbl_name": "courses",
+    "sql": "CREATE INDEX `courses_image_idx` ON `courses` (`image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_meta_meta_image_idx",
+    "tbl_name": "courses",
+    "sql": "CREATE INDEX `courses_meta_meta_image_idx` ON `courses` (`meta_image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_rels_media_id_idx",
+    "tbl_name": "courses_rels",
+    "sql": "CREATE INDEX `courses_rels_media_id_idx` ON `courses_rels` (`media_id`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_rels_order_idx",
+    "tbl_name": "courses_rels",
+    "sql": "CREATE INDEX `courses_rels_order_idx` ON `courses_rels` (`order`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_rels_parent_idx",
+    "tbl_name": "courses_rels",
+    "sql": "CREATE INDEX `courses_rels_parent_idx` ON `courses_rels` (`parent_id`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_rels_path_idx",
+    "tbl_name": "courses_rels",
+    "sql": "CREATE INDEX `courses_rels_path_idx` ON `courses_rels` (`path`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_slug_idx",
+    "tbl_name": "courses",
+    "sql": "CREATE UNIQUE INDEX `courses_slug_idx` ON `courses` (`slug`)"
+  },
+  {
+    "type": "index",
+    "name": "courses_updated_at_idx",
+    "tbl_name": "courses",
+    "sql": "CREATE INDEX `courses_updated_at_idx` ON `courses` (`updated_at`)"
+  },
+  {
+    "type": "index",
+    "name": "media_created_at_idx",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX `media_created_at_idx` ON `media` (`created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "media_filename_idx",
+    "tbl_name": "media",
+    "sql": "CREATE UNIQUE INDEX `media_filename_idx` ON `media` (`filename`)"
+  },
+  {
+    "type": "index",
+    "name": "media_sizes_card_sizes_card_filename_idx",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX `media_sizes_card_sizes_card_filename_idx` ON `media` (`sizes_card_filename`)"
+  },
+  {
+    "type": "index",
+    "name": "media_sizes_detail_sizes_detail_filename_idx",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX `media_sizes_detail_sizes_detail_filename_idx` ON `media` (`sizes_detail_filename`)"
+  },
+  {
+    "type": "index",
+    "name": "media_sizes_large_sizes_large_filename_idx",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX `media_sizes_large_sizes_large_filename_idx` ON `media` (`sizes_large_filename`)"
+  },
+  {
+    "type": "index",
+    "name": "media_updated_at_idx",
+    "tbl_name": "media",
+    "sql": "CREATE INDEX `media_updated_at_idx` ON `media` (`updated_at`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_appointments_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_appointments_id_idx` ON `payload_locked_documents_rels` (`appointments_id`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_courses_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_courses_id_idx` ON `payload_locked_documents_rels` (`courses_id`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_media_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_media_id_idx` ON `payload_locked_documents_rels` (`media_id`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_order_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_order_idx` ON `payload_locked_documents_rels` (`order`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_parent_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_parent_idx` ON `payload_locked_documents_rels` (`parent_id`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_path_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_path_idx` ON `payload_locked_documents_rels` (`path`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_payments_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_payments_id_idx` ON `payload_locked_documents_rels` (`payments_id`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_services_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_services_id_idx` ON `payload_locked_documents_rels` (`services_id`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_support_requests_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_support_requests_id_idx` ON `payload_locked_documents_rels` (`support_requests_id`)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_users_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_users_id_idx` ON `payload_locked_documents_rels` (`users_id`)"
+  },
+  {
+    "type": "index",
+    "name": "services__status_idx",
+    "tbl_name": "services",
+    "sql": "CREATE INDEX `services__status_idx` ON `services` (`_status`)"
+  },
+  {
+    "type": "index",
+    "name": "services_created_at_idx",
+    "tbl_name": "services",
+    "sql": "CREATE INDEX `services_created_at_idx` ON `services` (`created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "services_image_idx",
+    "tbl_name": "services",
+    "sql": "CREATE INDEX `services_image_idx` ON `services` (`image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "services_meta_meta_image_idx",
+    "tbl_name": "services",
+    "sql": "CREATE INDEX `services_meta_meta_image_idx` ON `services` (`meta_image_id`)"
+  },
+  {
+    "type": "index",
+    "name": "services_rels_media_id_idx",
+    "tbl_name": "services_rels",
+    "sql": "CREATE INDEX `services_rels_media_id_idx` ON `services_rels` (`media_id`)"
+  },
+  {
+    "type": "index",
+    "name": "services_rels_order_idx",
+    "tbl_name": "services_rels",
+    "sql": "CREATE INDEX `services_rels_order_idx` ON `services_rels` (`order`)"
+  },
+  {
+    "type": "index",
+    "name": "services_rels_parent_idx",
+    "tbl_name": "services_rels",
+    "sql": "CREATE INDEX `services_rels_parent_idx` ON `services_rels` (`parent_id`)"
+  },
+  {
+    "type": "index",
+    "name": "services_rels_path_idx",
+    "tbl_name": "services_rels",
+    "sql": "CREATE INDEX `services_rels_path_idx` ON `services_rels` (`path`)"
+  },
+  {
+    "type": "index",
+    "name": "services_slug_idx",
+    "tbl_name": "services",
+    "sql": "CREATE UNIQUE INDEX `services_slug_idx` ON `services` (`slug`)"
+  },
+  {
+    "type": "index",
+    "name": "services_updated_at_idx",
+    "tbl_name": "services",
+    "sql": "CREATE INDEX `services_updated_at_idx` ON `services` (`updated_at`)"
+  },
+  {
+    "type": "index",
+    "name": "site_settings_meta_meta_image_idx",
+    "tbl_name": "site_settings",
+    "sql": "CREATE INDEX `site_settings_meta_meta_image_idx` ON `site_settings` (`meta_image_id`)"
+  }
+]

@@ -1,9 +1,15 @@
 import * as migration_20261102_134951_initial from './20261102_134951_initial';
+import * as migration_20261104_130720_cms_workspace from './20261104_130720_cms_workspace';
 
 export const migrations = [
   {
     up: migration_20261102_134951_initial.up,
     down: migration_20261102_134951_initial.down,
-    name: '20261102_134951_initial'
+    name: '20261102_134951_initial',
+  },
+  {
+    up: migration_20261104_130720_cms_workspace.up,
+    down: migration_20261104_130720_cms_workspace.down,
+    name: '20261104_130720_cms_workspace'
   },
 ];

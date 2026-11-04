@@ -22,15 +22,23 @@
     "check": "npm run check --workspace @ltsp/cms && npm run check --workspace @ltsp/web",
     "build": "npm run build --workspace @ltsp/cms && npm run build --workspace @ltsp/web",
     "test": "playwright test",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "test:content-migration": "node --import tsx tests/content-migration.mjs",
+    "test:content": "node --import tsx --test tests/content.test.mjs",
+    "test:media-deployment": "node tests/media-deployment.mjs"
   },
   "overrides": {
-    "dompurify": "3.4.17"
+    "dompurify": "3.4.17",
+    "happy-dom": "21.0.4",
+    "@lexical/headless": {
+      "happy-dom": "21.0.4"
+    }
   },
   "devDependencies": {
     "@playwright/test": "latest",
     "@types/node": "^24.0.0",
     "node": "24.22.1",
+    "s3rver": "3.7.1",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
   },

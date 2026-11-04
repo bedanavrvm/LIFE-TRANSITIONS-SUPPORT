@@ -2,6 +2,7 @@ import config from '@payload-config';
 import { RootLayout, handleServerFunctions } from '@payloadcms/next/layouts';
 import type { ServerFunctionClient } from 'payload';
 import '@payloadcms/next/css';
+import './staff.scss';
 import { importMap } from './admin/importMap.js';
 import { headers } from 'next/headers';
 import { reportFailure } from '../../../../../scripts/observability.mjs';

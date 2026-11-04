@@ -1,0 +1,8 @@
+---
+import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html';
+import { safeBody } from '../../../../packages/shared/src/rich-content';
+interface Props { body?: unknown; fallback?: string; }
+let html = '';
+try { if (Astro.props.body) html = convertLexicalToHTML({ data: safeBody(Astro.props.body), disableContainer: true }); } catch {}
+---
+<div class="rich-content">{html ? <Fragment set:html={html} /> : <p>{Astro.props.fallback}</p>}</div>
