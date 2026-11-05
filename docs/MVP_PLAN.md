@@ -57,6 +57,10 @@ The implementation pins Payload packages to 3.92.0, Next to 16.4.3, Astro to 7.4
 
 Primary implementation references checked on 2026-10-26: [Payload installation](https://payloadcms.com/docs/getting-started/installation), [SQLite adapter](https://payloadcms.com/docs/database/sqlite), [access control](https://payloadcms.com/docs/access-control/overview), [tagged blank template](https://github.com/payloadcms/payload/tree/v3.92.0/templates/blank), [Astro Node adapter](https://docs.astro.build/en/guides/integrations-guide/node/), and [DOMPurify advisory](https://github.com/advisories/GHSA-cg2g-xh64-v4q7). Official package metadata and tagged source were used where documentation retrieval was unavailable.
 
+## Request inbox, C43
+
+The approved inbox protects original submissions and replaces direct request editing with simple triage and append-only attributed follow-up notes. Staff can capture Phone/WhatsApp enquiries or link a new enquiry for different support. New/Reviewed/Closed values and appointment/payment validation remain unchanged. See [the staff workflow and migration guidance](CMS_STAFF_GUIDE.md#manage-requests-in-the-inbox). Original values overwritten before this change cannot be recovered by the migration.
+
 ## CMS workspace upgrade, C41
 
 The approved three-phase upgrade adds a role-aware branded dashboard, restricted rich-text public editing, drafts/history and authenticated preview, then public media and SEO. Existing content-writing roles retain publishing permissions; care/payment access and operational rules are unchanged. Cloudflare R2 is selected, but the user deferred supplying credentials. The media schema is present without configuration and uploads fail closed. See [the staff/operator guide](CMS_STAFF_GUIDE.md) for behaviour, compatibility and rollout steps. Source implementation and local verification do not establish a live deployment or real R2 delivery.

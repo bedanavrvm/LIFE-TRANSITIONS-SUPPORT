@@ -19,7 +19,8 @@ try {
   await database.query("INSERT INTO services(title,slug,number,summary,description,audience) VALUES ('Synthetic legacy service','legacy-service','90','Synthetic summary','Preserve original plain text','Synthetic audience')");
   await database.query("INSERT INTO courses(title,slug,audience,summary,details,published) VALUES ('Legacy public course','legacy-public','Synthetic','Summary','Original public detail',true),('Legacy draft course','legacy-draft','Synthetic','Summary','Original draft detail',false)");
   await database.query("INSERT INTO support_requests(reference,kind,name,email,preferred_contact,consent) VALUES ('SYNTHETIC-MIGRATION','callback','Synthetic private fixture','fixture@example.test','email',true)");
-  const privateBefore = JSON.stringify((await database.query('SELECT * FROM support_requests')).rows);
+  const privateColumns = (await database.query("SELECT column_name FROM information_schema.columns WHERE table_name='support_requests' ORDER BY ordinal_position")).rows.map(row => '"' + row.column_name + '"').join(',');
+  const privateBefore = JSON.stringify((await database.query('SELECT ' + privateColumns + ' FROM support_requests')).rows);
   const env = { ...process.env, DATABASE_URI: uri, DATABASE_URL: uri, PAYLOAD_SECRET: 'synthetic-content-migration-secret-32-characters', INTERNAL_API_KEY: 'synthetic-content-migration-api-key-32-characters' };
   for (const key of ['RENDER','LTSP_TEST_MODE','R2_BUCKET','R2_ENDPOINT','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY']) delete env[key];
   function run(args) {
@@ -43,7 +44,7 @@ try {
   run(['scripts/payload.mjs', 'migrate']);
   run(['--import', 'tsx', 'scripts/seed.ts']);
   assert.equal(JSON.stringify((await database.query('SELECT * FROM services ORDER BY id')).rows), before);
-  assert.equal(JSON.stringify((await database.query('SELECT * FROM support_requests')).rows), privateBefore);
+  assert.equal(JSON.stringify((await database.query('SELECT ' + privateColumns + ' FROM support_requests')).rows), privateBefore);
   console.log('PASS: legacy PostgreSQL content and publication preserved; rich-text backfill respects edits; repeat migration/seed is a no-op.');
 } finally {
   await database.end();

@@ -32,7 +32,7 @@ Setup creates an ignored .env with random secrets. Development seeds missing ser
 ## Try the workflow
 
 1. Edit Services, Courses or Site settings in Payload. Services contains seven services and three signature packages; its Category field controls their listing group. Both use the existing detail page and short enquiry. Add confirmed phone, WhatsApp, email and response information when available.
-2. Submit a fictional request on the website and find it under Support Requests.
+2. Submit a fictional request on the website and open Request inbox in Payload. Original details are read-only; review, close/reopen or add an attributed follow-up note. Phone/WhatsApp enquiries can be recorded through the dedicated capture form.
 3. Review the request before confirming an appointment; coordinate availability manually.
 4. For an agreed paid service, create a linked Payment with a genuine provider-hosted HTTPS checkout URL and share its generated public URL privately.
 5. Verify the transaction in the provider dashboard and record its reference before marking paid. Returning from checkout is not payment proof. Complimentary services cannot be charged.
@@ -118,6 +118,8 @@ The initial documentation task created five Markdown files without application s
 - Keep real client data and secrets out of these files.
 
 ## Verification status
+
+Protected request inbox, C43, 2026-11-05: the full 90-test browser/API suite passed, followed by 15 focused CMS/inbox checks after the final catalogue-deletion safeguard. CMS/Astro checks and both production builds passed. Nine inbox regressions cover protected original submissions, attributed append-only notes/status history, concurrency, manual/linked capture, access denial, filters, pagination and phone layouts. Legacy PostgreSQL/SQLite upgrades and the compiled PostgreSQL/browser/restart workflow passed; a fresh private backup restored successfully. See [staff workflow, rollout and exact verification limits](docs/CMS_STAFF_GUIDE.md#manage-requests-in-the-inbox). Actual Render deployment and real staff acceptance remain separate.
 
 Render startup fix, C42, 2026-11-04: an isolated legacy PostgreSQL database reproduced the reported HTTP 500/SQLSTATE `42703`. The exact `node scripts/start.mjs` Render command now migrates, backfills public content and configures the administrator before the built CMS returns HTTP 200. Migration, seed and administrator failures each prevent app launch; repeated setup preserves content and unchanged credentials. Ten proxy/logging checks passed. See [recovery steps and precise test boundaries](docs/RENDER_DEPLOYMENT.md#troubleshooting-build-succeeds-runtime-reports-postgresql-42703). Actual Render recovery remains unverified pending deployment of this fix.
 

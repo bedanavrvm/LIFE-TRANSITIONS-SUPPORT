@@ -5,7 +5,7 @@ export function requestId(value) {
 }
 
 export function routeLabel(pathname = '') {
-  const match = /^\/api\/(users|services|courses|media|support-requests|appointments|payments)(?:\/|$)/.exec(pathname);
+  const match = /^\/api\/(users|services|courses|media|support-requests|request-activity|request-workflow|appointments|payments)(?:\/|$)/.exec(pathname);
   if (match) return `/api/${match[1]}`;
   if (pathname.startsWith('/admin')) return '/admin';
   if (pathname === '/support') return '/support';

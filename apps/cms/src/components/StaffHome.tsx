@@ -40,16 +40,16 @@ export default async function StaffHome({ req }: WidgetServerProps) {
       else params.append(key, String(value));
     }
     add(where, 'where');
-    return `/admin/collections/${collection}?${params}`;
+    return collection === 'support-requests' ? '/admin/requests?status=new' + (JSON.stringify(where).includes('callback') ? '&kind=callback' : '') : `/admin/collections/${collection}?${params}`;
   }
   const requestLabels: Record<string, string> = { care: 'Care', callback: 'Callback', referral: 'Referral', 'training-group': 'Group training', 'training-private': 'Private training' };
   const time = (value: string) => new Intl.DateTimeFormat('en-KE', { timeZone: 'Africa/Nairobi', dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
   function panel(title: string, collection: string, records: any[] | null, label: (record: any) => string, empty: string) {
-    return <section className="staff-panel"><h2>{title}</h2>{records === null ? <p>Temporarily unavailable. <a href="/admin">Retry</a></p> : records.length ? <ul>{records.map(record => <li key={record.id}><a href={`/admin/collections/${collection}/${record.id}`}>{label(record)}</a></li>)}</ul> : <p>{empty}</p>}</section>;
+    return <section className="staff-panel"><h2>{title}</h2>{records === null ? <p>Temporarily unavailable. <a href="/admin">Retry</a></p> : records.length ? <ul>{records.map(record => <li key={record.id}><a href={collection === 'support-requests' ? `/admin/requests/${record.id}` : `/admin/collections/${collection}/${record.id}`} >{label(record)}</a></li>)}</ul> : <p>{empty}</p>}</section>;
   }
   return <div className="staff-home">
     <header><p className="staff-eyebrow">Life Transitions Support Partners</p><h1>Welcome, {user.name || 'colleague'}.</h1><p>{care ? 'A clear view of the support and care ahead.' : 'Keep families informed with clear, up-to-date content.'}</p><a href="/admin">Refresh dashboard</a> · <a href={process.env.WEB_URL || '/'} target="_blank" rel="noreferrer">Open website</a></header>
-    <nav aria-label="Quick actions" className="staff-actions">{links.map(([label, slug]) => <a key={slug} href={`/admin/collections/${slug}`}>{label}</a>)}<a href="/admin/globals/site-settings">Website settings</a></nav>
+    <nav aria-label="Quick actions" className="staff-actions">{links.map(([label, slug]) => <a key={slug} href={slug === 'support-requests' ? '/admin/requests' : `/admin/collections/${slug}`} >{label}</a>)}<a href="/admin/globals/site-settings">Website settings</a></nav>
     <div className="staff-stats">{counts.map((item, index) => <a className="staff-stat" key={item.label} href={filterLink(item.collection, item.where)}><span>{item.label}</span><strong>{numbers[index] ?? 'Unavailable'}</strong></a>)}</div>
     <div className="staff-panels">
       {care && panel('Awaiting review', 'support-requests', enquiries, record => `${record.reference} · ${requestLabels[record.kind] || record.kind} · ${time(record.createdAt)}`, 'No new enquiries awaiting review.')}

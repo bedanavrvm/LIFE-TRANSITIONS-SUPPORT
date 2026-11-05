@@ -1,0 +1,44 @@
+[
+  {
+    "type": "table",
+    "name": "request_activity",
+    "tbl_name": "request_activity",
+    "sql": "CREATE TABLE \"request_activity\" (\n\t`id` integer PRIMARY KEY NOT NULL,\n\t`request_id` integer,\n\t`kind` text NOT NULL,\n\t`text` text NOT NULL,\n\t`author_id` integer,\n\t`author_name` text NOT NULL,\n\t`from_status` text,\n\t`to_status` text,\n\t`transition_key` text,\n\t`updated_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\t`created_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,\n\tFOREIGN KEY (`request_id`) REFERENCES `support_requests`(`id`) ON UPDATE no action ON DELETE set null,\n\tFOREIGN KEY (`author_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null\n)"
+  },
+  {
+    "type": "index",
+    "name": "payload_locked_documents_rels_request_activity_id_idx",
+    "tbl_name": "payload_locked_documents_rels",
+    "sql": "CREATE INDEX `payload_locked_documents_rels_request_activity_id_idx` ON `payload_locked_documents_rels` (`request_activity_id`)"
+  },
+  {
+    "type": "index",
+    "name": "request_activity_author_idx",
+    "tbl_name": "request_activity",
+    "sql": "CREATE INDEX `request_activity_author_idx` ON `request_activity` (`author_id`)"
+  },
+  {
+    "type": "index",
+    "name": "request_activity_created_at_idx",
+    "tbl_name": "request_activity",
+    "sql": "CREATE INDEX `request_activity_created_at_idx` ON `request_activity` (`created_at`)"
+  },
+  {
+    "type": "index",
+    "name": "request_activity_request_idx",
+    "tbl_name": "request_activity",
+    "sql": "CREATE INDEX `request_activity_request_idx` ON `request_activity` (`request_id`)"
+  },
+  {
+    "type": "index",
+    "name": "request_activity_transition_key_idx",
+    "tbl_name": "request_activity",
+    "sql": "CREATE UNIQUE INDEX `request_activity_transition_key_idx` ON `request_activity` (`transition_key`)"
+  },
+  {
+    "type": "index",
+    "name": "request_activity_updated_at_idx",
+    "tbl_name": "request_activity",
+    "sql": "CREATE INDEX `request_activity_updated_at_idx` ON `request_activity` (`updated_at`)"
+  }
+]

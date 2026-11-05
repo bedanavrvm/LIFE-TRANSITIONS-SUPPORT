@@ -712,6 +712,30 @@ The root guide therefore carries concise project rules and task-specific pointer
 
 The local Writing for Agents skill also informed document organisation: keep one authoritative home for detailed information, use conditional context links, and make completion checkable. The skill is guidance for this authoring session, not a dependency that future contributors must install.
 
+## Public website improvement candidates — 2026-11-04
+
+**Status: proposals for discussion, not approved implementation.** Keep the official light gold/cream identity, continuous flowing vines, photographs and existing navigation. The rejected rose sprays, page borders and torn-card treatment remain superseded. No live-site, field-performance or nurse/family usability audit was performed for these recommendations. Sources below were accessed on 2026-11-04; source facts and our proposed applications are distinguished explicitly.
+
+### 1. Show the people and explain the actual service
+
+Source inspection finds values and an invitation to ask who provides support on [About](../apps/web/src/pages/about.astro), but no named team profiles. Service pages already show audience, generic fee guidance, a request action and next steps. **Proposal:** add consented staff portraits, names, verified qualifications and responsibilities, then make each service's expectations specific: delivery setting, coverage, what happens during the first conversation, what is included and which costs need discussion. Publish hours, response windows and prices only after the team confirms them. Extend the existing acknowledgement with verified contact/response information; nurse review and appointment agreement remain unchanged. This is our recommendation, not a measured conversion finding. Never substitute stock subjects for staff or invent testimonials, partners or outcome figures.
+
+### 2. Build a small, maintained resource library
+
+**Observed reference:** [Sue Ryder's grief-support hub](https://www.sueryder.org/grief-support/) separates coping with grief, supporting another person, and support for children. Its [supporting-someone section](https://www.sueryder.org/grief-support/supporting-someone-bereaved/) links short, specific questions and practical topics. C04 already requires nurses to edit resources; the current static article lacks that editing path. **Proposal:** expand it into three to six original guides, grouped by family situation, with reviewer, review date and a relevant support link. Start with preparation and practical questions; clinical guidance requires professional review. The [NHS content policy](https://www.nhs.uk/our-policies/content-policy/) describes clinical sign-off and maintenance as its own editorial process; borrow the accountability principle, not NHS branding or an assumption of Kenyan compliance. Its displayed review date is old, so it is an editorial example rather than a current local requirement.
+
+### 3. Refine composition and motion without another redesign
+
+**Source guidance:** [W3C's carousel tutorial](https://www.w3.org/WAI/tutorials/carousels/) calls for keyboard operation, comprehensible focus, announced changes and control of movement. Its [animation-from-interactions guidance](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html) explains reduced-motion support; that specific criterion is Level AAA, not an AA requirement. **Proposal:** refine photo crops, subject placement, section rhythm and the space around calls to action. Retain the existing manual training carousel and reduced-motion behaviour. Evaluate any new movement separately with families and phone users; the reverted floral-kit motions are not implicitly reapproved. A passing component check would not establish whole-site accessibility.
+
+### 4. Make local information discoverable when launch-ready
+
+**Source facts:** [Google Business Profile eligibility](https://support.google.com/business/answer/13763036?hl=en) generally requires in-person customer contact. Its [service-area guidance](https://support.google.com/business/answer/9157481?hl=en) says businesses visiting customers without receiving them at their own address should use a service-area profile and remove the customer-facing address. [Google's structured-data policies](https://developers.google.com/search/docs/appearance/structured-data/sd-policies) require accurate, visible supporting content and do not guarantee rich results. **Proposal:** confirm real service areas and contacts, assess profile eligibility, and complement existing metadata with a published-content sitemap and appropriate organisation/breadcrumb data. Never invent a clinic address or claim rankings. Preserve demo/preview noindex until launch approval; private records and unpublished drafts stay outside public discovery.
+
+### 5. Measure speed before changing infrastructure
+
+**Source targets:** [Web Vitals](https://web.dev/articles/vitals) defines good field thresholds as LCP at most 2.5 seconds, INP at most 200 milliseconds and CLS at most 0.1, assessed at the 75th percentile separately for mobile and desktop. These are targets, not this site's measured results. **Proposal:** compare warm and cold page loads and real-phone performance before prioritising work. Inspect public CMS overfetch and image delivery; only introduce bounded, invalidation-aware public caching if measurements justify it. Keep private responses, authenticated previews and drafts out of shared caches. A local Lighthouse result cannot establish real-user performance or production uptime.
+
 ## Coverage and handoff
 
 | Discussion area | Authoritative record |

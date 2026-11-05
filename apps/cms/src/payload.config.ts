@@ -10,6 +10,7 @@ import { s3Storage } from '@payloadcms/storage-s3';
 import { seoPlugin } from '@payloadcms/plugin-seo';
 import { syncContent, captureContentInput, mediaFields } from './content';
 import { Media, storageReady } from './media';
+import { Requests, RequestActivity, requestEndpoints, createWebsiteRequest, preserveRequestedContent } from './requests';
 import { requestSchema, safeCheckoutUrl } from '@ltsp/shared';
 import { requestId, reportFailure, safePayloadLog } from '../../../scripts/observability.mjs';
 
@@ -54,7 +55,7 @@ const Services: CollectionConfig = {
     if (!isContentStaff(req.user)) throw new APIError('Sign in to restore content.', 403);
     const result = await req.payload.restoreVersion({ collection: 'services', id: String(req.routeParams?.id || ''), draft: true, req, overrideAccess: false });
     return Response.json({ ...result, message: 'Version restored as draft. Preview and publish when ready.' });
-  } }], versions, hooks: { beforeOperation: [captureContentInput('description')], beforeValidate: [syncContent('description')] }, admin: { useAsTitle: 'title', group: 'Website content', preview: preview('services'), defaultColumns: ['title', 'category', '_status', 'updatedAt'] },
+  } }], versions, hooks: { beforeDelete: [preserveRequestedContent('service')], beforeOperation: [captureContentInput('description')], beforeValidate: [syncContent('description')] }, admin: { useAsTitle: 'title', group: 'Website content', preview: preview('services'), defaultColumns: ['title', 'category', '_status', 'updatedAt'] },
   access: { read: publicRead, readVersions: isEditor, create: isEditor, update: isEditor, delete: isAdmin },
   fields: [
     { name: 'title', type: 'text', required: true }, { name: 'slug', type: 'text', required: true, unique: true },
@@ -69,7 +70,7 @@ const Courses: CollectionConfig = {
     if (!isContentStaff(req.user)) throw new APIError('Sign in to restore content.', 403);
     const result = await req.payload.restoreVersion({ collection: 'courses', id: String(req.routeParams?.id || ''), draft: true, req, overrideAccess: false });
     return Response.json({ ...result, message: 'Version restored as draft. Preview and publish when ready.' });
-  } }], versions, hooks: { beforeOperation: [captureContentInput('details')], beforeValidate: [syncContent('details')] }, admin: { useAsTitle: 'title', group: 'Website content', preview: preview('courses'), defaultColumns: ['title', 'date', '_status', 'updatedAt'] },
+  } }], versions, hooks: { beforeDelete: [preserveRequestedContent('course')], beforeOperation: [captureContentInput('details')], beforeValidate: [syncContent('details')] }, admin: { useAsTitle: 'title', group: 'Website content', preview: preview('courses'), defaultColumns: ['title', 'date', '_status', 'updatedAt'] },
   access: { read: publicRead, readVersions: isEditor, create: isEditor, update: isEditor, delete: isAdmin },
   fields: [
     { name: 'title', type: 'text', required: true }, { name: 'slug', type: 'text', required: true, unique: true },
@@ -79,32 +80,6 @@ const Courses: CollectionConfig = {
     { name: 'location', type: 'text' }, { name: 'capacity', type: 'number', min: 1 },
     { name: 'price', label: 'Fee in KES (leave blank until agreed)', type: 'number', min: 0, validate: validAmount },
   ],
-};
-const Requests: CollectionConfig = {
-  slug: 'support-requests', admin: { useAsTitle: 'reference', group: 'Care & training', defaultColumns: ['reference', 'kind', 'name', 'status', 'createdAt'] }, access: privateAccess,
-  fields: [
-    { name: 'reference', type: 'text', required: true, unique: true, defaultValue: () => `LT-${randomUUID().slice(0, 8).toUpperCase()}`, admin: { readOnly: true } },
-    { name: 'kind', type: 'select', required: true, options: ['care', 'callback', 'referral', 'training-group', 'training-private'] },
-    { name: 'status', type: 'select', required: true, defaultValue: 'new', options: ['new', 'reviewed', 'closed'] },
-    { type: 'collapsible', label: 'Contact details', fields: [
-    { name: 'name', type: 'text', required: true }, { name: 'phone', type: 'text' },
-    { name: 'email', type: 'email' }, { name: 'preferredContact', type: 'select', options: ['phone', 'whatsapp', 'email'], required: true },
-    ] },
-    { type: 'collapsible', label: 'Support context', fields: [
-    { name: 'service', type: 'relationship', relationTo: 'services' }, { name: 'course', type: 'relationship', relationTo: 'courses' },
-    { name: 'relationship', type: 'select', options: ['self', 'family', 'employer', 'professional'] },
-    { name: 'ageGroup', type: 'select', options: ['adult', 'child', 'not-applicable'] },
-    { name: 'area', type: 'text' }, { name: 'availability', type: 'text' }, { name: 'message', type: 'textarea' },
-    { name: 'consent', label: 'Privacy acknowledgement received', type: 'checkbox', required: true },
-    ] },
-    { name: 'staffNotes', type: 'textarea', admin: { description: 'Necessary operational notes only. Do not use this MVP as a medical record.' } },
-  ],
-  hooks: { beforeValidate: [({ data, originalDoc }) => {
-    const item = { ...originalDoc, ...data };
-    if (item.preferredContact === 'email' && !String(item.email || '').trim()) throw new APIError('Enter an email address for an email reply.', 400);
-    if (['phone', 'whatsapp'].includes(item.preferredContact) && !String(item.phone || '').trim()) throw new APIError('Enter a phone number for a call or WhatsApp reply.', 400);
-    return data;
-  }] },
 };
 const Appointments: CollectionConfig = {
   slug: 'appointments', access: privateAccess, admin: { group: 'Care & training', defaultColumns: ['request', 'startsAt', 'status'] },
@@ -171,20 +146,21 @@ export default buildConfig({
   graphQL: { disable: true },
   email: () => ({ name: 'local-disabled', defaultFromAddress: 'no-reply@example.test', defaultFromName: 'Life Transitions local preview', sendEmail: async () => { console.info('Email delivery is disabled in local preview; no message content was logged.'); } }),
   serverURL: process.env.CMS_URL || process.env.WEB_URL || 'http://127.0.0.1:3000',
-  admin: { user: 'users', theme: 'light', importMap: { baseDir: directory }, meta: { titleSuffix: ' | Life Transitions' }, components: { graphics: { Logo: './components/Brand#Logo', Icon: './components/Brand#Icon' } }, dashboard: { widgets: [{ slug: 'staff-home', label: 'Your workspace', Component: './components/StaffHome', minWidth: 'full' }], defaultLayout: [{ widgetSlug: 'staff-home', width: 'full' }, { widgetSlug: 'collections', width: 'full' }] } },
+  admin: { user: 'users', theme: 'light', importMap: { baseDir: directory }, meta: { titleSuffix: ' | Life Transitions' }, components: { views: { requestInbox: { Component: './components/RequestInboxView', path: '/requests', exact: true }, requestDetail: { Component: './components/RequestInboxView', path: '/requests/:id', exact: true } }, beforeNavLinks: ['./components/RequestInboxLink'], graphics: { Logo: './components/Brand#Logo', Icon: './components/Brand#Icon' } }, dashboard: { widgets: [{ slug: 'staff-home', label: 'Your workspace', Component: './components/StaffHome', minWidth: 'full' }], defaultLayout: [{ widgetSlug: 'staff-home', width: 'full' }, { widgetSlug: 'collections', width: 'full' }] } },
   db: usePostgres ? postgresAdapter({
     pool: { connectionString: databaseURI, max: 5, connectionTimeoutMillis: 15000, idleTimeoutMillis: 30000 },
     disableCreateDatabase: true,
     push: false,
     migrationDir: path.resolve(directory, 'migrations/postgres'),
-  }) : sqliteAdapter({ client: { url: databaseURI || `file:${path.resolve(directory, '../../../data/development.sqlite').replaceAll('\\', '/')}` } }),
+  }) : sqliteAdapter({ transactionOptions: { behavior: 'immediate' }, client: { url: databaseURI || `file:${path.resolve(directory, '../../../data/development.sqlite').replaceAll('\\', '/')}` } }),
   typescript: { autoGenerate: false },
-  collections: [Users, Services, Courses, Requests, Appointments, Payments, Media],
+  collections: [Users, Services, Courses, Requests, RequestActivity, Appointments, Payments, Media],
   globals: [{ slug: 'site-settings', admin: { group: 'Website content' }, access: { read: () => true, update: isEditor }, fields: [
     { name: 'phone', type: 'text' }, { name: 'whatsapp', label: 'WhatsApp number including country code', type: 'text' },
     { name: 'email', type: 'email' }, { name: 'responseNote', type: 'text' }, { name: 'aboutText', type: 'textarea' },
   ] }],
   endpoints: [
+    ...requestEndpoints,
     { path: '/intake', method: 'post', handler: async req => {
       if (!internal(req)) return Response.json({ error: 'Unauthorised' }, { status: 401 });
       let raw: unknown;
@@ -198,7 +174,7 @@ export default buildConfig({
       ]);
       if ((service && !services?.docs.length) || (course && !courses?.docs.length)) return Response.json({ error: 'This service or course is unavailable.' }, { status: 400 });
       // Public creation is limited to the validated intake shape; no private document is returned.
-      const created = await req.payload.create({ collection: 'support-requests', overrideAccess: true, req, data: { ...values, phone: values.phone || undefined, email: values.email || undefined, status: 'new', service: services?.docs[0]?.id, course: courses?.docs[0]?.id } });
+      const created = await createWebsiteRequest(req, { ...values, phone: values.phone || undefined, email: values.email || undefined, service: services?.docs[0]?.id, course: courses?.docs[0]?.id });
       return Response.json({ reference: created.reference }, { status: 201, headers: { 'Cache-Control': 'no-store' } });
     } },
     { path: '/payment-summary/:reference', method: 'get', handler: async req => {

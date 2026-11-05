@@ -67,8 +67,8 @@ test('all five minimal enquiry kinds save privately, including email without a p
     expect(record.relationship).toBeFalsy();
     expect(record.ageGroup).toBeFalsy();
     expect(record.course != null).toBe(kind === 'training-group');
-    expect((await request.patch(`${backend}/api/support-requests/${record.id}`, { headers, data: { status: 'reviewed' } })).ok()).toBeTruthy();
-    expect((await request.patch(`${backend}/api/support-requests/${record.id}`, { headers, data: { preferredContact: kind === 'callback' ? 'email' : 'phone' } })).status()).toBe(400);
+    expect((await request.post(`${backend}/api/request-workflow/${record.id}/status`, { headers, data: { status: 'reviewed', revision: record.workflowRevision } })).ok()).toBeTruthy();
+    expect((await request.patch(`${backend}/api/support-requests/${record.id}`, { headers, data: { preferredContact: kind === 'callback' ? 'email' : 'phone' } })).status()).toBe(403);
   }
 });
 

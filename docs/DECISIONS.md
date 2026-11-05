@@ -74,6 +74,10 @@ Research verification is a separate issue: an externally supported fact can info
 
 The colour portions of C12, C15 and C24 are superseded by C29 and C33. Their readability, layout, photography and navigation behaviour remain. C23's package icons and C26's manual training showcase remain in use; the temporary branding and gutter artwork are replaced.
 
+### Request inbox — confirmed 2026-11-05 (C43)
+
+The user requested safer request management because staff could change submitted names, contacts and requested services, then authorised implementation of the plan. They selected a dedicated inbox inside Payload, original submissions plus notes only for corrections, simple New/Reviewed/Closed triage without assignment or reminders, and clearly labelled manual capture of phone/WhatsApp enquiries. The approved plan also includes linked staff follow-ups for different support, append-only attributed notes/status history, protected API access and additive migration. This replaces editing request details directly in collection forms; existing appointment/payment rules remain. See [the inbox workflow and rollout](CMS_STAFF_GUIDE.md#manage-requests-in-the-inbox).
+
 ## Delegated default
 
 | ID | Choice | Delegation and rationale | Revision boundary |
@@ -97,6 +101,7 @@ All entries below remain proposals. Their detailed descriptions and alternatives
 | P12 | Replace illustrative stock with consented organisation photography when available, alongside verifiable team information and clear next steps. | Authentic Kenyan people and homes remain the long-term imagery goal; C13 authorises licensed stock for the current refresh. No invented testimonials, qualifications or outcomes. |
 | P13 | Measure the smallest viable combined runtime allocation. | C37 selects the single-service topology and Neon. Actual Render/Linux capacity, region, backup/restore and usage costs still need commissioning. Earlier separate-service sizing is retained as history in [hosting options](RESEARCH_AND_OPTIONS.md#hosting-deployment-options). |
 | P15 | Evaluate static Astro on Firebase Hosting, Payload/Next.js on one Render service, and Neon PostgreSQL. | On 2026-11-02 the user asked why this split could not replace two Render services. It is viable after moving the Astro server's intake/payment work to Render and adding public-content rebuild/deploy automation. It remains a proposal, with hosting quotas, implementation boundaries and the SSR alternative recorded in [hosting deployment options](RESEARCH_AND_OPTIONS.md#firebase-hosting-frontend--render-payload--neon--2026-11-02); no application change, provider selection or deployment is authorised by the question. |
+| P17 | Prioritise authentic team information, specific service expectations and a small reviewed resource hub, followed by contact follow-through, discoverability and measured mobile performance. | On 2026-11-04 the user asked what could improve the website after the Render startup fix. These are recommendations, not authorised application features. Preserve the selected light brand, flowing vines, short enquiry and existing navigation. [Current-source observations, options and evidence](RESEARCH_AND_OPTIONS.md#public-website-improvement-candidates--2026-11-04). |
 
 ## Superseded advice
 

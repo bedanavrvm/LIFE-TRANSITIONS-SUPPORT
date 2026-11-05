@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Upgrade legacy SQLite atomically before Drizzle's development schema push attempts table rebuilds.
-export async function prepareSQLite() {
+async function prepareContentSQLite() {
   const uri = process.env.DATABASE_URI || process.env.DATABASE_URL || `file:${path.resolve('data/development.sqlite')}`;
   if (!uri.startsWith('file:')) return;
   const file = uri.startsWith('file://') ? fileURLToPath(uri) : uri.slice(5);
@@ -41,4 +41,36 @@ export async function prepareSQLite() {
       console.log('Local SQLite content upgrade prepared; backup saved beside the database.');
     } catch (error) { db.exec('ROLLBACK'); throw error; }
   } finally { db.exec('PRAGMA foreign_keys=ON'); db.close(); }
+}
+
+export async function prepareSQLite() {
+  await prepareContentSQLite();
+  const uri = process.env.DATABASE_URI || process.env.DATABASE_URL || 'file:' + path.resolve('data/development.sqlite');
+  if (!uri.startsWith('file:')) return;
+  const file = uri.startsWith('file://') ? fileURLToPath(uri) : uri.slice(5);
+  if (!existsSync(file)) return;
+  const { DatabaseSync, backup } = await import('node:sqlite');
+  const db = new DatabaseSync(file);
+  try {
+    const columns = table => new Set(db.prepare('PRAGMA table_info("' + table + '")').all().map(column => column.name));
+    const existing = columns('support_requests');
+    if (!existing.size || existing.has('workflow_revision')) return;
+    await backup(db, file + '.before-request-inbox-' + Date.now() + '.bak');
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      db.exec("ALTER TABLE support_requests ADD COLUMN workflow_revision text DEFAULT 'legacy'");
+      db.exec("ALTER TABLE support_requests ADD COLUMN source text DEFAULT 'legacy'");
+      db.exec('ALTER TABLE support_requests ADD COLUMN captured_by_id integer REFERENCES users(id) ON DELETE SET NULL');
+      db.exec('ALTER TABLE support_requests ADD COLUMN captured_by_name text');
+      db.exec('ALTER TABLE support_requests ADD COLUMN original_request_id integer REFERENCES support_requests(id) ON DELETE SET NULL');
+      db.exec('ALTER TABLE payload_locked_documents_rels ADD COLUMN request_activity_id integer REFERENCES request_activity(id) ON DELETE CASCADE');
+      const schema = JSON.parse(readFileSync(new URL('./sqlite-request-schema.json', import.meta.url), 'utf8'));
+      for (const entry of schema) db.exec(entry.sql);
+      db.exec('CREATE INDEX support_requests_captured_by_idx ON support_requests(captured_by_id)');
+      db.exec('CREATE INDEX support_requests_original_request_idx ON support_requests(original_request_id)');
+      if (db.prepare('PRAGMA foreign_key_check').all().length || db.prepare('PRAGMA integrity_check').get().integrity_check !== 'ok') throw new Error('Request inbox upgrade failed database integrity checks.');
+      db.exec('COMMIT');
+      console.log('Local SQLite request inbox upgrade prepared; backup saved beside the database.');
+    } catch (error) { db.exec('ROLLBACK'); throw error; }
+  } finally { db.close(); }
 }

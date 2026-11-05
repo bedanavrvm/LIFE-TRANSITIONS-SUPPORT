@@ -21,9 +21,11 @@ test.beforeAll(async ({ request }) => {
     const token = (await (await request.post(`${cms}/api/users/login`, { data: { email: `workspace-${role}@example.test`, password } })).json()).token;
     if (role === 'editor') editor = token; else care = token;
   }
-  const requestResponse = await request.post(`${cms}/api/support-requests`, { headers: auth(admin), data: { kind: 'care', status: 'reviewed', name: 'Synthetic dashboard care request', email: 'dashboard@example.test', preferredContact: 'email', consent: true } });
+  const requestResponse = await request.post(`${cms}/api/request-workflow/capture`, { headers: auth(admin), data: { source: 'phone', kind: 'care', name: 'Synthetic dashboard care request', email: 'dashboard@example.test', preferredContact: 'email', consent: true } });
   expect(requestResponse.ok(), await requestResponse.text()).toBeTruthy();
   const support = (await requestResponse.json()).doc;
+  const reviewed = await request.post(`${cms}/api/request-workflow/${support.id}/status`, { headers: auth(admin), data: { status: 'reviewed', revision: support.workflowRevision } });
+  expect(reviewed.ok(), await reviewed.text()).toBeTruthy();
   appointmentReference = support.reference;
   const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   for (const [offset, status] of [[0, 'confirmed'], [-86400000, 'confirmed'], [0, 'cancelled']] as const) {

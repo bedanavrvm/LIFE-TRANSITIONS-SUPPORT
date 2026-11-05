@@ -7,6 +7,21 @@ let serviceID: number;
 let freeServiceID: number;
 let courseSlug: string;
 async function staff(request: APIRequestContext, path: string, method = 'GET', data?: object) {
+  if (path === 'support-requests' && method === 'POST') {
+    const values = { ...data } as any;
+    const reviewed = values.status === 'reviewed'; delete values.status;
+    values.service = values.service === freeServiceID ? 'spiritual-bereavement' : 'home-follow-up';
+    const created = await request.post(backend + '/api/request-workflow/capture', { data: { ...values, source: 'phone' }, headers: { Authorization: 'JWT ' + token } });
+    if (!created.ok() || !reviewed) return created;
+    const record = (await created.json()).doc;
+    await staff(request, 'support-requests/' + record.id, 'PATCH', { status: 'reviewed' });
+    return created;
+  }
+  if (path.startsWith('support-requests/') && method === 'PATCH') {
+    const record = await (await staff(request, path)).json();
+    if ((data as any)?.status) return request.post(backend + '/api/request-workflow/' + record.id + '/status', { headers: { Authorization: 'JWT ' + token }, data: { ...data, revision: record.workflowRevision } });
+    return request.post(backend + '/api/request-workflow/' + record.id + '/note', { headers: { Authorization: 'JWT ' + token }, data: { text: (data as any).staffNotes } });
+  }
   return request.fetch(`${backend}/api/${path}`, { method, data, headers: { Authorization: `JWT ${token}` } });
 }
 const form = { kind: 'care', name: 'Synthetic family', phone: '+254700000001', email: 'family@example.test', preferredContact: 'phone', service: 'home-follow-up', course: '', relationship: 'family', ageGroup: 'adult', area: 'Test area', availability: 'Test afternoon', message: 'Fictional request for a follow-up conversation.', consent: 'on' };
@@ -107,7 +122,7 @@ test('complimentary support cannot be charged and unsafe checkout URLs are rejec
   const id = (await created.json()).doc.id;
   const updated = await staff(request, `support-requests/${id}`, 'PATCH', { staffNotes: 'Synthetic follow-up note.' });
   expect(updated.ok(), await updated.text()).toBeTruthy();
-  expect((await updated.json()).doc).toMatchObject({ relationship: 'family', ageGroup: 'adult', area: form.area, availability: form.availability, phone: form.phone, email: form.email });
+  expect(await (await staff(request, 'support-requests/' + id)).json()).toMatchObject({ relationship: 'family', ageGroup: 'adult', area: form.area, availability: form.availability, phone: form.phone, email: form.email });
   const payment = await staff(request, 'payments', 'POST', { request: id, amount: 500 });
   expect(payment.status()).toBe(400);
   const paidRequest = await staff(request, 'support-requests', 'POST', { ...form, service: serviceID, consent: true, status: 'reviewed' });
